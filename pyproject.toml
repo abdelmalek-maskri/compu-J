@@ -1,0 +1,31 @@
+[project]
+name = "research-classifier"
+version = "0.1.0"
+description = "Classify bank research emails with an LLM and browse them in a dashboard"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "beautifulsoup4",
+    "lxml",
+    "pypdf",
+    "pydantic>=2",
+    "litellm",
+    "python-dotenv",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
