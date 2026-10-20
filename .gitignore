@@ -1,0 +1,17 @@
+/Data
+Data.zip
+
+.env
+
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.cache/
+
+node_modules/
+web/dist/
+playwright-report/
+test-results/
+
+.DS_Store
