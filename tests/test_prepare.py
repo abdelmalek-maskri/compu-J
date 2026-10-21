@@ -1,6 +1,7 @@
 from pipeline.prepare import (
     MIMECAST_BANNER,
     clean_html,
+    list_files,
     strip_banner,
 )
 
@@ -69,3 +70,17 @@ def test_repeated_identical_lines_collapse():
 def test_strip_banner_removes_only_the_banner():
     text = f"{MIMECAST_BANNER}\nRefs :\nLevels as of 07-Apr-26"
     assert strip_banner(text) == "Refs :\nLevels as of 07-Apr-26"
+
+
+def test_list_files_finds_pdfs_images_and_thumbnails(tmp_path):
+    (tmp_path / "inline").mkdir()
+    (tmp_path / "thumbs").mkdir()
+    for name in ["emailbody.html", "Flyer.pdf", "image001.jpg", "inline/image002.png"]:
+        (tmp_path / name).write_bytes(b"")
+    (tmp_path / "thumbs" / "Flyer.pdf.png").write_bytes(b"")
+
+    files = list_files(tmp_path)
+
+    assert files.pdfs == ["Flyer.pdf"]
+    assert files.images == ["image001.jpg", "inline/image002.png"]
+    assert files.thumbnails == {"Flyer.pdf": "thumbs/Flyer.pdf.png"}

@@ -1,6 +1,8 @@
 """turn raw email folders into clean text for the LLM"""
 
 import re
+from dataclasses import dataclass
+from pathlib import Path
 
 from bs4 import BeautifulSoup, Comment
 
@@ -68,3 +70,26 @@ MIMECAST_BANNER = (
 
 def strip_banner(text: str) -> str:
     return "\n".join(line for line in text.splitlines() if line != MIMECAST_BANNER)
+
+
+IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif"}
+
+
+@dataclass
+class Attachments:
+    pdfs: list[str]
+    images: list[str]
+    thumbnails: dict[str, str]
+
+
+def list_files(folder: Path) -> Attachments:
+    pdfs = sorted(p.name for p in folder.iterdir() if p.suffix.lower() == ".pdf")
+    images = sorted(
+        str(p.relative_to(folder))
+        for p in [*folder.iterdir(), *folder.glob("inline/*")]
+        if p.suffix.lower() in IMAGE_SUFFIXES
+    )
+    thumbnails = {
+        pdf: f"thumbs/{pdf}.png" for pdf in pdfs if (folder / "thumbs" / f"{pdf}.png").exists()
+    }
+    return Attachments(pdfs, images, thumbnails)
