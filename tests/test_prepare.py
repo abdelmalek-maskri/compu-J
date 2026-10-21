@@ -6,6 +6,7 @@ from pipeline.prepare import (
     clean_html,
     find_bank,
     find_date,
+    find_duplicates,
     list_files,
     select_pages,
     strip_banner,
@@ -173,3 +174,15 @@ def test_llm_input_without_attachments():
 def test_llm_input_lists_unreadable_pdf_without_text():
     result = build_llm_input("See attached.", ["broken.pdf"], {"broken.pdf": ""})
     assert result == "EMAIL BODY:\nSee attached.\n\nATTACHMENTS: broken.pdf"
+
+
+def test_duplicates_point_to_first_copy_ignoring_whitespace():
+    texts = {
+        "035428": "UBS House View\nAffording a war",
+        "035427": "UBS House View Affording  a war",
+    }
+    assert find_duplicates(texts) == {"035428": "035427"}
+
+
+def test_different_emails_are_not_duplicates():
+    assert find_duplicates({"a": "FX Daily 9 April", "b": "FX Daily 10 April"}) == {}

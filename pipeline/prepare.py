@@ -1,5 +1,6 @@
 """turn raw email folders into clean text for the LLM"""
 
+import hashlib
 import re
 from dataclasses import dataclass
 from datetime import date
@@ -211,3 +212,16 @@ def build_llm_input(body: str, pdfs: list[str], pdf_texts: dict[str, str]) -> st
     # a PDF that could not be read is still listed above, it just has no text section
     parts += [f"PDF TEXT ({name}):\n{text}" for name, text in pdf_texts.items() if text]
     return "\n\n".join(parts)
+
+
+def find_duplicates(texts: dict[str, str]) -> dict[str, str]:
+    """maps each repeated email to the first one with the same text, in id order"""
+    first_seen: dict[str, str] = {}
+    duplicates = {}
+    for email_id in sorted(texts):
+        digest = hashlib.sha256(" ".join(texts[email_id].split()).encode()).hexdigest()
+        if digest in first_seen:
+            duplicates[email_id] = first_seen[digest]
+        else:
+            first_seen[digest] = email_id
+    return duplicates
