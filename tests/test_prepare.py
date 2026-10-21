@@ -1,7 +1,10 @@
+from datetime import date
+
 from pipeline.prepare import (
     MIMECAST_BANNER,
     clean_html,
     find_bank,
+    find_date,
     list_files,
     strip_banner,
 )
@@ -105,3 +108,28 @@ def test_bank_from_signature_with_damaged_accent():
 
 def test_bank_none_when_not_found():
     assert find_bank("Dear all,\nPlease find below.") == (None, None)
+
+
+def test_date_formats_in_text():
+    assert find_date("9 April 2026 | 4:48PM EDT", []) == (date(2026, 4, 9), "text")
+    assert find_date("Levels as of 07-Apr-26 09:32 GMT", []) == (date(2026, 4, 7), "text")
+    assert find_date("Published April 10, 2026", []) == (date(2026, 4, 10), "text")
+    assert find_date("report as of 31.03.2026", []) == (date(2026, 3, 31), "text")
+
+
+def test_date_earliest_in_text_wins():
+    text = "9 April 2026\nMonday, 21 September 2026 investor trip"
+    assert find_date(text, []) == (date(2026, 4, 9), "text")
+
+
+def test_impossible_and_ambiguous_dates_are_skipped():
+    assert find_date("31.02.2026 and 04/10/2026", []) == (None, None)
+
+
+def test_date_falls_back_to_pdf_names():
+    pdfs = ["DailyTechIndex_20260409_en.pdf"]
+    assert find_date("Dear Client,", pdfs) == (date(2026, 4, 9), "pdf_name")
+    assert find_date("Dear Client,", ["Daily Market Insights 09.04.2026.pdf"]) == (
+        date(2026, 4, 9),
+        "pdf_name",
+    )

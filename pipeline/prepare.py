@@ -2,6 +2,7 @@
 
 import re
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 from bs4 import BeautifulSoup, Comment
@@ -134,4 +135,45 @@ def find_bank(text: str) -> tuple[str | None, str | None]:
     for source, region in regions:
         if bank := _earliest_bank(region):
             return bank, source
+    return None, None
+
+
+MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+MONTH = rf"(?:{'|'.join(MONTHS)})[a-z]*\.?"
+
+# (pattern, group numbers for day, month, year)
+TEXT_DATES = [
+    (re.compile(rf"\b(\d{{1,2}})[ -]({MONTH})[ -](\d{{4}}|\d{{2}})\b", re.I), (1, 2, 3)),
+    (re.compile(rf"\b({MONTH}) (\d{{1,2}}),? (\d{{4}})\b", re.I), (2, 1, 3)),
+    (re.compile(r"\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b"), (1, 2, 3)),
+]
+# slash dates are left out on purpose: 04/10/2026 is ambiguous between US and European order
+PDF_NAME_DATES = [*TEXT_DATES, (re.compile(r"(?<!\d)(20\d\d)(\d\d)(\d\d)(?!\d)"), (3, 2, 1))]
+
+
+def _to_date(day: str, month: str, year: str) -> date | None:
+    y = int(year) + (2000 if len(year) == 2 else 0)
+    m = int(month) if month.isdigit() else MONTHS.index(month[:3].lower()) + 1
+    try:
+        return date(y, m, int(day))
+    except ValueError:
+        return None
+
+
+def _earliest_date(text: str, patterns: list) -> date | None:
+    found = []
+    for rx, (d, m, y) in patterns:
+        for match in rx.finditer(text):
+            if parsed := _to_date(match[d], match[m], match[y]):
+                found.append((match.start(), parsed))
+    return min(found)[1] if found else None
+
+
+def find_date(text: str, pdf_names: list[str]) -> tuple[date | None, str | None]:
+    """returns (date, source); the publication date sits near the top when it is present"""
+    if found := _earliest_date("\n".join(text.splitlines()[:25]), TEXT_DATES):
+        return found, "text"
+    for name in pdf_names:
+        if found := _earliest_date(name, PDF_NAME_DATES):
+            return found, "pdf_name"
     return None, None
