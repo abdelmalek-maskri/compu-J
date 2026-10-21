@@ -6,6 +6,7 @@ from pipeline.prepare import (
     find_bank,
     find_date,
     list_files,
+    select_pages,
     strip_banner,
 )
 
@@ -133,3 +134,21 @@ def test_date_falls_back_to_pdf_names():
         date(2026, 4, 9),
         "pdf_name",
     )
+
+
+def test_select_pages_keeps_title_page_and_skips_short_pages_after_it():
+    title = "WEEKLY ADVISORY CALL 13 April 2026"
+    body = "US markets: if the rise continues, the index will test resistance. " * 5
+    assert select_pages([title, "9", body, ""], budget=1000) == f"{title}\n\n{body.strip()}"
+
+
+def test_select_pages_stops_at_budget_and_says_so():
+    pages = ["a" * 300, "b" * 300, "c" * 300]
+    result = select_pages(pages, budget=450)
+    assert result == "a" * 300 + "\n\n" + "b" * 150 + " [truncated]"
+    assert "ccc" not in result
+
+
+def test_select_pages_tidies_whitespace():
+    page = "Intraday   FX View\n\n\n  EUR/USD\t1.1658 " + "x" * 200
+    assert select_pages([page], budget=1000).startswith("Intraday FX View\nEUR/USD 1.1658")

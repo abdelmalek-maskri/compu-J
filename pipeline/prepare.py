@@ -6,6 +6,7 @@ from datetime import date
 from pathlib import Path
 
 from bs4 import BeautifulSoup, Comment
+from pypdf import PdfReader
 
 DROP_TAGS = ["script", "style", "head", "title", "meta", "noscript"]
 BLOCK_TAGS = [
@@ -177,3 +178,28 @@ def find_date(text: str, pdf_names: list[str]) -> tuple[date | None, str | None]
         if found := _earliest_date(name, PDF_NAME_DATES):
             return found, "pdf_name"
     return None, None
+
+
+PDF_BUDGET_CHARS = 6000
+# after page 1, pages this short are contents pages, dividers or image only slides
+MIN_PAGE_CHARS = 200
+
+
+def read_pdf_pages(path: Path) -> list[str]:
+    """raises pypdf.errors.PdfReadError on a broken file; the caller records it"""
+    return [page.extract_text() or "" for page in PdfReader(path).pages]
+
+
+def select_pages(pages: list[str], budget: int) -> str:
+    kept, used = [], 0
+    for i, page in enumerate(pages):
+        page = "\n".join(" ".join(line.split()) for line in page.splitlines() if line.strip())
+        # a short first page is the title page: it often names the report and its date
+        if not page or (i > 0 and len(page) < MIN_PAGE_CHARS):
+            continue
+        if used + len(page) > budget:
+            kept.append(page[: budget - used] + " [truncated]")
+            break
+        kept.append(page)
+        used += len(page)
+    return "\n\n".join(kept)
