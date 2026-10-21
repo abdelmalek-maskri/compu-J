@@ -1,4 +1,8 @@
-from pipeline.prepare import clean_html
+from pipeline.prepare import (
+    MIMECAST_BANNER,
+    clean_html,
+    strip_banner,
+)
 
 
 def test_removes_scripts_styles_and_comments():
@@ -60,3 +64,8 @@ def test_hidden_preheader_and_invisible_chars_removed():
 def test_repeated_identical_lines_collapse():
     html = "<p>Disclaimer</p><p>Disclaimer</p><p>Body</p>"
     assert clean_html(html) == "Disclaimer\nBody"
+
+
+def test_strip_banner_removes_only_the_banner():
+    text = f"{MIMECAST_BANNER}\nRefs :\nLevels as of 07-Apr-26"
+    assert strip_banner(text) == "Refs :\nLevels as of 07-Apr-26"

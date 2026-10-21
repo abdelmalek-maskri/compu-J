@@ -58,3 +58,13 @@ def clean_html(html: str) -> str:
         if line and (not lines or line != lines[-1]):
             lines.append(line)
     return "\n".join(lines)
+
+
+MIMECAST_BANNER = (
+    "This Message contains suspicious characteristics and has originated outside your "
+    "organization. Please check your email in Mimecast Hold queue before releasing."
+)
+
+
+def strip_banner(text: str) -> str:
+    return "\n".join(line for line in text.splitlines() if line != MIMECAST_BANNER)
