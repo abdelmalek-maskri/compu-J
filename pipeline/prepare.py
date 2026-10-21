@@ -203,3 +203,11 @@ def select_pages(pages: list[str], budget: int) -> str:
         kept.append(page)
         used += len(page)
     return "\n\n".join(kept)
+
+
+def build_llm_input(body: str, pdfs: list[str], pdf_texts: dict[str, str]) -> str:
+    """fixed section headings so the prompt can refer to each part by name"""
+    parts = [f"EMAIL BODY:\n{body}", f"ATTACHMENTS: {', '.join(pdfs) or 'none'}"]
+    # a PDF that could not be read is still listed above, it just has no text section
+    parts += [f"PDF TEXT ({name}):\n{text}" for name, text in pdf_texts.items() if text]
+    return "\n\n".join(parts)

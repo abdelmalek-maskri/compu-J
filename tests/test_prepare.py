@@ -2,6 +2,7 @@ from datetime import date
 
 from pipeline.prepare import (
     MIMECAST_BANNER,
+    build_llm_input,
     clean_html,
     find_bank,
     find_date,
@@ -152,3 +153,23 @@ def test_select_pages_stops_at_budget_and_says_so():
 def test_select_pages_tidies_whitespace():
     page = "Intraday   FX View\n\n\n  EUR/USD\t1.1658 " + "x" * 200
     assert select_pages([page], budget=1000).startswith("Intraday FX View\nEUR/USD 1.1658")
+
+
+def test_llm_input_has_named_sections():
+    result = build_llm_input("FX Daily", ["Intraday.pdf"], {"Intraday.pdf": "EUR/USD 1.1658"})
+    assert result == (
+        "EMAIL BODY:\nFX Daily\n\n"
+        "ATTACHMENTS: Intraday.pdf\n\n"
+        "PDF TEXT (Intraday.pdf):\nEUR/USD 1.1658"
+    )
+
+
+def test_llm_input_without_attachments():
+    assert build_llm_input("Rates rallied.", [], {}) == (
+        "EMAIL BODY:\nRates rallied.\n\nATTACHMENTS: none"
+    )
+
+
+def test_llm_input_lists_unreadable_pdf_without_text():
+    result = build_llm_input("See attached.", ["broken.pdf"], {"broken.pdf": ""})
+    assert result == "EMAIL BODY:\nSee attached.\n\nATTACHMENTS: broken.pdf"
