@@ -1,4 +1,7 @@
 from datetime import date
+from pathlib import Path
+
+import pytest
 
 from pipeline.prepare import (
     MIMECAST_BANNER,
@@ -8,6 +11,7 @@ from pipeline.prepare import (
     find_date,
     find_duplicates,
     list_files,
+    prepare_all,
     select_pages,
     strip_banner,
 )
@@ -186,3 +190,70 @@ def test_duplicates_point_to_first_copy_ignoring_whitespace():
 
 def test_different_emails_are_not_duplicates():
     assert find_duplicates({"a": "FX Daily 9 April", "b": "FX Daily 10 April"}) == {}
+
+
+def make_email(folder, html: bytes, pdfs: dict[str, bytes] | None = None):
+    folder.mkdir()
+    (folder / "emailbody.html").write_bytes(html)
+    for name, content in (pdfs or {}).items():
+        (folder / name).write_bytes(content)
+
+
+def test_prepare_all_runs_every_step(tmp_path):
+    html = b'<img alt="Barclays"><p>9 April 2026</p><p>EU MedTech Investor Trip</p>'
+    make_email(tmp_path / "035239", html)
+
+    emails, failures = prepare_all(tmp_path)
+
+    assert failures == {}
+    [email] = emails
+    assert (email.id, email.bank, email.bank_source) == ("035239", "Barclays", "logo")
+    assert (email.date, email.date_source) == (date(2026, 4, 9), "text")
+    assert email.llm_input.startswith("EMAIL BODY:\n[image: Barclays]")
+
+
+def test_prepare_all_records_failures_and_continues(tmp_path):
+    make_email(tmp_path / "good", b"<p>Rates rallied.</p>")
+    (tmp_path / "empty").mkdir()
+    (tmp_path / ".DS_Store").write_bytes(b"")
+
+    emails, failures = prepare_all(tmp_path)
+
+    assert [e.id for e in emails] == ["good"]
+    assert list(failures) == ["empty"]
+    assert failures["empty"].startswith("FileNotFoundError")
+
+
+def test_windows_1252_file_is_decoded(tmp_path):
+    make_email(tmp_path / "035432", b"<p>\xa9 Julius Baer Group</p>")
+    [email], _ = prepare_all(tmp_path)
+    assert email.encoding == "cp1252"
+    assert email.body == "\u00a9 Julius Baer Group"
+
+
+def test_broken_pdf_becomes_a_warning_not_a_failure(tmp_path):
+    make_email(tmp_path / "035242", b"<p>See attached.</p>", {"report.pdf": b"not a pdf"})
+    [email], failures = prepare_all(tmp_path)
+    assert failures == {}
+    assert email.warnings[0].startswith("could not read report.pdf")
+    assert email.llm_input.endswith("ATTACHMENTS: report.pdf")
+
+
+def test_prepare_all_flags_duplicates(tmp_path):
+    for folder in ["035427", "035428"]:
+        make_email(tmp_path / folder, b"<p>UBS House View: Affording a war</p>")
+    emails, _ = prepare_all(tmp_path)
+    assert [e.duplicate_of for e in emails] == [None, "035427"]
+
+
+DATA = Path(__file__).parent.parent / "Data"
+
+
+@pytest.mark.skipif(not DATA.is_dir(), reason="licensed data is not in the repository")
+def test_real_data_prepares_cleanly():
+    emails, failures = prepare_all(DATA)
+    assert failures == {}
+    assert len(emails) == 200
+    assert all(e.bank for e in emails)
+    assert sum(e.date is not None for e in emails) == 184
+    assert [e.id for e in emails if e.duplicate_of] == ["035428"]

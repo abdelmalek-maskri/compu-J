@@ -2,12 +2,13 @@
 
 import hashlib
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 
 from bs4 import BeautifulSoup, Comment
 from pypdf import PdfReader
+from pypdf.errors import PdfReadError
 
 DROP_TAGS = ["script", "style", "head", "title", "meta", "noscript"]
 BLOCK_TAGS = [
@@ -225,3 +226,71 @@ def find_duplicates(texts: dict[str, str]) -> dict[str, str]:
         else:
             first_seen[digest] = email_id
     return duplicates
+
+
+@dataclass
+class PreparedEmail:
+    id: str
+    body: str
+    llm_input: str
+    attachments: Attachments
+    bank: str | None
+    bank_source: str | None
+    date: date | None
+    date_source: str | None
+    encoding: str
+    duplicate_of: str | None = None
+    warnings: list[str] = field(default_factory=list)
+
+
+def read_html(path: Path) -> tuple[str, str]:
+    raw = path.read_bytes()
+    try:
+        return raw.decode("utf-8"), "utf-8"
+    except UnicodeDecodeError:
+        # one export (035432) declares no charset and is Windows-1252
+        return raw.decode("cp1252"), "cp1252"
+
+
+def prepare_email(folder: Path) -> PreparedEmail:
+    html, encoding = read_html(folder / "emailbody.html")
+    body = strip_banner(clean_html(html))
+    files = list_files(folder)
+
+    warnings, pdf_texts = [], {}
+    share = PDF_BUDGET_CHARS // max(len(files.pdfs), 1)
+    for name in files.pdfs:
+        try:
+            pdf_texts[name] = select_pages(read_pdf_pages(folder / name), share)
+        except PdfReadError as e:
+            warnings.append(f"could not read {name}: {e}")
+
+    bank, bank_source = find_bank(body)
+    found_date, date_source = find_date(body, files.pdfs)
+    return PreparedEmail(
+        id=folder.name,
+        body=body,
+        llm_input=build_llm_input(body, files.pdfs, pdf_texts),
+        attachments=files,
+        bank=bank,
+        bank_source=bank_source,
+        date=found_date,
+        date_source=date_source,
+        encoding=encoding,
+        warnings=warnings,
+    )
+
+
+def prepare_all(data_dir: Path) -> tuple[list[PreparedEmail], dict[str, str]]:
+    """one folder failing never stops the rest; failures are returned by folder id"""
+    emails, failures = [], {}
+    for folder in sorted(p for p in data_dir.iterdir() if p.is_dir()):
+        try:
+            emails.append(prepare_email(folder))
+        except (OSError, UnicodeDecodeError) as e:
+            failures[folder.name] = f"{type(e).__name__}: {e}"
+
+    duplicates = find_duplicates({e.id: e.body for e in emails})
+    for email in emails:
+        email.duplicate_of = duplicates.get(email.id)
+    return emails, failures
