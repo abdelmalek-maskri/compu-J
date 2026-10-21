@@ -1,6 +1,7 @@
 from pipeline.prepare import (
     MIMECAST_BANNER,
     clean_html,
+    find_bank,
     list_files,
     strip_banner,
 )
@@ -84,3 +85,23 @@ def test_list_files_finds_pdfs_images_and_thumbnails(tmp_path):
     assert files.pdfs == ["Flyer.pdf"]
     assert files.images == ["image001.jpg", "inline/image002.png"]
     assert files.thumbnails == {"Flyer.pdf": "thumbs/Flyer.pdf.png"}
+
+
+def test_bank_from_logo_beats_other_names_in_text():
+    text = "[image: Goldman Sachs Research]\nWe compare our view with Barclays."
+    assert find_bank(text) == ("Goldman Sachs", "logo")
+
+
+def test_bank_earliest_mention_wins_in_top_text():
+    text = "Morgan Stanley Research\nSee also J.P. Morgan's note."
+    assert find_bank(text) == ("Morgan Stanley", "top_text")
+
+
+def test_bank_from_signature_with_damaged_accent():
+    lines = ["Dear Client,", "Please find attached our report."] + ["..."] * 40
+    text = "\n".join([*lines, "Best regards, Union Bancaire Priv\ufffde, UBP SA"])
+    assert find_bank(text) == ("UBP", "signature")
+
+
+def test_bank_none_when_not_found():
+    assert find_bank("Dear all,\nPlease find below.") == (None, None)

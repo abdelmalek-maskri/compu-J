@@ -93,3 +93,45 @@ def list_files(folder: Path) -> Attachments:
         pdf: f"thumbs/{pdf}.png" for pdf in pdfs if (folder / "thumbs" / f"{pdf}.png").exists()
     }
     return Attachments(pdfs, images, thumbnails)
+
+
+# canonical name -> how it appears in logos, headers and signatures
+BANKS = {
+    "Deutsche Bank": r"Deutsche Bank",
+    "Barclays": r"Barclays",
+    "Goldman Sachs": r"Goldman Sachs",
+    "Morgan Stanley": r"Morgan Stanley",
+    "J.P. Morgan": r"J\.\s?P\.\s?Morgan|JP\s?Morgan",
+    "UBS": r"UBS",
+    "Julius Baer": r"Julius B\S{1,2}r",
+    # some exports damaged the accent, so match the start of "Privée"
+    "UBP": r"Union Bancaire Priv|UBP",
+    "Pictet": r"Pictet",
+    "J. Safra Sarasin": r"Safra Sarasin",
+    "Macquarie": r"Macquarie",
+    "BNP Paribas": r"BNP Paribas",
+    "EFG": r"EFG",
+    # an asset manager, not a bank, but the publisher is what this field records
+    "T. Rowe Price": r"T\. Rowe Price",
+}
+BANK_PATTERNS = {name: re.compile(rf"\b(?:{p})\b") for name, p in BANKS.items()}
+
+
+def _earliest_bank(text: str) -> str | None:
+    hits = [(m.start(), name) for name, rx in BANK_PATTERNS.items() if (m := rx.search(text))]
+    return min(hits)[1] if hits else None
+
+
+def find_bank(text: str) -> tuple[str | None, str | None]:
+    """returns (bank, source), checking the strongest evidence first"""
+    lines = text.splitlines()
+    regions = [
+        ("logo", " ".join(re.findall(r"\[image: ([^\]]+)\]", text))),
+        ("top_text", "\n".join(lines[:30])),
+        # private banks often only name themselves in the signature
+        ("signature", "\n".join(lines[-30:])),
+    ]
+    for source, region in regions:
+        if bank := _earliest_bank(region):
+            return bank, source
+    return None, None
