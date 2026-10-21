@@ -2,7 +2,7 @@
 Data.zip
 
 .env
-
+DECISIONS.md
 __pycache__/
 *.pyc
 .venv/
