@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      # --frozen fails if uv.lock is out of date instead of silently resolving new versions
+      - run: uv sync --frozen
+      - run: uv run ruff check pipeline tests scripts
+      - run: uv run ruff format --check pipeline tests scripts
+      # Data/ is not in the repository, so the real data test skips here
+      - run: uv run pytest -rs
