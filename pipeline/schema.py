@@ -55,6 +55,7 @@ class Meta(BaseModel):
     received: date | None = None
     title_verified: bool | None = None
     conflicts: list[str] = []
+    corrections: list[str] = []
     content_type: ContentType | None = None
     market_wrap_checklist: MarketWrapChecklist | None = None
     duplicate_of: str | None = None
