@@ -1,4 +1,5 @@
-from datetime import date
+import os
+from datetime import date, datetime
 from pathlib import Path
 
 import pytest
@@ -7,11 +8,13 @@ from pipeline.prepare import (
     MIMECAST_BANNER,
     build_llm_input,
     clean_html,
+    could_be_published,
     find_bank,
     find_date,
     find_duplicates,
     list_files,
     prepare_all,
+    received_date,
     select_pages,
     strip_banner,
 )
@@ -192,6 +195,38 @@ def test_different_emails_are_not_duplicates():
     assert find_duplicates({"a": "FX Daily 9 April", "b": "FX Daily 10 April"}) == {}
 
 
+def test_date_after_arrival_is_rejected():
+    text = "Subscription period until: 17.04.2026, 15:00 Geneva time"
+    assert find_date(text, [], received=date(2026, 4, 9)) == (None, None)
+
+
+def test_rejected_date_falls_through_to_the_next_one():
+    text = "Webinar: Wednesday, 15 April 2026\nPublished 9 April 2026"
+    assert find_date(text, [], received=date(2026, 4, 10)) == (date(2026, 4, 9), "text")
+
+
+def test_one_day_after_arrival_is_allowed_for_time_zones():
+    assert find_date("10 April 2026 | 9:00 HKT", [], received=date(2026, 4, 9)) == (
+        date(2026, 4, 10),
+        "text",
+    )
+
+
+def test_received_date_ignores_the_rewritten_email_body(tmp_path):
+    (tmp_path / "inline").mkdir()
+    body, image = tmp_path / "emailbody.html", tmp_path / "inline" / "image001.png"
+    body.write_bytes(b"")
+    image.write_bytes(b"")
+    os.utime(body, (datetime(2026, 5, 26).timestamp(),) * 2)
+    os.utime(image, (datetime(2026, 4, 9, 19).timestamp(),) * 2)
+    assert received_date(tmp_path) == date(2026, 4, 9)
+
+
+def test_received_date_is_none_without_attachments(tmp_path):
+    (tmp_path / "emailbody.html").write_bytes(b"")
+    assert received_date(tmp_path) is None
+
+
 def make_email(folder, html: bytes, pdfs: dict[str, bytes] | None = None):
     folder.mkdir()
     (folder / "emailbody.html").write_bytes(html)
@@ -255,5 +290,7 @@ def test_real_data_prepares_cleanly():
     assert failures == {}
     assert len(emails) == 200
     assert all(e.bank for e in emails)
-    assert sum(e.date is not None for e in emails) == 184
+    # 184 found, minus a subscription deadline (035243) and an event (035341) dated after arrival
+    assert sum(e.date is not None for e in emails) == 182
+    assert all(could_be_published(e.date, e.received) for e in emails if e.date)
     assert [e.id for e in emails if e.duplicate_of] == ["035428"]

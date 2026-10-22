@@ -3,7 +3,7 @@
 import hashlib
 import re
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 from bs4 import BeautifulSoup, Comment
@@ -163,21 +163,45 @@ def _to_date(day: str, month: str, year: str) -> date | None:
         return None
 
 
-def _earliest_date(text: str, patterns: list) -> date | None:
+# file times carry no time zone, so a report dated the day after it arrived is still possible
+RECEIVED_MARGIN = timedelta(days=1)
+
+
+def received_date(folder: Path) -> date | None:
+    """when the email arrived, from its attachment and image file times.
+
+    emailbody.html is not used: the export rewrote it, so it carries the export date.
+    copying files can reset these times to today, which only makes the check below looser
+    """
+    stamps = [
+        p.stat().st_mtime for p in folder.rglob("*") if p.is_file() and p.name != "emailbody.html"
+    ]
+    return date.fromtimestamp(min(stamps)) if stamps else None
+
+
+def could_be_published(found: date, received: date | None) -> bool:
+    """a report cannot be published after it arrived; deadlines and event dates fail this"""
+    return received is None or found <= received + RECEIVED_MARGIN
+
+
+def _earliest_date(text: str, patterns: list, received: date | None) -> date | None:
     found = []
     for rx, (d, m, y) in patterns:
         for match in rx.finditer(text):
-            if parsed := _to_date(match[d], match[m], match[y]):
+            parsed = _to_date(match[d], match[m], match[y])
+            if parsed and could_be_published(parsed, received):
                 found.append((match.start(), parsed))
     return min(found)[1] if found else None
 
 
-def find_date(text: str, pdf_names: list[str]) -> tuple[date | None, str | None]:
+def find_date(
+    text: str, pdf_names: list[str], received: date | None = None
+) -> tuple[date | None, str | None]:
     """returns (date, source); the publication date sits near the top when it is present"""
-    if found := _earliest_date("\n".join(text.splitlines()[:25]), TEXT_DATES):
+    if found := _earliest_date("\n".join(text.splitlines()[:25]), TEXT_DATES, received):
         return found, "text"
     for name in pdf_names:
-        if found := _earliest_date(name, PDF_NAME_DATES):
+        if found := _earliest_date(name, PDF_NAME_DATES, received):
             return found, "pdf_name"
     return None, None
 
@@ -238,6 +262,7 @@ class PreparedEmail:
     bank_source: str | None
     date: date | None
     date_source: str | None
+    received: date | None
     encoding: str
     duplicate_of: str | None = None
     warnings: list[str] = field(default_factory=list)
@@ -266,7 +291,8 @@ def prepare_email(folder: Path) -> PreparedEmail:
             warnings.append(f"could not read {name}: {e}")
 
     bank, bank_source = find_bank(body)
-    found_date, date_source = find_date(body, files.pdfs)
+    received = received_date(folder)
+    found_date, date_source = find_date(body, files.pdfs, received)
     return PreparedEmail(
         id=folder.name,
         body=body,
@@ -276,6 +302,7 @@ def prepare_email(folder: Path) -> PreparedEmail:
         bank_source=bank_source,
         date=found_date,
         date_source=date_source,
+        received=received,
         encoding=encoding,
         warnings=warnings,
     )
