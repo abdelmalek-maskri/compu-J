@@ -4,36 +4,11 @@ import pytest
 from pydantic import ValidationError
 
 from pipeline.schema import ClassifiedEmail, LLMOutput, Meta
-
-CHECKLIST = {
-    "structure": False,
-    "asset_coverage": False,
-    "timeframe": False,
-    "purpose": False,
-    "title": False,
-    "language": False,
-    "depth": False,
-}
-
-
-def llm_output(**overrides):
-    data = {
-        "title": "FX Daily: USD/JPY",
-        "bank": "Deutsche Bank",
-        "date": "2026-04-10",
-        "date_quote": "10 April 2026",
-        "content_type": "research",
-        "market_wrap_checklist": CHECKLIST,
-        "primary_asset_tag": "FX",
-        "asset_tags": ["FX", "JPY"],
-        "companies_mentioned": [],
-        "industry_subindustry": [],
-    }
-    return {**data, **overrides}
+from tests.factories import llm_output_data
 
 
 def test_valid_output_parses_and_reads_the_date():
-    parsed = LLMOutput.model_validate(llm_output())
+    parsed = LLMOutput.model_validate(llm_output_data())
     assert parsed.date == date(2026, 4, 10)
 
 
@@ -50,12 +25,12 @@ def test_valid_output_parses_and_reads_the_date():
 )
 def test_values_outside_the_taxonomy_are_rejected(field, value):
     with pytest.raises(ValidationError):
-        LLMOutput.model_validate(llm_output(**{field: value}))
+        LLMOutput.model_validate(llm_output_data(**{field: value}))
 
 
 def test_extra_keys_are_rejected():
     with pytest.raises(ValidationError):
-        LLMOutput.model_validate(llm_output(confidence=0.9))
+        LLMOutput.model_validate(llm_output_data(confidence=0.9))
 
 
 def test_json_schema_lists_the_allowed_tags_for_constrained_decoding():
