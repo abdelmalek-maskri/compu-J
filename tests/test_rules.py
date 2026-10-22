@@ -3,7 +3,7 @@ from tests.factories import checklist, llm_output
 
 
 def test_real_model_mistakes_are_corrected():
-    # what gemma returned for Goldman's "Macro at a Glance" with a one line prompt
+    # what gpt-oss 20B returned for Goldman's "Macro at a Glance" with a one line prompt
     output = llm_output(
         primary_asset_tag="Macro",
         asset_tags=["Energy", "Commodities", "Macro", "Energy", "Credit Strategy"],
