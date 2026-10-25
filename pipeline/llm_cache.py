@@ -19,6 +19,7 @@ def cache_key(llm_input: str, settings: Settings, prompt: str | None = None) -> 
         "model": settings.model,
         "num_ctx": settings.num_ctx,
         "reasoning_effort": settings.reasoning_effort,
+        "temperature": settings.temperature,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:16]
 

@@ -36,6 +36,7 @@ def main() -> int:
     print(f"banks:        {dict(Counter(e.bank for e in emails).most_common())}")
     print(f"date source:  {dict(Counter(e.date_source for e in emails))}")
     print(f"no date:      {[e.id for e in emails if e.date is None]}")
+    print(f"date hints:   { {e.id: e.date_hint.isoformat() for e in emails if e.date_hint} }")
     print(f"with PDFs:    {sum(bool(e.attachments.pdfs) for e in emails)}")
     print(f"not utf-8:    {[e.id for e in emails if e.encoding != 'utf-8']}")
     duplicates = {e.id: e.duplicate_of for e in emails if e.duplicate_of}

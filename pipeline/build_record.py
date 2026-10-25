@@ -2,7 +2,7 @@
 
 from pipeline.check_metadata import check_metadata
 from pipeline.clean_emails import PreparedEmail
-from pipeline.flags import logic_flags, metadata_flags
+from pipeline.flags import hint_flags, logic_flags, metadata_flags
 from pipeline.schema import ClassifiedEmail, LLMOutput, Meta
 from pipeline.tag_rules import apply_tag_rules
 
@@ -28,12 +28,15 @@ def build_record(
             date_source=meta.date_source,
             date_quote=meta.date_quote,
             received=email.received,
+            date_hint=None if meta.date else email.date_hint,
             title_verified=meta.title_verified,
             bank_llm=meta.bank_llm,
             bank_python=meta.bank_python,
             date_llm=meta.date_llm,
             date_python=meta.date_python,
-            flags=metadata_flags(meta) + logic_flags(output),
+            flags=metadata_flags(meta)
+            + logic_flags(output)
+            + hint_flags(meta.date, email.date_hint),
             corrections=tags.corrections,
             content_type=output.content_type,
             market_wrap_checklist=output.market_wrap_checklist,
@@ -66,6 +69,8 @@ def error_record(
             bank_python=email.bank,
             date_python=email.date,
             received=email.received,
+            date_hint=email.date_hint,
+            flags=hint_flags(email.date, email.date_hint),
             duplicate_of=email.duplicate_of,
             warnings=email.warnings,
             error=error,

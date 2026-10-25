@@ -1,6 +1,7 @@
 """turn raw email folders into clean text for the LLM"""
 
 import hashlib
+import html as html_lib
 import re
 from dataclasses import dataclass, field
 from datetime import date, timedelta
@@ -145,14 +146,19 @@ def find_bank(text: str) -> tuple[str | None, str | None]:
 MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 MONTH = rf"(?:{'|'.join(MONTHS)})[a-z]*\.?"
 
+# ordinal days like "10th April 2026" and "April 7th, 2026" appear in the emails
+ORDINAL = r"(?:st|nd|rd|th)?"
 # (pattern, group numbers for day, month, year)
 TEXT_DATES = [
-    (re.compile(rf"\b(\d{{1,2}})[ -]({MONTH})[ -](\d{{4}}|\d{{2}})\b", re.I), (1, 2, 3)),
-    (re.compile(rf"\b({MONTH}) (\d{{1,2}}),? (\d{{4}})\b", re.I), (2, 1, 3)),
+    # 9 April 2026, 07-Apr-26, 10th April 2026, and "13 Apr, 2026" from Goldman's footers
+    (re.compile(rf"\b(\d{{1,2}}){ORDINAL}[ -]({MONTH}),?[ -](\d{{4}}|\d{{2}})\b", re.I), (1, 2, 3)),
+    # April 10, 2026 and April 7th, 2026
+    (re.compile(rf"\b({MONTH}) (\d{{1,2}}){ORDINAL},? (\d{{4}})\b", re.I), (2, 1, 3)),
     (re.compile(r"\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b"), (1, 2, 3)),
 ]
 # slash dates are left out on purpose: 04/10/2026 is ambiguous between US and European order
-PDF_NAME_DATES = [*TEXT_DATES, (re.compile(r"(?<!\d)(20\d\d)(\d\d)(\d\d)(?!\d)"), (3, 2, 1))]
+COMPACT_DATE = (re.compile(r"(?<!\d)(20\d\d)(\d\d)(\d\d)(?!\d)"), (3, 2, 1))
+PDF_NAME_DATES = [*TEXT_DATES, COMPACT_DATE]
 
 
 def _to_date(day: str, month: str, year: str) -> date | None:
@@ -198,6 +204,13 @@ def _earliest_date(text: str, patterns: list, received: date | None) -> date | N
             if parsed and could_be_published(parsed, received):
                 found.append((match.start(), parsed))
     return min(found)[1] if found else None
+
+
+def find_date_hint(html: str, received: date | None) -> date | None:
+    """a date inferred from link addresses, such as a campaign code ending _20260413. it is a
+    send date at best, not one the email states, so it is kept apart from the date field"""
+    hrefs = " ".join(html_lib.unescape(h) for h in re.findall(r'href="([^"]+)"', html, re.I))
+    return _earliest_date(hrefs, [COMPACT_DATE], received)
 
 
 def find_date(
@@ -270,6 +283,8 @@ class PreparedEmail:
     date_source: str | None
     received: date | None
     encoding: str
+    # only set when the email states no date (see find_date_hint)
+    date_hint: date | None = None
     duplicate_of: str | None = None
     warnings: list[str] = field(default_factory=list)
 
@@ -310,6 +325,7 @@ def prepare_email(folder: Path) -> PreparedEmail:
         date_source=date_source,
         received=received,
         encoding=encoding,
+        date_hint=None if found_date else find_date_hint(html, received),
         warnings=warnings,
     )
 

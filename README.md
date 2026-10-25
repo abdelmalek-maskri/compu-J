@@ -38,7 +38,7 @@ Choose a model in `.env` with `LLM_MODEL`:
 | 3. Classify | `uv run python classify.py` | Classifies every email and writes `classified_emails.json` | The brief's main step |
 | 4. Review | open `output/runs/<run>/review.csv` | Lists every disagreement found (see "Flags" below), with an empty `your_verdict` column | A person checks the doubtful cases |
 | 5. Compare models | `uv run python -m scripts.compare_models --models gemma gemini-flash-lite --emails 10` | Runs the same emails through each model and compares speed and answers | Decide which model to trust |
-| 6. Tests | `uv run pytest` | 139 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
+| 6. Tests | `uv run pytest` | 143 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
 
 Useful options:
 
@@ -116,6 +116,39 @@ and the smoke test proves it is applied.
 would hit every email (wrong key, missing model, daily quota used up) stops the run, keeps what
 was finished, and the next run carries on.
 
+**The date field only holds dates the email states.** That means a date printed in the email,
+a date in an attachment's file name, or a date the model quotes from the email. A date that is
+only inferred, such as a campaign code in a link address (`..._20260413`), is never put in the
+date field: it goes in `meta.date_hint` and gets an `inferred` flag, so a person can confirm it.
+
+## What we found in the data
+
+Looking closely at the 200 emails before and while building changed several decisions.
+
+* **No subjects, no senders.** The folders are numbered and the emails have no headers (no
+  From, Subject or Date lines), so title, bank and date all have to be read from the body.
+* **Other banks' names appear in the text.** "Issued by Goldman Sachs" sits in an email from
+  UBP; "Barclays estimates that..." in one from J. Safra Sarasin. The sender is named in the
+  logo or the signature, not wherever a bank name first appears.
+* **Not every date is the publication date.** Emails also mention subscription deadlines,
+  webinar times, the date data is "as of", and old dates on charts. One email even lists
+  several articles, each "Published on" its own day. A date must fall between 31 days before
+  and 1 day after the email arrived (known from its attachments' file times) to be accepted.
+* **Dates are written many ways**: `9 April 2026`, `07-Apr-26`, `10th April 2026`,
+  `April 7th, 2026`, `13 Apr, 2026`, `09.04.2026`, and `20260409` in file names. Dates like
+  `04/10/2026` are skipped, because they can be read as April 10 or October 4, and even one
+  bank writes both orders.
+* **17 emails have no date the rules can find.** 16 state none at all. The other, `035433`,
+  prints "Published 13 Apr, 2026" only at the very bottom, where the model can find and quote
+  it. Three of the 17 have a likely send date hidden in a link address; those are kept as
+  hints, not dates.
+* **The export damaged some characters.** 140 emails contain `�` where an apostrophe, quote,
+  dash or accent was lost when the emails were exported (see Known limits).
+* **Every email contains an injected script** and many load tracking images from the banks'
+  servers, so the dashboard must show emails in a sandbox, without scripts.
+* **One email appears twice** (`035428` is a copy of `035427`), and 32 start with an email
+  security warning that is removed before classifying.
+
 ## Output
 
 ```text
@@ -164,8 +197,8 @@ tests/                        one test file per module, plus shared test data in
 ## Known limits
 
 * No accuracy figures yet: they need emails labelled by hand, which comes next.
-* 18 of the 200 emails state no publication date, so their date stays empty unless the model
-  finds one it can quote.
+* 17 of the 200 emails have no date the rules can find, so their date stays empty unless the
+  model quotes one from the email (see What we found in the data).
 * The emails were converted to UTF-8 when they were exported into these folders, but the
   export did not update the encoding written inside the HTML (138 files still say
   `windows-1252`, `iso-8859-1` or similar), and in 140 files it replaced characters it could

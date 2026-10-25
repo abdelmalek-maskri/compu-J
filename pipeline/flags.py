@@ -3,6 +3,7 @@
 model_vs_python: the model and the rules gave different answers
 model_logic:     the model's answer contradicts itself
 model_vs_model:  two models disagree on the same email (made by scripts/compare_models.py)
+inferred:        a value was inferred rather than stated, so a person should confirm it
 """
 
 import csv
@@ -68,6 +69,19 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
             )
         )
     return flags
+
+
+def hint_flags(date_found: date | None, hint: date | None) -> list[Flag]:
+    if date_found or not hint:
+        return []
+    return [
+        Flag(
+            kind="inferred",
+            field="date",
+            value_a=_text(hint),
+            note="the email states no date; this one is inferred from a link address",
+        )
+    ]
 
 
 def logic_flags(output: LLMOutput) -> list[Flag]:

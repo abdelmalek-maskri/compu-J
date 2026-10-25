@@ -143,8 +143,12 @@ def test_ollama_only_settings_are_not_sent_to_cloud_models(monkeypatch):
     complete(Settings.from_name("gemma"), [])
     complete(Settings.from_name("gemini-flash-lite"), [])
     ollama, gemini = sent
-    assert (ollama["num_ctx"], ollama["reasoning_effort"]) == (32768, "none")
-    assert "num_ctx" not in gemini and "api_base" not in gemini and "reasoning_effort" not in gemini
+    assert (ollama["num_ctx"], ollama["reasoning_effort"], ollama["temperature"]) == (
+        32768,
+        "none",
+        0,
+    )
+    assert not {"num_ctx", "api_base", "reasoning_effort", "temperature"} & set(gemini)
 
 
 def test_context_warning_is_only_for_ollama():
