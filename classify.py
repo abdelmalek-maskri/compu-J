@@ -149,7 +149,7 @@ def main() -> int:
 
     settings = Settings.from_env()
     print(f"classifying {len(emails)} emails with {settings.model}\n")
-    outcomes = classify_all(emails, settings, Cache())
+    outcomes = classify_all(emails, settings, Cache(), args.force)
     records = [o.record for o in outcomes]
     write_json(records, out)
     review = out.with_suffix(".review.csv")
