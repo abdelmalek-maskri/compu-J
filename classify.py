@@ -176,7 +176,7 @@ def main() -> int:
     records = [o.record for o in outcomes]
 
     write_json(records, run / "classified_emails.json")
-    write_review(review_rows(records), run / "review.csv")
+    write_review(review_rows(records, settings.name), run / "review.csv")
     text = summary(outcomes, settings)
     if stopped:
         text = f"STOPPED after {len(outcomes)} of {len(emails)} emails: {stopped}\n{text}"
