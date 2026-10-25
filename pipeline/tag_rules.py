@@ -3,11 +3,8 @@
 from dataclasses import dataclass, field
 from typing import Literal
 
-from pipeline.schema import LLMOutput, MarketWrapChecklist
-from pipeline.taxonomy import EQUITY, MARKET_WRAP, PRIMARY_TAGS, SUB_TO_PARENT, UNKNOWN_INDUSTRY
-
-# out of the 7 checklist groups; the brief gives no threshold, so this gets tuned on labelled emails
-MARKET_WRAP_THRESHOLD = 5
+from pipeline.allowed_tags import EQUITY, MARKET_WRAP, PRIMARY_TAGS, SUB_TO_PARENT, UNKNOWN_INDUSTRY
+from pipeline.schema import LLMOutput
 
 
 @dataclass
@@ -18,10 +15,6 @@ class Tags:
     companies_mentioned: list[str]
     industry_subindustry: list[str]
     corrections: list[str] = field(default_factory=list)
-
-
-def is_market_wrap(checklist: MarketWrapChecklist) -> bool:
-    return sum(checklist.model_dump().values()) >= MARKET_WRAP_THRESHOLD
 
 
 def normalise_tags(primary: str, tags: list[str]) -> tuple[list[str], list[str]]:
@@ -60,13 +53,14 @@ def apply_equity_rules(
 
 
 def apply_tag_rules(output: LLMOutput) -> Tags:
-    if is_market_wrap(output.market_wrap_checklist):
+    # the model decides; the brief then fixes what a market wrap's tags must be
+    if output.market_wrap == "YES":
         return Tags("YES", MARKET_WRAP, [MARKET_WRAP], [], [])
 
     corrections = []
     primary, tags = output.primary_asset_tag, list(output.asset_tags)
     if MARKET_WRAP in [primary, *tags]:
-        corrections.append("removed Market Wrap: checklist below threshold")
+        corrections.append("removed Market Wrap tag: the model decided it is not a market wrap")
         tags = [t for t in tags if t != MARKET_WRAP]
         if primary == MARKET_WRAP:
             # promote the first other class the model named, parents of sub-tags included

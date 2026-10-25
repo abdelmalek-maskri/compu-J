@@ -1,5 +1,4 @@
-from pipeline.prepare import BANKS
-from pipeline.taxonomy import (
+from pipeline.allowed_tags import (
     ASSET_TAXONOMY,
     BANK_NAMES,
     INDUSTRY_TAGS,
@@ -8,6 +7,7 @@ from pipeline.taxonomy import (
     SUB_TAGS,
     SUB_TO_PARENT,
 )
+from pipeline.clean_emails import BANKS
 
 
 def test_counts_match_the_brief():

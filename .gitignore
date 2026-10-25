@@ -7,7 +7,8 @@ __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
-.cache/
+# everything the pipeline generates; the deliverable classified_emails.json stays at the root
+/output
 
 node_modules/
 web/dist/

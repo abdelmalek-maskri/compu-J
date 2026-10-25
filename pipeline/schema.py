@@ -5,7 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from pipeline.taxonomy import ASSET_TAGS, BANK_NAMES, INDUSTRY_TAGS, PRIMARY_TAGS
+from pipeline.allowed_tags import ASSET_TAGS, BANK_NAMES, INDUSTRY_TAGS, PRIMARY_TAGS
 
 PrimaryTag = Literal[PRIMARY_TAGS]
 AssetTag = Literal[ASSET_TAGS]
@@ -15,7 +15,7 @@ ContentType = Literal["research", "event", "marketing"]
 
 
 class MarketWrapChecklist(BaseModel):
-    """the brief's seven checklist groups; rules.py turns the answers into YES or NO"""
+    """the brief's seven checklist groups, answered by the model before it decides"""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -40,10 +40,23 @@ class LLMOutput(BaseModel):
     # before the tags on purpose: the model writes fields in this order, and the brief
     # decides market wrap first
     market_wrap_checklist: MarketWrapChecklist
+    # the model's own decision; the checklist above is kept as its reasons
+    market_wrap: Literal["YES", "NO"]
     primary_asset_tag: PrimaryTag
     asset_tags: list[AssetTag]
     companies_mentioned: list[str]
     industry_subindustry: list[IndustryTag]
+
+
+class Flag(BaseModel):
+    """something a person should look at: two answers that disagree, or an answer that
+    contradicts itself. corrections the rules make on their own are not flags"""
+
+    kind: Literal["model_vs_python", "model_logic", "model_vs_model"]
+    field: str
+    value_a: str | None = None
+    value_b: str | None = None
+    note: str
 
 
 class Meta(BaseModel):
@@ -54,7 +67,12 @@ class Meta(BaseModel):
     date_quote: str | None = None
     received: date | None = None
     title_verified: bool | None = None
-    conflicts: list[str] = []
+    # both answers kept on every record, so the model and the rules can be compared
+    bank_llm: str | None = None
+    bank_python: str | None = None
+    date_llm: date | None = None
+    date_python: date | None = None
+    flags: list[Flag] = []
     corrections: list[str] = []
     content_type: ContentType | None = None
     market_wrap_checklist: MarketWrapChecklist | None = None

@@ -1,16 +1,17 @@
 """assemble the final classified_emails.json entry for one email"""
 
-from pipeline.metadata import merge_metadata
-from pipeline.prepare import PreparedEmail
-from pipeline.rules import apply_tag_rules
+from pipeline.check_metadata import check_metadata
+from pipeline.clean_emails import PreparedEmail
+from pipeline.flags import logic_flags, metadata_flags
 from pipeline.schema import ClassifiedEmail, LLMOutput, Meta
+from pipeline.tag_rules import apply_tag_rules
 
 
 def build_record(
     email: PreparedEmail, output: LLMOutput, model: str, prompt_version: str
 ) -> ClassifiedEmail:
     tags = apply_tag_rules(output)
-    meta = merge_metadata(email, output)
+    meta = check_metadata(email, output)
     return ClassifiedEmail(
         folder_name=meta.title,
         bank=meta.bank,
@@ -28,7 +29,11 @@ def build_record(
             date_quote=meta.date_quote,
             received=email.received,
             title_verified=meta.title_verified,
-            conflicts=meta.conflicts,
+            bank_llm=meta.bank_llm,
+            bank_python=meta.bank_python,
+            date_llm=meta.date_llm,
+            date_python=meta.date_python,
+            flags=metadata_flags(meta) + logic_flags(output),
             corrections=tags.corrections,
             content_type=output.content_type,
             market_wrap_checklist=output.market_wrap_checklist,
@@ -56,8 +61,10 @@ def error_record(
         pdf_attachment=email.attachments.pdfs or None,
         source_file=email.id,
         meta=Meta(
-            bank_source=email.bank_source,
-            date_source=email.date_source,
+            bank_source=f"python:{email.bank_source}" if email.bank else None,
+            date_source=f"python:{email.date_source}" if email.date else None,
+            bank_python=email.bank,
+            date_python=email.date,
             received=email.received,
             duplicate_of=email.duplicate_of,
             warnings=email.warnings,

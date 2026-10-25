@@ -1,4 +1,4 @@
-from pipeline.rules import apply_tag_rules, clean_companies
+from pipeline.tag_rules import apply_tag_rules, clean_companies
 from tests.factories import checklist, llm_output
 
 
@@ -14,8 +14,9 @@ def test_real_model_mistakes_are_corrected():
     assert tags.corrections == ["added parent Fixed Income for Credit Strategy"]
 
 
-def test_five_of_seven_checks_force_the_market_wrap_values():
+def test_model_saying_yes_forces_the_market_wrap_values():
     output = llm_output(
+        market_wrap="YES",
         market_wrap_checklist=checklist(yes=5),
         primary_asset_tag="Equity",
         asset_tags=["Equity", "Company Research"],
@@ -31,15 +32,20 @@ def test_five_of_seven_checks_force_the_market_wrap_values():
     assert (tags.companies_mentioned, tags.industry_subindustry) == ([], [])
 
 
-def test_four_of_seven_checks_is_not_a_market_wrap():
-    assert apply_tag_rules(llm_output(market_wrap_checklist=checklist(yes=4))).market_wrap == "NO"
+def test_the_model_decides_not_a_checklist_count():
+    # all seven groups true, yet the model judged it is not a wrap: its decision stands
+    output = llm_output(market_wrap="NO", market_wrap_checklist=checklist(yes=7))
+    assert apply_tag_rules(output).market_wrap == "NO"
+    # and the other way round
+    output = llm_output(market_wrap="YES", market_wrap_checklist=checklist(yes=0))
+    assert apply_tag_rules(output).market_wrap == "YES"
 
 
-def test_market_wrap_tag_removed_when_checklist_says_no():
+def test_market_wrap_tag_removed_when_the_model_says_no():
     output = llm_output(primary_asset_tag="Market Wrap", asset_tags=["Market Wrap", "JPY"])
     tags = apply_tag_rules(output)
     assert (tags.primary_asset_tag, tags.asset_tags) == ("FX", ["FX", "JPY"])
-    assert "removed Market Wrap: checklist below threshold" in tags.corrections
+    assert "removed Market Wrap tag: the model decided it is not a market wrap" in tags.corrections
 
 
 def test_market_wrap_with_nothing_else_leaves_no_class():

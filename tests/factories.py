@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from pipeline.prepare import Attachments, PreparedEmail
+from pipeline.clean_emails import Attachments, PreparedEmail
 from pipeline.schema import LLMOutput
 
 CHECKS = ["structure", "asset_coverage", "timeframe", "purpose", "title", "language", "depth"]
@@ -21,6 +21,7 @@ def llm_output_data(**overrides) -> dict:
         "date_quote": "10 April 2026",
         "content_type": "research",
         "market_wrap_checklist": checklist(),
+        "market_wrap": "NO",
         "primary_asset_tag": "FX",
         "asset_tags": ["FX", "JPY"],
         "companies_mentioned": [],
