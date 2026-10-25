@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from datetime import date
 
-from pipeline.prepare import PreparedEmail, could_be_published, find_date
+from pipeline.clean_emails import PreparedEmail, could_be_published, find_date
 from pipeline.schema import LLMOutput
 
 # models often retype curly quotes and dashes as plain ones when copying text

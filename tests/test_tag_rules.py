@@ -1,4 +1,4 @@
-from pipeline.rules import apply_tag_rules, clean_companies
+from pipeline.tag_rules import apply_tag_rules, clean_companies
 from tests.factories import checklist, llm_output
 
 

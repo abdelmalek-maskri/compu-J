@@ -1,6 +1,6 @@
 from datetime import date
 
-from pipeline.metadata import appears_in, merge_metadata
+from pipeline.check_metadata import appears_in, merge_metadata
 from tests.factories import llm_output, prepared_email
 
 

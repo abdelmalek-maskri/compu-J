@@ -1,6 +1,6 @@
 """prepare every email, print coverage, and save what the LLM will read to .cache/prepared/
 
-run from the repo root: uv run python -m scripts.prepare_report
+run from the repo root: uv run python -m scripts.preview_cleaned_emails
 """
 
 import argparse
@@ -9,7 +9,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from pipeline.prepare import prepare_all
+from pipeline.clean_emails import prepare_all
 
 
 def main() -> int:

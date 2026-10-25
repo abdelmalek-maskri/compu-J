@@ -1,9 +1,9 @@
 """assemble the final classified_emails.json entry for one email"""
 
-from pipeline.metadata import merge_metadata
-from pipeline.prepare import PreparedEmail
-from pipeline.rules import apply_tag_rules
+from pipeline.check_metadata import merge_metadata
+from pipeline.clean_emails import PreparedEmail
 from pipeline.schema import ClassifiedEmail, LLMOutput, Meta
+from pipeline.tag_rules import apply_tag_rules
 
 
 def build_record(

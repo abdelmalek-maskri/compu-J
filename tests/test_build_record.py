@@ -1,7 +1,7 @@
 from datetime import date
 
-from pipeline.prepare import Attachments
-from pipeline.record import build_record, error_record
+from pipeline.build_record import build_record, error_record
+from pipeline.clean_emails import Attachments
 from tests.factories import checklist, llm_output, prepared_email
 
 MODEL, PROMPT = "ollama_chat/gemma4:26b-a4b-it-qat", "v1"

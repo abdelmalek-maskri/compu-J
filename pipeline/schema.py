@@ -5,7 +5,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from pipeline.taxonomy import ASSET_TAGS, BANK_NAMES, INDUSTRY_TAGS, PRIMARY_TAGS
+from pipeline.allowed_tags import ASSET_TAGS, BANK_NAMES, INDUSTRY_TAGS, PRIMARY_TAGS
 
 PrimaryTag = Literal[PRIMARY_TAGS]
 AssetTag = Literal[ASSET_TAGS]
@@ -15,7 +15,7 @@ ContentType = Literal["research", "event", "marketing"]
 
 
 class MarketWrapChecklist(BaseModel):
-    """the brief's seven checklist groups; rules.py turns the answers into YES or NO"""
+    """the brief's seven checklist groups; tag_rules.py turns the answers into YES or NO"""
 
     model_config = ConfigDict(extra="forbid")
 

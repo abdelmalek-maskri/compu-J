@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pipeline.prepare import (
+from pipeline.clean_emails import (
     MIMECAST_BANNER,
     build_llm_input,
     clean_html,

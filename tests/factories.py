@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from pipeline.prepare import Attachments, PreparedEmail
+from pipeline.clean_emails import Attachments, PreparedEmail
 from pipeline.schema import LLMOutput
 
 CHECKS = ["structure", "asset_coverage", "timeframe", "purpose", "title", "language", "depth"]

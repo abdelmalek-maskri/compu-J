@@ -3,8 +3,8 @@
 from dataclasses import dataclass, field
 from typing import Literal
 
+from pipeline.allowed_tags import EQUITY, MARKET_WRAP, PRIMARY_TAGS, SUB_TO_PARENT, UNKNOWN_INDUSTRY
 from pipeline.schema import LLMOutput, MarketWrapChecklist
-from pipeline.taxonomy import EQUITY, MARKET_WRAP, PRIMARY_TAGS, SUB_TO_PARENT, UNKNOWN_INDUSTRY
 
 # out of the 7 checklist groups; the brief gives no threshold, so this gets tuned on labelled emails
 MARKET_WRAP_THRESHOLD = 5

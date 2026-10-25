@@ -1,6 +1,6 @@
 """the brief's tag lists: the one source for the schema, the prompt and the dashboard filters"""
 
-from pipeline.prepare import BANKS
+from pipeline.clean_emails import BANKS
 
 ASSET_TAXONOMY: dict[str, list[str]] = {
     "Macro": ["Developed Markets", "Emerging Markets"],
