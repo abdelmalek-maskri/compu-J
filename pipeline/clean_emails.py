@@ -1,6 +1,7 @@
 """turn raw email folders into clean text for the LLM"""
 
 import hashlib
+import html as html_lib
 import re
 from dataclasses import dataclass, field
 from datetime import date, timedelta
@@ -205,6 +206,13 @@ def _earliest_date(text: str, patterns: list, received: date | None) -> date | N
     return min(found)[1] if found else None
 
 
+def find_date_hint(html: str, received: date | None) -> date | None:
+    """a date inferred from link addresses, such as a campaign code ending _20260413. it is a
+    send date at best, not one the email states, so it is kept apart from the date field"""
+    hrefs = " ".join(html_lib.unescape(h) for h in re.findall(r'href="([^"]+)"', html, re.I))
+    return _earliest_date(hrefs, [COMPACT_DATE], received)
+
+
 def find_date(
     text: str, pdf_names: list[str], received: date | None = None
 ) -> tuple[date | None, str | None]:
@@ -275,6 +283,8 @@ class PreparedEmail:
     date_source: str | None
     received: date | None
     encoding: str
+    # only set when the email states no date (see find_date_hint)
+    date_hint: date | None = None
     duplicate_of: str | None = None
     warnings: list[str] = field(default_factory=list)
 
@@ -315,6 +325,7 @@ def prepare_email(folder: Path) -> PreparedEmail:
         date_source=date_source,
         received=received,
         encoding=encoding,
+        date_hint=None if found_date else find_date_hint(html, received),
         warnings=warnings,
     )
 
