@@ -17,6 +17,20 @@ def test_text_matches_despite_spacing_case_and_curly_quotes():
     assert not appears_in("", text)
 
 
+def test_export_damage_and_retyped_punctuation_do_not_count():
+    # 035437: the export replaced the curly apostrophe with the replacement sign
+    damaged = f"aims to summarise the previous week{chr(0xFFFD)}s major events"
+    assert appears_in("the previous week's major events", damaged)
+    assert appears_in(f"the previous week{chr(0x2019)}s major events", damaged)
+    assert appears_in("Previous week s major events", damaged)
+
+
+def test_whole_words_only_and_punctuation_alone_never_matches():
+    assert appears_in("FX Daily", "Today: FX Daily, 9 April")
+    assert not appears_in("FX", "AFX Daily")
+    assert not appears_in("!!!", "Today: FX Daily")
+
+
 def test_title_is_the_models_and_marked_when_not_in_the_email():
     meta = check_metadata(prepared_email(), llm_output(title="Weekly FX Outlook"))
     assert (meta.title, meta.title_verified) == ("Weekly FX Outlook", False)

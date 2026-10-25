@@ -1,15 +1,11 @@
 """title, bank and date: the model's answer wins when the email confirms it, Python backs up"""
 
+import re
 from dataclasses import dataclass
 from datetime import date
 
 from pipeline.clean_emails import BANK_PATTERNS, PreparedEmail, could_be_published, find_date
 from pipeline.schema import LLMOutput
-
-# models often retype curly quotes and dashes as plain ones when copying text
-PLAIN_PUNCTUATION = str.maketrans(
-    {0x2018: "'", 0x2019: "'", 0x201C: '"', 0x201D: '"', 0x2013: "-", 0x2014: "-"}
-)
 
 
 @dataclass
@@ -28,12 +24,17 @@ class Metadata:
     date_python: date | None
 
 
-def _normalise(text: str) -> str:
-    return " ".join(text.translate(PLAIN_PUNCTUATION).split()).casefold()
+def _words(text: str) -> str:
+    """lower case words only. punctuation does not count: models retype curly quotes and dashes
+    as plain ones, and the export replaced characters it could not convert with \ufffd, which
+    is not a word character either ("week\ufffds" and "week's" both become "week s")"""
+    return " ".join(re.findall(r"\w+", text.casefold()))
 
 
 def appears_in(snippet: str | None, text: str) -> bool:
-    return bool(snippet and snippet.strip()) and _normalise(snippet) in _normalise(text)
+    """the snippet's words appear in the text, in order and as whole words"""
+    words = _words(snippet or "")
+    return bool(words) and f" {words} " in f" {_words(text)} "
 
 
 def _choose_bank(email: PreparedEmail, said: str) -> tuple[str | None, str | None]:

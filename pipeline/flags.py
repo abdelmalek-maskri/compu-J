@@ -10,7 +10,7 @@ from datetime import date
 from pathlib import Path
 
 from pipeline.allowed_tags import EQUITY, SUB_TO_PARENT
-from pipeline.check_metadata import Metadata
+from pipeline.check_metadata import Metadata, appears_in
 from pipeline.schema import ClassifiedEmail, Flag, LLMOutput
 
 # these only decide when to ask a person to look, never what the answer is
@@ -126,12 +126,69 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
     return flags
 
 
-REVIEW_COLUMNS = ["email", "title", "kind", "field", "value_a", "value_b", "note", "your_verdict"]
+# fields compared between two models; lists are compared as sets, titles ignoring spacing and case
+COMPARED_FIELDS = [
+    "market_wrap",
+    "primary_asset_tag",
+    "asset_tags",
+    "bank",
+    "date",
+    "folder_name",
+    "companies_mentioned",
+    "industry_subindustry",
+]
 
 
-def review_rows(records: list[ClassifiedEmail]) -> list[dict]:
+def _value(record: ClassifiedEmail, field: str) -> str | None:
+    value = getattr(record, field)
+    if isinstance(value, list):
+        return ", ".join(
+            sorted(v.casefold() if field == "companies_mentioned" else v for v in value)
+        )
+    return _text(value)
+
+
+def same_answer(a: ClassifiedEmail, b: ClassifiedEmail, field: str) -> bool:
+    if field == "folder_name":
+        return a.folder_name == b.folder_name or (
+            appears_in(a.folder_name, b.folder_name or "")
+            and appears_in(b.folder_name, a.folder_name or "")
+        )
+    return _value(a, field) == _value(b, field)
+
+
+def model_vs_model_flags(
+    a: ClassifiedEmail, b: ClassifiedEmail, name_a: str, name_b: str
+) -> list[Flag]:
+    """one flag per field where two models answered the same email differently"""
     return [
-        {"email": r.source_file, "title": r.folder_name, **flag.model_dump(), "your_verdict": ""}
+        Flag(
+            kind="model_vs_model",
+            field=field,
+            value_a=_value(a, field),
+            value_b=_value(b, field),
+            note=f"{name_a} vs {name_b}",
+        )
+        for field in COMPARED_FIELDS
+        if not same_answer(a, b, field)
+    ]
+
+
+REVIEW_COLUMNS = [
+    "email", "title", "model", "kind", "field", "value_a", "value_b", "note", "your_verdict",
+]  # fmt: skip
+
+
+def review_rows(records: list[ClassifiedEmail], model: str) -> list[dict]:
+    """each record's own flags; model says who raised them (a model, or "a vs b")"""
+    return [
+        {
+            "email": r.source_file,
+            "title": r.folder_name,
+            "model": model,
+            **flag.model_dump(),
+            "your_verdict": "",
+        }
         for r in records
         for flag in r.meta.flags
     ]

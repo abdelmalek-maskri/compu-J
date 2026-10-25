@@ -108,10 +108,10 @@ def test_review_file_has_one_row_per_flag_and_an_empty_verdict(tmp_path):
         prepared_email(), llm_output(bank="Barclays", title="Weekly FX Outlook"), "model", "v2"
     )
     path = tmp_path / "classified.review.csv"
-    write_review(review_rows([record]), path)
+    write_review(review_rows([record], "gemma"), path)
     rows = list(csv.DictReader(path.open()))
-    assert [(r["email"], r["field"], r["your_verdict"]) for r in rows] == [
-        ("035300", "bank", ""),
-        ("035300", "title", ""),
+    assert [(r["email"], r["model"], r["field"], r["your_verdict"]) for r in rows] == [
+        ("035300", "gemma", "bank", ""),
+        ("035300", "gemma", "title", ""),
     ]
     assert record.meta.received is None or isinstance(record.meta.received, date)
