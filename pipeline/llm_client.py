@@ -1,4 +1,4 @@
-"""one classification call to the configured model, with retries and checks"""
+"""one classification call to the configured model, local or cloud, with retries and checks"""
 
 import os
 import time
@@ -6,8 +6,9 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 import litellm
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
+from pipeline.model_presets import PRESETS
 from pipeline.paths import model_slug
 from pipeline.prompt import system_prompt
 from pipeline.schema import LLMOutput
@@ -20,12 +21,25 @@ RETRYABLE = (
     litellm.exceptions.InternalServerError,
 )
 RETRY_WAITS = (5, 20)
+# a rate limit that outlasts these waits is a daily quota, which no amount of waiting fixes
+RATE_LIMIT_WAITS = (30, 60, 120)
+# problems that would hit every email the same way
+STOPS_THE_RUN = (
+    litellm.exceptions.AuthenticationError,
+    litellm.exceptions.PermissionDeniedError,
+    litellm.exceptions.NotFoundError,
+)
 # Ollama truncates silently past num_ctx, so an input this close to it is flagged
 CONTEXT_WARNING_SHARE = 0.95
 
 
 class LLMError(Exception):
     """this email could not be classified; the run carries on with the next one"""
+
+
+class StopRun(Exception):
+    """no email can be classified now: wrong key, missing model or quota used up.
+    answers already received are cached, so the next run carries on from here"""
 
 
 @dataclass(frozen=True)
@@ -35,21 +49,45 @@ class Settings:
     num_ctx: int
     reasoning_effort: str | None
     timeout: int = 300
+    preset: str | None = None
+    seconds_between_calls: float = 0
+    api_key_env: str | None = None
 
     @property
     def name(self) -> str:
         """used for folder names under output/"""
-        return model_slug(self.model)
+        return self.preset or model_slug(self.model)
+
+    @property
+    def is_ollama(self) -> bool:
+        return self.model.startswith("ollama")
+
+    def missing_key(self) -> str | None:
+        """the environment variable this model needs but does not have"""
+        if self.api_key_env and not os.getenv(self.api_key_env):
+            return self.api_key_env
+        return None
 
     @classmethod
-    def from_env(cls) -> "Settings":
-        model = os.getenv("LLM_MODEL", "ollama_chat/gemma4:26b-a4b-it-qat")
+    def from_name(cls, name: str) -> "Settings":
+        """a preset name (see model_presets.py) or a full LiteLLM model string"""
+        preset = PRESETS.get(name)
+        model = preset.model if preset else name
         return cls(
             model=model,
             api_base=os.getenv("OLLAMA_API_BASE") if model.startswith("ollama") else None,
             num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "32768")),
-            reasoning_effort=os.getenv("LLM_REASONING_EFFORT") or None,
+            reasoning_effort=preset.reasoning_effort
+            if preset
+            else os.getenv("LLM_REASONING_EFFORT") or None,
+            preset=name if preset else None,
+            seconds_between_calls=preset.seconds_between_calls if preset else 0,
+            api_key_env=preset.api_key_env if preset else None,
         )
+
+    @classmethod
+    def from_env(cls) -> "Settings":
+        return cls.from_name(os.getenv("LLM_MODEL", "gemma"))
 
 
 @dataclass
@@ -62,32 +100,46 @@ class CallResult:
     warnings: list[str] = field(default_factory=list)
 
 
-def complete(settings: Settings, messages: list[dict]):
-    """the only place that talks to the model; tests pass a fake instead"""
+def complete(settings: Settings, messages: list[dict], schema: type[BaseModel] = LLMOutput):
+    """the only place that talks to a model; tests pass a fake instead"""
+    options = {}
+    if settings.is_ollama:
+        # cloud models read far more than this; for Ollama it must be set or input is cut off
+        options = {"api_base": settings.api_base, "num_ctx": settings.num_ctx}
+    if settings.reasoning_effort:
+        options["reasoning_effort"] = settings.reasoning_effort
     return litellm.completion(
         model=settings.model,
-        api_base=settings.api_base,
         messages=messages,
         response_format={
             "type": "json_schema",
-            "json_schema": {"name": "classification", "schema": LLMOutput.model_json_schema()},
+            "json_schema": {"name": schema.__name__.lower(), "schema": schema.model_json_schema()},
         },
-        num_ctx=settings.num_ctx,
-        reasoning_effort=settings.reasoning_effort,
         temperature=0,
         timeout=settings.timeout,
+        **options,
     )
 
 
 def _complete_with_retries(complete_fn, settings, messages, sleep):
-    for wait in (*RETRY_WAITS, None):
+    waits, rate_waits = list(RETRY_WAITS), list(RATE_LIMIT_WAITS)
+    while True:
         try:
             return complete_fn(settings, messages)
         except RETRYABLE as e:
-            if wait is None:
+            if not waits:
                 tries = len(RETRY_WAITS) + 1
                 raise LLMError(f"{type(e).__name__} after {tries} tries: {e}") from e
-            sleep(wait)
+            sleep(waits.pop(0))
+        except litellm.exceptions.RateLimitError as e:
+            if not rate_waits:
+                raise StopRun(
+                    f"{settings.model} keeps refusing with a rate limit: the daily free quota is "
+                    "probably used up. Run again later; answers so far are cached."
+                ) from e
+            sleep(rate_waits.pop(0))
+        except STOPS_THE_RUN as e:
+            raise StopRun(f"{type(e).__name__} from {settings.model}: {e}") from e
         except litellm.exceptions.BadRequestError as e:
             # includes an input too long for the model; retrying cannot help
             raise LLMError(f"{type(e).__name__}: {e}") from e
@@ -99,7 +151,6 @@ def classify_email(
     complete_fn: Callable = complete,
     sleep: Callable[[float], None] = time.sleep,
 ) -> CallResult:
-    """NotFoundError (model not pulled) is not caught: every other email would fail the same way"""
     messages = [
         {"role": "system", "content": system_prompt()},
         {"role": "user", "content": llm_input},
@@ -113,7 +164,10 @@ def classify_email(
         output_tokens += response.usage.completion_tokens
 
         warnings = []
-        if response.usage.prompt_tokens >= settings.num_ctx * CONTEXT_WARNING_SHARE:
+        if (
+            settings.is_ollama
+            and response.usage.prompt_tokens >= settings.num_ctx * CONTEXT_WARNING_SHARE
+        ):
             warnings.append(
                 f"input used {response.usage.prompt_tokens} of {settings.num_ctx} tokens, "
                 "it may have been cut off"

@@ -1,9 +1,11 @@
 import json
 
+import pytest
+
 import classify
-from classify import classify_all, summary, write_json
+from classify import RunStopped, classify_all, summary, write_json
 from pipeline.llm_cache import Cache
-from pipeline.llm_client import CallResult, LLMError, Settings
+from pipeline.llm_client import CallResult, LLMError, Settings, StopRun
 from tests.factories import llm_output, prepared_email
 
 SETTINGS = Settings(model="ollama_chat/test", api_base=None, num_ctx=32768, reasoning_effort=None)
@@ -125,3 +127,41 @@ def test_the_command_writes_the_run_folder_and_only_a_full_run_writes_the_delive
     monkeypatch.setattr("sys.argv", ["classify.py", "--force"])
     classify.main()
     assert len(fake.calls) == calls_before + 2
+
+
+def test_cloud_models_wait_between_calls_but_not_for_cached_answers(tmp_path):
+    cloud = Settings("gemini/x", None, 32768, None, seconds_between_calls=6.5)
+    # the clock is read when each call starts: first call at 0 s, second email ready at 2 s
+    waits, now = [], iter([0.0, 2.0, 8.5])
+    cache = Cache(tmp_path)
+    quiet = lambda line: None  # noqa: E731
+    classify_all(
+        emails(), cloud, cache, False, FakeClassifier(), quiet, waits.append, lambda: next(now)
+    )
+    assert waits == [4.5]  # a 6.5 s gap, 2 s already passed
+    classify_all(emails(), cloud, cache, False, FakeClassifier(), quiet, waits.append)
+    assert waits == [4.5]  # all cached: no waiting
+
+
+def test_a_stopped_run_keeps_what_was_finished(tmp_path):
+    class QuotaAfterOne(FakeClassifier):
+        def __call__(self, llm_input, settings):
+            if self.calls:
+                raise StopRun("daily free quota used up")
+            return super().__call__(llm_input, settings)
+
+    with pytest.raises(RunStopped, match="daily free quota") as stopped:
+        classify_all(emails(), SETTINGS, Cache(tmp_path), False, QuotaAfterOne(), lambda line: None)
+    assert [o.record.source_file for o in stopped.value.outcomes] == ["035300"]
+
+
+def test_missing_api_key_stops_before_anything_runs(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "Data" / "035300").mkdir(parents=True)
+    (tmp_path / "Data" / "035300" / "emailbody.html").write_text("<p>FX Daily</p>")
+    monkeypatch.setenv("LLM_MODEL", "gemini-flash-lite")
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    monkeypatch.setattr("sys.argv", ["classify.py"])
+    assert classify.main() == 2
+    assert "gemini-flash-lite needs GEMINI_API_KEY in .env" in capsys.readouterr().out
+    assert not (tmp_path / "output").exists()
