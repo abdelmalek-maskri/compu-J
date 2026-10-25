@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import litellm
 import pytest
 
-from pipeline.llm_client import CallResult, LLMError, Settings, classify_email
+from pipeline.llm_client import CallResult, LLMError, Settings, StopRun, classify_email, complete
 from tests.factories import llm_output_data
 
 SETTINGS = Settings(model="ollama_chat/test", api_base=None, num_ctx=32768, reasoning_effort=None)
@@ -92,10 +92,65 @@ def test_bad_request_is_not_retried():
     assert len(fake.calls) == 1
 
 
-def test_missing_model_stops_the_whole_run():
+def test_missing_model_or_bad_key_stops_the_whole_run():
     missing = litellm.exceptions.NotFoundError(message="pull it", model="m", llm_provider="ollama")
-    with pytest.raises(litellm.exceptions.NotFoundError):
+    with pytest.raises(StopRun, match="NotFoundError"):
         run(FakeModel(missing))
+    bad_key = litellm.exceptions.AuthenticationError(
+        message="invalid key", llm_provider="gemini", model="m"
+    )
+    with pytest.raises(StopRun, match="AuthenticationError"):
+        run(FakeModel(bad_key))
+
+
+def rate_limited():
+    return litellm.exceptions.RateLimitError(message="429", llm_provider="gemini", model="m")
+
+
+def test_rate_limit_waits_longer_then_succeeds():
+    waits = []
+    result = run(FakeModel(rate_limited(), reply(GOOD)), waits)
+    assert (result.attempts, waits) == (1, [30])
+
+
+def test_rate_limit_that_never_ends_stops_the_run():
+    waits = []
+    with pytest.raises(StopRun, match="daily free quota"):
+        run(FakeModel(*[rate_limited()] * 4), waits)
+    assert waits == [30, 60, 120]
+
+
+def test_presets_carry_their_settings(monkeypatch):
+    gemini = Settings.from_name("gemini-flash-lite")
+    assert (gemini.model, gemini.name, gemini.is_ollama) == (
+        "gemini/gemini-3.5-flash-lite",
+        "gemini-flash-lite",
+        False,
+    )
+    assert (gemini.seconds_between_calls, gemini.api_key_env) == (6.5, "GEMINI_API_KEY")
+    gemma = Settings.from_name("gemma")
+    assert (gemma.reasoning_effort, gemma.is_ollama, gemma.name) == ("none", True, "gemma")
+
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    assert gemini.missing_key() == "GEMINI_API_KEY"
+    monkeypatch.setenv("GEMINI_API_KEY", "set")
+    assert gemini.missing_key() is None
+
+
+def test_ollama_only_settings_are_not_sent_to_cloud_models(monkeypatch):
+    sent = []
+    monkeypatch.setattr("litellm.completion", lambda **options: sent.append(options))
+    complete(Settings.from_name("gemma"), [])
+    complete(Settings.from_name("gemini-flash-lite"), [])
+    ollama, gemini = sent
+    assert (ollama["num_ctx"], ollama["reasoning_effort"]) == (32768, "none")
+    assert "num_ctx" not in gemini and "api_base" not in gemini and "reasoning_effort" not in gemini
+
+
+def test_context_warning_is_only_for_ollama():
+    cloud = Settings("gemini/gemini-3.5-flash-lite", None, 32768, None)
+    result = classify_email("x", cloud, FakeModel(reply(GOOD, prompt_tokens=31500)), [].append)
+    assert result.warnings == []
 
 
 def test_input_near_the_context_limit_is_flagged():
