@@ -2,6 +2,7 @@ from dataclasses import replace
 
 from pipeline.llm_cache import Cache, cache_key
 from pipeline.llm_client import CallResult, Settings
+from pipeline.prompt import PROMPT_VERSION
 from tests.factories import llm_output
 
 SETTINGS = Settings(model="ollama_chat/gemma", api_base=None, num_ctx=32768, reasoning_effort=None)
@@ -33,16 +34,15 @@ def test_key_changes_with_anything_that_changes_the_answer():
 
 
 def test_two_models_keep_separate_answers(tmp_path):
-    cache = Cache(tmp_path)
-    other = replace(RESULT, seconds=33.5)
-    gemma_key = cache_key("x", SETTINGS)
-    oss_key = cache_key("x", replace(SETTINGS, model="gpt-oss"))
-    cache.put("035299", gemma_key, RESULT)
-    cache.put("035299", oss_key, other)
-    assert cache.get("035299", gemma_key).seconds == 23.3
-    assert cache.get("035299", oss_key).seconds == 33.5
+    gemma, oss = Cache(tmp_path / "gemma"), Cache(tmp_path / "gpt-oss-20b")
+    gemma.put("035299", cache_key("x", SETTINGS), RESULT)
+    oss.put(
+        "035299", cache_key("x", replace(SETTINGS, model="gpt-oss")), replace(RESULT, seconds=33.5)
+    )
+    assert gemma.get("035299", cache_key("x", SETTINGS)).seconds == 23.3
+    assert oss.get("035299", cache_key("x", replace(SETTINGS, model="gpt-oss"))).seconds == 33.5
 
 
-def test_no_temporary_files_are_left_behind(tmp_path):
-    Cache(tmp_path).put("035300", "abc", RESULT)
-    assert [p.name for p in (tmp_path / "035300").iterdir()] == ["abc.json"]
+def test_file_name_shows_the_email_and_the_prompt_and_nothing_is_left_half_written(tmp_path):
+    Cache(tmp_path).put("035300", "3fa9c1d2e8b04a71", RESULT)
+    assert [p.name for p in tmp_path.iterdir()] == [f"035300_{PROMPT_VERSION}_3fa9c1d2.json"]

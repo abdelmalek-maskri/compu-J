@@ -1,15 +1,18 @@
 """classify every email with the LLM and write classified_emails.json
 
-uv run python classify.py                 all emails
-uv run python classify.py --limit 10      the first 10, written to .cache/classified_subset.json
+uv run python classify.py                 all emails, also writes classified_emails.json
+uv run python classify.py --limit 10      the first 10
 uv run python classify.py --only 035299   one or more emails by folder id
 uv run python classify.py --force         ignore cached answers
+
+each run writes output/runs/<run>/: classified_emails.json, review.csv and summary.txt
 """
 
 import argparse
 import json
 import os
 import sys
+import time
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -21,13 +24,18 @@ from pipeline.build_record import build_record, error_record
 from pipeline.clean_emails import PreparedEmail, prepare_all
 from pipeline.flags import review_rows, write_review
 from pipeline.llm_cache import Cache, cache_key
-from pipeline.llm_client import LLMError, Settings, classify_email
+from pipeline.llm_client import LLMError, Settings, StopRun, classify_email
+from pipeline.paths import DELIVERABLE, LLM_ANSWERS, RUNS, run_name
 from pipeline.prompt import PROMPT_VERSION
 from pipeline.schema import ClassifiedEmail
 
-FULL_OUTPUT = Path("classified_emails.json")
-# a trial run must never replace the full deliverable by accident
-SUBSET_OUTPUT = Path(".cache/classified_subset.json")
+
+class RunStopped(Exception):
+    """the model refused every further call; carries what was finished before that"""
+
+    def __init__(self, reason: str, outcomes: list):
+        super().__init__(reason)
+        self.outcomes = outcomes
 
 
 @dataclass
@@ -43,17 +51,29 @@ def classify_all(
     settings: Settings,
     cache: Cache,
     force: bool = False,
-    classify_fn: Callable = classify_email,
+    classify_fn: Callable | None = None,
     log: Callable[[str], None] = print,
+    sleep: Callable[[float], None] = time.sleep,
+    clock: Callable[[], float] = time.monotonic,
 ) -> list[Outcome]:
+    # looked up at call time, so tests can replace the model with a fake
+    classify_fn = classify_fn or classify_email
     outcomes = []
+    last_call = None
     for i, email in enumerate(emails, 1):
         key = cache_key(email.llm_input, settings)
         result = None if force else cache.get(email.id, key)
         cached = result is not None
         if result is None:
+            # free cloud tiers allow a few requests a minute; cached answers cost nothing
+            if last_call is not None and settings.seconds_between_calls:
+                sleep(max(0.0, settings.seconds_between_calls - (clock() - last_call)))
+            last_call = clock()
             try:
                 result = classify_fn(email.llm_input, settings)
+            except StopRun as e:
+                log(f"[{i}/{len(emails)}] {email.id} STOPPED: {e}")
+                raise RunStopped(str(e), outcomes) from e
             except LLMError as e:
                 record = error_record(email, str(e), settings.model, PROMPT_VERSION)
                 outcomes.append(Outcome(record, cached=False, seconds=0, prompt_tokens=0))
@@ -120,9 +140,7 @@ def main() -> int:
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("--data", type=Path, default=Path("Data"))
-    parser.add_argument(
-        "--out", type=Path, help=f"default {FULL_OUTPUT}, or {SUBSET_OUTPUT} for a subset"
-    )
+    parser.add_argument("--run", help="name of the folder under output/runs/ (default from model)")
     parser.add_argument("--limit", type=int, help="only the first N emails")
     parser.add_argument("--only", nargs="+", metavar="ID", help="only these folder ids")
     parser.add_argument("--force", action="store_true", help="ignore cached answers")
@@ -144,17 +162,32 @@ def main() -> int:
         emails = [e for e in emails if e.id in args.only]
     if args.limit:
         emails = emails[: args.limit]
-    subset = bool(args.only or args.limit)
-    out = args.out or (SUBSET_OUTPUT if subset else FULL_OUTPUT)
-
     settings = Settings.from_env()
-    print(f"classifying {len(emails)} emails with {settings.model}\n")
-    outcomes = classify_all(emails, settings, Cache())
+    if missing := settings.missing_key():
+        print(f"{settings.name} needs {missing} in .env")
+        return 2
+    run = RUNS / (args.run or run_name(settings.name, args.limit, bool(args.only)))
+    print(f"classifying {len(emails)} emails with {settings.name} ({settings.model}) into {run}/\n")
+    stopped = None
+    try:
+        outcomes = classify_all(emails, settings, Cache(LLM_ANSWERS / settings.name), args.force)
+    except RunStopped as e:
+        outcomes, stopped = e.outcomes, str(e)
     records = [o.record for o in outcomes]
-    write_json(records, out)
-    review = out.with_suffix(".review.csv")
-    write_review(review_rows(records), review)
-    print(f"\n{summary(outcomes, settings)}\nwritten to {out}, flags to {review}")
+
+    write_json(records, run / "classified_emails.json")
+    write_review(review_rows(records), run / "review.csv")
+    text = summary(outcomes, settings)
+    if stopped:
+        text = f"STOPPED after {len(outcomes)} of {len(emails)} emails: {stopped}\n{text}"
+    (run / "summary.txt").write_text(text + "\n", encoding="utf-8")
+    print(f"\n{text}\nwritten to {run}/")
+    # only a finished run over every email may replace the deliverable
+    if not (args.only or args.limit or stopped):
+        write_json(records, DELIVERABLE)
+        print(f"and to {DELIVERABLE}")
+    if stopped:
+        return 2
     return 1 if failures else 0
 
 

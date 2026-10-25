@@ -1,6 +1,10 @@
-"""smoke test: the model answers, returns schema valid JSON and reads long input whole"""
+"""smoke test: the model answers, returns schema valid JSON and reads long input whole
 
-import os
+run from the repo root: uv run python -m scripts.smoke_test_llm [--model gemini-flash-lite]
+it sends two requests to the model, so it uses two of a free cloud tier's daily requests
+"""
+
+import argparse
 import sys
 import time
 from typing import Literal
@@ -8,6 +12,8 @@ from typing import Literal
 import litellm
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
+
+from pipeline.llm_client import Settings, complete
 
 
 class Probe(BaseModel):
@@ -32,31 +38,23 @@ FILLER = "Analysts reviewed sector earnings, rates and currency moves across reg
 MIN_LONG_PROMPT_TOKENS = 10_000
 
 
-def call(model: str, text: str) -> tuple[Probe, int, float]:
+def call(settings: Settings, text: str) -> tuple[Probe, int, float]:
+    messages = [
+        {"role": "system", "content": "Classify the research note. Reply with JSON only."},
+        {"role": "user", "content": text},
+    ]
     start = time.perf_counter()
+    # the same call classify.py makes, so this checks the real settings for this model
     try:
-        resp = litellm.completion(
-            model=model,
-            api_base=os.getenv("OLLAMA_API_BASE") if model.startswith("ollama") else None,
-            messages=[
-                {"role": "system", "content": "Classify the research note. Reply with JSON only."},
-                {"role": "user", "content": text},
-            ],
-            response_format={
-                "type": "json_schema",
-                "json_schema": {"name": "probe", "schema": Probe.model_json_schema()},
-            },
-            num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "32768")),
-            # litellm maps "none" to ollama's think=false; gpt-oss only accepts low/medium/high
-            reasoning_effort=os.getenv("LLM_REASONING_EFFORT") or None,
-            # the model's own default is 1.0; classification should be repeatable
-            temperature=0,
-            timeout=300,
-        )
+        resp = complete(settings, messages, Probe)
     except litellm.exceptions.NotFoundError as e:
-        raise CheckFailed(f"model not found, run `ollama pull` or fix LLM_MODEL ({e})") from e
+        raise CheckFailed(f"model not found: pull it in Ollama or fix the model name ({e})") from e
+    except litellm.exceptions.AuthenticationError as e:
+        raise CheckFailed(f"the API key was refused, check {settings.api_key_env} ({e})") from e
+    except litellm.exceptions.RateLimitError as e:
+        raise CheckFailed(f"rate limit or daily quota reached, try later ({e})") from e
     except litellm.exceptions.Timeout as e:
-        raise CheckFailed(f"no reply within 300s, first load can be slow, retry ({e})") from e
+        raise CheckFailed(f"no reply within 300s, a first local load can be slow ({e})") from e
     except litellm.exceptions.APIConnectionError as e:
         raise CheckFailed(f"could not reach the model, is Ollama running? ({e})") from e
     seconds = time.perf_counter() - start
@@ -72,18 +70,26 @@ def call(model: str, text: str) -> tuple[Probe, int, float]:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--model", help="a preset name or model string; default LLM_MODEL in .env")
+    args = parser.parse_args()
+
     load_dotenv()
-    model = os.getenv("LLM_MODEL", "ollama_chat/gemma4:26b-a4b-it-qat")
-    print(f"model: {model}")
+    settings = Settings.from_name(args.model) if args.model else Settings.from_env()
+    print(f"model: {settings.name} ({settings.model})")
+    if missing := settings.missing_key():
+        print(f"FAILED: {settings.name} needs {missing} in .env")
+        return 1
 
     try:
-        probe, tokens, seconds = call(model, SAMPLE)
+        probe, tokens, seconds = call(settings, SAMPLE)
         print(f"[1/2] schema: ok in {seconds:.1f}s, {tokens} prompt tokens\n      {probe}")
 
-        probe, tokens, seconds = call(model, FILLER + "\n\n" + SAMPLE)
+        time.sleep(settings.seconds_between_calls)
+        probe, tokens, seconds = call(settings, FILLER + "\n\n" + SAMPLE)
         if tokens < MIN_LONG_PROMPT_TOKENS:
             raise CheckFailed(
-                f"long input was truncated to {tokens} tokens, num_ctx is not reaching the model"
+                f"long input was cut to {tokens} tokens: for Ollama, num_ctx is not arriving"
             )
         print(f"[2/2] long input: ok in {seconds:.1f}s, {tokens} prompt tokens read")
     except CheckFailed as e:
