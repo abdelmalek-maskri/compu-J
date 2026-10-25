@@ -1,4 +1,4 @@
-"""prepare every email, print coverage, and save what the LLM will read to .cache/prepared/
+"""prepare every email, print coverage, and save what the LLM will read to output/cleaned_emails/
 
 run from the repo root: uv run python -m scripts.preview_cleaned_emails
 """
@@ -10,12 +10,13 @@ from collections import Counter
 from pathlib import Path
 
 from pipeline.clean_emails import prepare_all
+from pipeline.paths import CLEANED_EMAILS
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data", type=Path, default=Path("Data"))
-    parser.add_argument("--out", type=Path, default=Path(".cache/prepared"))
+    parser.add_argument("--out", type=Path, default=CLEANED_EMAILS)
     args = parser.parse_args()
 
     if not args.data.is_dir():

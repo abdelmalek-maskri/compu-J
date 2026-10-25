@@ -16,7 +16,7 @@ jobs:
           enable-cache: true
       # --frozen fails if uv.lock is out of date instead of silently resolving new versions
       - run: uv sync --frozen
-      - run: uv run ruff check pipeline tests scripts
-      - run: uv run ruff format --check pipeline tests scripts
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
       # Data/ is not in the repository, so the real data test skips here
       - run: uv run pytest -rs
