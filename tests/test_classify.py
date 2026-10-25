@@ -1,5 +1,6 @@
 import json
 
+import classify
 from classify import classify_all, summary, write_json
 from pipeline.llm_cache import Cache
 from pipeline.llm_client import CallResult, LLMError, Settings
@@ -89,3 +90,38 @@ def test_summary_reports_failures_and_timing(tmp_path):
     text = summary(outcomes, SETTINGS)
     assert text.startswith("1 classified, 1 failed ['035301']")
     assert "average 20s" in text
+
+
+def test_the_command_writes_the_run_folder_and_only_a_full_run_writes_the_deliverable(
+    tmp_path, monkeypatch
+):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("LLM_MODEL", "ollama_chat/test-model")
+    for email_id in ["035300", "035301"]:
+        (tmp_path / "Data" / email_id).mkdir(parents=True)
+        (tmp_path / "Data" / email_id / "emailbody.html").write_text(
+            "<p>FX Daily 10 April 2026</p>"
+        )
+    fake = FakeClassifier()
+    monkeypatch.setattr("classify.classify_email", fake)
+
+    monkeypatch.setattr("sys.argv", ["classify.py", "--limit", "1"])
+    classify.main()
+    run = tmp_path / "output" / "runs" / "test-model_1-emails"
+    assert sorted(p.name for p in run.iterdir()) == [
+        "classified_emails.json",
+        "review.csv",
+        "summary.txt",
+    ]
+    assert not (tmp_path / "classified_emails.json").exists()
+
+    monkeypatch.setattr("sys.argv", ["classify.py"])
+    classify.main()
+    assert len(json.loads((tmp_path / "classified_emails.json").read_text())) == 2
+    assert (tmp_path / "output" / "runs" / "test-model" / "summary.txt").exists()
+
+    # --force must ignore the cache: every email is sent again
+    calls_before = len(fake.calls)
+    monkeypatch.setattr("sys.argv", ["classify.py", "--force"])
+    classify.main()
+    assert len(fake.calls) == calls_before + 2

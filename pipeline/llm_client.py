@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 import litellm
 from pydantic import ValidationError
 
+from pipeline.paths import model_slug
 from pipeline.prompt import system_prompt
 from pipeline.schema import LLMOutput
 
@@ -34,6 +35,11 @@ class Settings:
     num_ctx: int
     reasoning_effort: str | None
     timeout: int = 300
+
+    @property
+    def name(self) -> str:
+        """used for folder names under output/"""
+        return model_slug(self.model)
 
     @classmethod
     def from_env(cls) -> "Settings":

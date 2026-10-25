@@ -1,4 +1,4 @@
-"""one file per email and settings in .cache/llm/, so an unchanged email is never sent twice"""
+"""one file per email, prompt and settings, so an unchanged email is never sent twice"""
 
 import hashlib
 import json
@@ -6,10 +6,8 @@ import os
 from pathlib import Path
 
 from pipeline.llm_client import CallResult, Settings
-from pipeline.prompt import system_prompt
+from pipeline.prompt import PROMPT_VERSION, system_prompt
 from pipeline.schema import LLMOutput
-
-CACHE_DIR = Path(".cache/llm")
 
 
 def cache_key(llm_input: str, settings: Settings, prompt: str | None = None) -> str:
@@ -26,13 +24,14 @@ def cache_key(llm_input: str, settings: Settings, prompt: str | None = None) -> 
 
 
 class Cache:
-    """answers live at <root>/<email id>/<key>.json, so several models can sit side by side"""
+    """answers live at <root>/<email id>_<prompt version>_<short key>.json; classify.py gives
+    each model its own root, so the folder says which model answered"""
 
-    def __init__(self, root: Path = CACHE_DIR):
+    def __init__(self, root: Path):
         self.root = root
 
     def _path(self, email_id: str, key: str) -> Path:
-        return self.root / email_id / f"{key}.json"
+        return self.root / f"{email_id}_{PROMPT_VERSION}_{key[:8]}.json"
 
     def get(self, email_id: str, key: str) -> CallResult | None:
         path = self._path(email_id, key)

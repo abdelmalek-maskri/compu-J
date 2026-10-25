@@ -1,9 +1,11 @@
 """classify every email with the LLM and write classified_emails.json
 
-uv run python classify.py                 all emails
-uv run python classify.py --limit 10      the first 10, written to .cache/classified_subset.json
+uv run python classify.py                 all emails, also writes classified_emails.json
+uv run python classify.py --limit 10      the first 10
 uv run python classify.py --only 035299   one or more emails by folder id
 uv run python classify.py --force         ignore cached answers
+
+each run writes output/runs/<run>/: classified_emails.json, review.csv and summary.txt
 """
 
 import argparse
@@ -22,12 +24,9 @@ from pipeline.clean_emails import PreparedEmail, prepare_all
 from pipeline.flags import review_rows, write_review
 from pipeline.llm_cache import Cache, cache_key
 from pipeline.llm_client import LLMError, Settings, classify_email
+from pipeline.paths import DELIVERABLE, LLM_ANSWERS, RUNS, run_name
 from pipeline.prompt import PROMPT_VERSION
 from pipeline.schema import ClassifiedEmail
-
-FULL_OUTPUT = Path("classified_emails.json")
-# a trial run must never replace the full deliverable by accident
-SUBSET_OUTPUT = Path(".cache/classified_subset.json")
 
 
 @dataclass
@@ -43,9 +42,11 @@ def classify_all(
     settings: Settings,
     cache: Cache,
     force: bool = False,
-    classify_fn: Callable = classify_email,
+    classify_fn: Callable | None = None,
     log: Callable[[str], None] = print,
 ) -> list[Outcome]:
+    # looked up at call time, so tests can replace the model with a fake
+    classify_fn = classify_fn or classify_email
     outcomes = []
     for i, email in enumerate(emails, 1):
         key = cache_key(email.llm_input, settings)
@@ -120,9 +121,7 @@ def main() -> int:
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("--data", type=Path, default=Path("Data"))
-    parser.add_argument(
-        "--out", type=Path, help=f"default {FULL_OUTPUT}, or {SUBSET_OUTPUT} for a subset"
-    )
+    parser.add_argument("--run", help="name of the folder under output/runs/ (default from model)")
     parser.add_argument("--limit", type=int, help="only the first N emails")
     parser.add_argument("--only", nargs="+", metavar="ID", help="only these folder ids")
     parser.add_argument("--force", action="store_true", help="ignore cached answers")
@@ -144,17 +143,21 @@ def main() -> int:
         emails = [e for e in emails if e.id in args.only]
     if args.limit:
         emails = emails[: args.limit]
-    subset = bool(args.only or args.limit)
-    out = args.out or (SUBSET_OUTPUT if subset else FULL_OUTPUT)
-
     settings = Settings.from_env()
-    print(f"classifying {len(emails)} emails with {settings.model}\n")
-    outcomes = classify_all(emails, settings, Cache(), args.force)
+    run = RUNS / (args.run or run_name(settings.name, args.limit, bool(args.only)))
+    print(f"classifying {len(emails)} emails with {settings.model} into {run}/\n")
+    outcomes = classify_all(emails, settings, Cache(LLM_ANSWERS / settings.name), args.force)
     records = [o.record for o in outcomes]
-    write_json(records, out)
-    review = out.with_suffix(".review.csv")
-    write_review(review_rows(records), review)
-    print(f"\n{summary(outcomes, settings)}\nwritten to {out}, flags to {review}")
+
+    write_json(records, run / "classified_emails.json")
+    write_review(review_rows(records), run / "review.csv")
+    text = summary(outcomes, settings)
+    (run / "summary.txt").write_text(text + "\n", encoding="utf-8")
+    print(f"\n{text}\nwritten to {run}/")
+    # only a run over every email may replace the deliverable
+    if not (args.only or args.limit):
+        write_json(records, DELIVERABLE)
+        print(f"and to {DELIVERABLE}")
     return 1 if failures else 0
 
 
