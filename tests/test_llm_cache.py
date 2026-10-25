@@ -31,6 +31,7 @@ def test_key_changes_with_anything_that_changes_the_answer():
     assert base != cache_key(
         "EMAIL BODY:\nFX Daily", replace(SETTINGS, reasoning_effort="low"), "v1"
     )
+    assert base != cache_key("EMAIL BODY:\nFX Daily", replace(SETTINGS, temperature=None), "v1")
 
 
 def test_two_models_keep_separate_answers(tmp_path):
