@@ -116,6 +116,13 @@ def test_bank_from_signature_with_damaged_accent():
     assert find_bank(text) == ("UBP", "signature")
 
 
+def test_signature_beats_a_bank_named_in_the_content():
+    # 035243: the product is issued by Goldman Sachs, the email comes from UBP
+    lines = ["15 months tenor in USD, issued by Goldman Sachs"] + ["..."] * 40
+    text = "\n".join([*lines, "Best regards, Union Bancaire Privee, UBP SA"])
+    assert find_bank(text) == ("UBP", "signature")
+
+
 def test_bank_none_when_not_found():
     assert find_bank("Dear all,\nPlease find below.") == (None, None)
 
@@ -193,6 +200,15 @@ def test_duplicates_point_to_first_copy_ignoring_whitespace():
 
 def test_different_emails_are_not_duplicates():
     assert find_duplicates({"a": "FX Daily 9 April", "b": "FX Daily 10 April"}) == {}
+
+
+def test_date_long_before_arrival_is_rejected():
+    # a chart date in the flyer's PDF; a ten day old price sheet is still accepted
+    assert find_date("08.04.2024 29.08.2024", [], received=date(2026, 4, 9)) == (None, None)
+    assert find_date("Levels as of 30-Mar-26", [], received=date(2026, 4, 9)) == (
+        date(2026, 3, 30),
+        "text",
+    )
 
 
 def test_date_after_arrival_is_rejected():
@@ -294,3 +310,6 @@ def test_real_data_prepares_cleanly():
     assert sum(e.date is not None for e in emails) == 182
     assert all(could_be_published(e.date, e.received) for e in emails if e.date)
     assert [e.id for e in emails if e.duplicate_of] == ["035428"]
+    # banks that were wrong when the top of the email was read before the signature
+    banks = {e.id: e.bank for e in emails}
+    assert (banks["035243"], banks["035244"], banks["035359"]) == ("UBP", "J. Safra Sarasin", "EFG")

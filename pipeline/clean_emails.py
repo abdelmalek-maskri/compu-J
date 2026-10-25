@@ -131,9 +131,10 @@ def find_bank(text: str) -> tuple[str | None, str | None]:
     lines = text.splitlines()
     regions = [
         ("logo", " ".join(re.findall(r"\[image: ([^\]]+)\]", text))),
+        # the sign-off and legal text name the sender; the top is content and can name other
+        # banks ("issued by Goldman Sachs"). it starts after the top 30 lines so they never overlap
+        ("signature", "\n".join(lines[max(30, len(lines) - 30) :])),
         ("top_text", "\n".join(lines[:30])),
-        # private banks often only name themselves in the signature
-        ("signature", "\n".join(lines[-30:])),
     ]
     for source, region in regions:
         if bank := _earliest_bank(region):
@@ -165,6 +166,9 @@ def _to_date(day: str, month: str, year: str) -> date | None:
 
 # file times carry no time zone, so a report dated the day after it arrived is still possible
 RECEIVED_MARGIN = timedelta(days=1)
+# the largest real gap is 10 days (a price sheet "as of 30 March" arriving on 9 April); older
+# dates are charts or history, like 08.04.2024 in a 2026 flyer
+RECEIVED_LOOKBACK = timedelta(days=31)
 
 
 def received_date(folder: Path) -> date | None:
@@ -180,8 +184,10 @@ def received_date(folder: Path) -> date | None:
 
 
 def could_be_published(found: date, received: date | None) -> bool:
-    """a report cannot be published after it arrived; deadlines and event dates fail this"""
-    return received is None or found <= received + RECEIVED_MARGIN
+    """a publication date sits just before arrival: deadlines, events and old chart dates fail"""
+    if received is None:
+        return True
+    return received - RECEIVED_LOOKBACK <= found <= received + RECEIVED_MARGIN
 
 
 def _earliest_date(text: str, patterns: list, received: date | None) -> date | None:
