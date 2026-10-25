@@ -21,6 +21,7 @@ def llm_output_data(**overrides) -> dict:
         "date_quote": "10 April 2026",
         "content_type": "research",
         "market_wrap_checklist": checklist(),
+        "market_wrap": "NO",
         "primary_asset_tag": "FX",
         "asset_tags": ["FX", "JPY"],
         "companies_mentioned": [],

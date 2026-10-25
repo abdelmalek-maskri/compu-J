@@ -21,6 +21,7 @@ def test_valid_output_parses_and_reads_the_date():
         ("industry_subindustry", ["Gas"]),  # must be the full SECTOR > Subindustry string
         ("date", "10/04/2026"),
         ("content_type", "newsletter"),
+        ("market_wrap", "maybe"),
     ],
 )
 def test_values_outside_the_taxonomy_are_rejected(field, value):
@@ -37,9 +38,10 @@ def test_json_schema_lists_the_allowed_tags_for_constrained_decoding():
     schema = LLMOutput.model_json_schema()
     assert schema["properties"]["primary_asset_tag"]["enum"][0] == "Macro"
     assert schema["additionalProperties"] is False
-    assert list(schema["properties"]).index("market_wrap_checklist") < list(
-        schema["properties"]
-    ).index("asset_tags")
+    # the model writes in this order: reasons, then its decision, then the tags
+    fields = list(schema["properties"])
+    assert fields.index("market_wrap_checklist") < fields.index("market_wrap")
+    assert fields.index("market_wrap") < fields.index("asset_tags")
 
 
 def test_record_keys_follow_the_brief_exactly():

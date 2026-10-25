@@ -20,14 +20,18 @@ def test_record_combines_rules_metadata_and_files():
     assert record["pdf_attachment"] == ["FXView.pdf"]
     assert record["source_file"] == "035300"
     meta = record["meta"]
-    assert meta["conflicts"] == ["bank: rules found Deutsche Bank, model said Barclays"]
-    assert (meta["date_source"], meta["title_verified"]) == ("text+llm", True)
+    assert [(f["kind"], f["field"]) for f in meta["flags"]] == [("model_vs_python", "bank")]
+    assert (meta["bank_llm"], meta["bank_python"]) == ("Barclays", "Deutsche Bank")
+    assert (meta["date_source"], meta["title_verified"]) == ("llm+python", True)
     assert (meta["model"], meta["prompt_version"]) == (MODEL, PROMPT)
 
 
 def test_market_wrap_record_has_the_forced_values():
     record = build_record(
-        prepared_email(), llm_output(market_wrap_checklist=checklist(yes=6)), MODEL, PROMPT
+        prepared_email(),
+        llm_output(market_wrap="YES", market_wrap_checklist=checklist(yes=6)),
+        MODEL,
+        PROMPT,
     )
     assert record.market_wrap == "YES"
     assert record.asset_tags == ["Market Wrap"]
