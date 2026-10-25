@@ -145,14 +145,19 @@ def find_bank(text: str) -> tuple[str | None, str | None]:
 MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
 MONTH = rf"(?:{'|'.join(MONTHS)})[a-z]*\.?"
 
+# ordinal days like "10th April 2026" and "April 7th, 2026" appear in the emails
+ORDINAL = r"(?:st|nd|rd|th)?"
 # (pattern, group numbers for day, month, year)
 TEXT_DATES = [
-    (re.compile(rf"\b(\d{{1,2}})[ -]({MONTH})[ -](\d{{4}}|\d{{2}})\b", re.I), (1, 2, 3)),
-    (re.compile(rf"\b({MONTH}) (\d{{1,2}}),? (\d{{4}})\b", re.I), (2, 1, 3)),
+    # 9 April 2026, 07-Apr-26, 10th April 2026, and "13 Apr, 2026" from Goldman's footers
+    (re.compile(rf"\b(\d{{1,2}}){ORDINAL}[ -]({MONTH}),?[ -](\d{{4}}|\d{{2}})\b", re.I), (1, 2, 3)),
+    # April 10, 2026 and April 7th, 2026
+    (re.compile(rf"\b({MONTH}) (\d{{1,2}}){ORDINAL},? (\d{{4}})\b", re.I), (2, 1, 3)),
     (re.compile(r"\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b"), (1, 2, 3)),
 ]
 # slash dates are left out on purpose: 04/10/2026 is ambiguous between US and European order
-PDF_NAME_DATES = [*TEXT_DATES, (re.compile(r"(?<!\d)(20\d\d)(\d\d)(\d\d)(?!\d)"), (3, 2, 1))]
+COMPACT_DATE = (re.compile(r"(?<!\d)(20\d\d)(\d\d)(\d\d)(?!\d)"), (3, 2, 1))
+PDF_NAME_DATES = [*TEXT_DATES, COMPACT_DATE]
 
 
 def _to_date(day: str, month: str, year: str) -> date | None:

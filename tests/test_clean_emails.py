@@ -139,6 +139,13 @@ def test_date_earliest_in_text_wins():
     assert find_date(text, []) == (date(2026, 4, 9), "text")
 
 
+def test_commas_and_ordinal_days_are_read():
+    assert find_date("Published 13 Apr, 2026 3:15 AM EDT", []) == (date(2026, 4, 13), "text")
+    assert find_date("10th April 2026", []) == (date(2026, 4, 10), "text")
+    assert find_date("Published on 1st April 2026", []) == (date(2026, 4, 1), "text")
+    assert find_date("April 7th, 2026", []) == (date(2026, 4, 7), "text")
+
+
 def test_impossible_and_ambiguous_dates_are_skipped():
     assert find_date("31.02.2026 and 04/10/2026", []) == (None, None)
 
@@ -306,8 +313,9 @@ def test_real_data_prepares_cleanly():
     assert failures == {}
     assert len(emails) == 200
     assert all(e.bank for e in emails)
-    # 184 found, minus a subscription deadline (035243) and an event (035341) dated after arrival
-    assert sum(e.date is not None for e in emails) == 182
+    # minus a subscription deadline (035243) and an event (035341) dated after arrival,
+    # plus "10 Apr, 2026" (035368) once commas after the month were accepted
+    assert sum(e.date is not None for e in emails) == 183
     assert all(could_be_published(e.date, e.received) for e in emails if e.date)
     assert [e.id for e in emails if e.duplicate_of] == ["035428"]
     # banks that were wrong when the top of the email was read before the signature
