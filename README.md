@@ -38,7 +38,8 @@ Choose a model in `.env` with `LLM_MODEL`:
 | 3. Classify | `uv run python classify.py` | Classifies every email and writes `classified_emails.json` | The brief's main step |
 | 4. Review | open `output/runs/<run>/review.csv` | Lists every disagreement found (see "Flags" below), with an empty `your_verdict` column | A person checks the doubtful cases |
 | 5. Compare models | `uv run python -m scripts.compare_models --models gemma gemini-flash-lite --emails 10` | Runs the same emails through each model and compares speed and answers | Decide which model to trust |
-| 6. Tests | `uv run pytest` | 143 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
+| 6. News headlines | `uv run python fetch_news.py --every 10` | Fetches financial headlines every 10 minutes into `output/headlines.json` for the dashboard's ticker | The ticker reads a local file, so it is fast and keeps working when the news source is down |
+| 7. Tests | `uv run pytest` | 152 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
 
 Useful options:
 
@@ -116,6 +117,21 @@ and the smoke test proves it is applied.
 would hit every email (wrong key, missing model, daily quota used up) stops the run, keeps what
 was finished, and the next run carries on.
 
+### The news ticker
+
+`fetch_news.py` takes headlines from [Finnhub](https://finnhub.io)'s news API (free key in
+`.env` as `FINNHUB_API_KEY`), or from CNBC's public RSS feed when there is no key or Finnhub
+fails. Finviz, suggested in the brief, was left out: it has no API, and its terms discourage
+automated access, so scraping it would be both fragile and against its rules.
+
+* **One fetch for every viewer.** The script writes a local file and the dashboard reads it,
+  so the news source gets one request every 10 minutes (144 a day, against Finnhub's free 60 a
+  minute) however many people use the dashboard, and the API key never reaches the browser.
+* **Old news beats no news.** If every source fails, the last good headlines are kept and
+  marked `"stale": true` with the time they were really fetched, so the ticker can warn
+  instead of going blank.
+* **Outside data is not trusted.** Headlines are stored as plain text with `https` links
+  only, and the RSS feed is read with `defusedxml`, which refuses malicious XML.
 **The date field only holds dates the email states.** That means a date printed in the email,
 a date in an attachment's file name, or a date the model quotes from the email. A date that is
 only inferred, such as a campaign code in a link address (`..._20260413`), is never put in the
@@ -155,6 +171,7 @@ Looking closely at the 200 emails before and while building changed several deci
 classified_emails.json        the deliverable; only written by a run over every email
 output/                       everything else the pipeline creates (not committed)
   cleaned_emails/<id>.txt     what the model reads
+  headlines.json              the ticker's headlines (fetch_news.py)
   llm_answers/<model>/        saved answers: <id>_<prompt version>_<key>.json
   runs/<run>/                 one folder per classify.py run
     classified_emails.json
@@ -174,6 +191,9 @@ flags, warnings and the model and prompt version used.
 
 ```text
 classify.py                   classify every email (step 3)
+fetch_news.py                 refresh the ticker's headlines (step 6)
+news/
+  headlines.py                Finnhub and RSS sources, checks, keeping the last good set
 pipeline/
   clean_emails.py             read each email folder into clean text, attachments and Python's guesses
   allowed_tags.py             the brief's tag lists, written once
