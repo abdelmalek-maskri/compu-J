@@ -21,6 +21,14 @@ its answers, under a strip of live market headlines.
 each with the reason in plain words. On 20 independently labelled emails, bank and date are
 20 of 20 right, and market wrap and main asset class 18 of 20 (details below).
 
+## What it looks like
+
+![The dashboard: live headlines on top, the 200 emails on the left, the open email on the right](docs/screenshots/dashboard.png)
+
+| Search and filters | Why an email is worth checking |
+| --- | --- |
+| ![Filters for bank, asset class and industry, with a count beside each option](docs/screenshots/filters.png) | ![The reasons the AI and the rules disagree, in plain words](docs/screenshots/worth-checking.png) |
+
 ## How each email is read
 
 Every email is read twice, by two readers that work in different ways:
