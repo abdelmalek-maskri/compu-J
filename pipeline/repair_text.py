@@ -102,6 +102,7 @@ RULES = [
     (rf"{R}(?=-Credit)", EURO),
     # contractions and possessives: "it?s", "don?t", "we?ll", "S&P 500?s", "WTB ?s"
     (rf"(?<=[A-Za-z0-9.]){R}(?=(?:s|t|ll|re|ve|d|m)\b)", APOSTROPHE),
+    (rf"(?<=[A-Z]){R}(?=(?:S|T|LL|RE|VE|D|M)\b)", APOSTROPHE),  # "COMPANY?S"
     (rf"(?<=\w)\s{R}(?=s\b)", APOSTROPHE),
     (rf"\A{R}(?=s\b)", APOSTROPHE),  # "Kering" in bold, then "?s share price"
     # French elision: "d?Indemnisation", "l?Industrie"

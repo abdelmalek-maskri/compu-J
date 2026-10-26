@@ -23,6 +23,7 @@ A = APOSTROPHE
             f"the company{A}s view: we{A}ll see, don{A}t",
         ),
         (f"what we{R}{R}ve learned", f"what we{A}ve learned"),
+        (f"THE COMPANY{R}S VIEW", f"THE COMPANY{A}S VIEW"),
         (
             f"Union Bancaire Priv{R}e",
             "Union Bancaire Priv" + chr(0xE9) + "e",
