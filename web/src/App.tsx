@@ -79,7 +79,7 @@ export default function App() {
                   onClick={() => setFilters({ ...NO_FILTERS, other: [OTHER.review] })}
                   className="underline underline-offset-2 hover:text-accent"
                 >
-                  {toReview} to review
+                  {toReview} to check
                 </button>
               </>
             )}

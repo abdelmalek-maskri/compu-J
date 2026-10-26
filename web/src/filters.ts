@@ -15,7 +15,7 @@ export const GROUP_LABELS: Record<Group, string> = {
 export const OTHER = {
   wrap: 'Market wrap',
   pdf: 'Has a PDF',
-  review: 'Needs review',
+  review: 'Worth checking',
   nodate: 'No date',
 } as const
 

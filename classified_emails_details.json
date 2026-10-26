@@ -495,7 +495,7 @@
         "field": "date",
         "value_a": null,
         "value_b": "2026-03-27",
-        "note": "the model found no publication date; kept the rules' date (python:text)"
+        "note": "The AI found no publication date; the rules found 27 March 2026 in the email's text. Kept it, but it may be another kind of date, such as the day data is 'as of'."
       }
     ],
     "corrections": [],
@@ -1058,7 +1058,7 @@
         "field": "date",
         "value_a": null,
         "value_b": "2026-03-31",
-        "note": "the model found no publication date; kept the rules' date (python:text)"
+        "note": "The AI found no publication date; the rules found 31 March 2026 in the email's text. Kept it, but it may be another kind of date, such as the day data is 'as of'."
       }
     ],
     "corrections": [],
@@ -2660,7 +2660,7 @@
         "field": "companies_mentioned",
         "value_a": "2 companies",
         "value_b": "primary tag: Fixed Income",
-        "note": "named companies but gave no Equity tag, so they were dropped"
+        "note": "The AI named 2 companies but did not tag the email as Equity. The brief lists companies only for Equity, so they were dropped."
       }
     ],
     "corrections": [
@@ -2728,7 +2728,7 @@
         "field": "date",
         "value_a": "2026-04-10",
         "value_b": null,
-        "note": "the email states no date; this one is inferred from a link address"
+        "note": "The email states no date. A link in it contains 10 April 2026, probably the day it was sent; shown as a hint, not used as the date."
       }
     ],
     "corrections": [],
@@ -2852,7 +2852,7 @@
         "field": "date",
         "value_a": "2026-04-10",
         "value_b": "2026-04-09",
-        "note": "kept 2026-04-10 (llm)"
+        "note": "The AI dated it 10 April 2026; the rules found 9 April 2026. Kept the AI's date, because the email states it ('Published 10 Apr, 2026 3:07 AM EDT')."
       }
     ],
     "corrections": [],
@@ -2889,7 +2889,7 @@
         "field": "date",
         "value_a": "2026-04-10",
         "value_b": null,
-        "note": "kept None (None), the model's date did not check out (quote 'Friday, 10 April': missing, another date, or outside the arrival window)"
+        "note": "The AI dated it 10 April 2026, quoting 'Friday, 10 April', but that could not be confirmed: the quote must be in the email, give the full date, and fall between a month before the email arrived and a day after. The date was left empty."
       }
     ],
     "corrections": [],
@@ -3075,7 +3075,7 @@
         "field": "date",
         "value_a": "2026-04-15",
         "value_b": null,
-        "note": "kept None (None), the model's date did not check out (quote 'Wednesday, 15 April 2026': missing, another date, or outside the arrival window)"
+        "note": "The AI dated it 15 April 2026, quoting 'Wednesday, 15 April 2026', but that could not be confirmed: the quote must be in the email, give the full date, and fall between a month before the email arrived and a day after. The date was left empty."
       }
     ],
     "corrections": [],
@@ -3290,7 +3290,7 @@
         "field": "date",
         "value_a": null,
         "value_b": "2026-04-10",
-        "note": "the model found no publication date; kept the rules' date (python:pdf_name)"
+        "note": "The AI found no publication date; the rules found 10 April 2026 in a PDF's file name. Kept it, but it may be another kind of date, such as the day data is 'as of'."
       }
     ],
     "corrections": [],
@@ -3532,7 +3532,7 @@
         "field": "date",
         "value_a": "2026-04-09",
         "value_b": null,
-        "note": "kept None (None), the model's date did not check out (quote '9 April 2026': missing, another date, or outside the arrival window)"
+        "note": "The AI dated it 9 April 2026, quoting '9 April 2026', but that could not be confirmed: the quote must be in the email, give the full date, and fall between a month before the email arrived and a day after. The date was left empty."
       }
     ],
     "corrections": [],
@@ -4106,7 +4106,7 @@
         "field": "date",
         "value_a": "2026-04-13",
         "value_b": null,
-        "note": "kept None (None), the model's date did not check out (quote 'April 13': missing, another date, or outside the arrival window)"
+        "note": "The AI dated it 13 April 2026, quoting 'April 13', but that could not be confirmed: the quote must be in the email, give the full date, and fall between a month before the email arrived and a day after. The date was left empty."
       }
     ],
     "corrections": [],
@@ -5655,7 +5655,7 @@
         "field": "date",
         "value_a": "2026-04-13",
         "value_b": null,
-        "note": "kept None (None), the model's date did not check out (quote 'Monday, 13 April': missing, another date, or outside the arrival window)"
+        "note": "The AI dated it 13 April 2026, quoting 'Monday, 13 April', but that could not be confirmed: the quote must be in the email, give the full date, and fall between a month before the email arrived and a day after. The date was left empty."
       }
     ],
     "corrections": [],
@@ -5692,7 +5692,7 @@
         "field": "date",
         "value_a": "2026-04-13",
         "value_b": null,
-        "note": "kept None (None), the model's date did not check out (quote 'Monday, 13 April': missing, another date, or outside the arrival window)"
+        "note": "The AI dated it 13 April 2026, quoting 'Monday, 13 April', but that could not be confirmed: the quote must be in the email, give the full date, and fall between a month before the email arrived and a day after. The date was left empty."
       }
     ],
     "corrections": [],
@@ -5729,7 +5729,7 @@
         "field": "date",
         "value_a": "2026-04-13",
         "value_b": null,
-        "note": "the email states no date; this one is inferred from a link address"
+        "note": "The email states no date. A link in it contains 13 April 2026, probably the day it was sent; shown as a hint, not used as the date."
       }
     ],
     "corrections": [],
@@ -5798,14 +5798,14 @@
         "field": "date",
         "value_a": null,
         "value_b": "2026-04-13",
-        "note": "the model found no publication date; kept the rules' date (python:text)"
+        "note": "The AI found no publication date; the rules found 13 April 2026 in the email's text. Kept it, but it may be another kind of date, such as the day data is 'as of'."
       },
       {
         "kind": "model_logic",
         "field": "market_wrap",
         "value_a": "YES",
         "value_b": "purpose: no",
-        "note": "a wrap is descriptive with no forward-looking view, yet the model says this email's purpose is not"
+        "note": "The AI called this a market wrap, but its own checklist says the email does more than recap what happened. A market wrap only recaps."
       }
     ],
     "corrections": [],
@@ -5991,14 +5991,14 @@
         "field": "primary_asset_tag",
         "value_a": "Market Wrap",
         "value_b": "decision: NO",
-        "note": "named Market Wrap as the main class but decided it is not a wrap; the tag was removed, leaving no asset class"
+        "note": "The AI gave Market Wrap as the main asset class, but decided the email is not a market wrap. The Market Wrap tag was removed, leaving no main asset class."
       },
       {
         "kind": "inferred",
         "field": "date",
         "value_a": "2026-04-13",
         "value_b": null,
-        "note": "the email states no date; this one is inferred from a link address"
+        "note": "The email states no date. A link in it contains 13 April 2026, probably the day it was sent; shown as a hint, not used as the date."
       }
     ],
     "corrections": [

@@ -64,7 +64,7 @@ export function EmailList({ emails, total, selectedId, onSelect }: Props) {
                     {email.pdf_attachment && <span title="Has a PDF">PDF</span>}
                     {email.flag_count > 0 && (
                       <span className="bg-flag text-flag-ink px-1.5">
-                        {email.flag_count === 1 ? '1 to review' : `${email.flag_count} to review`}
+                        {email.flag_count === 1 ? '1 to check' : `${email.flag_count} to check`}
                       </span>
                     )}
                   </span>

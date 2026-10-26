@@ -27,7 +27,7 @@ describe('EmailList', () => {
 
     expect(screen.getByText('1 of 200 emails')).toBeInTheDocument()
     expect(screen.getByText('No date')).toBeInTheDocument()
-    expect(screen.getByText('1 to review')).toBeInTheDocument()
+    expect(screen.getByText('1 to check')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: /Market Update/ }))
     expect(onSelect).toHaveBeenCalledWith('035245')

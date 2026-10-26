@@ -30,6 +30,8 @@ def run_once(out: Path) -> bool:
         print(f"STALE: {payload['error']}. {kept}".strip())
     else:
         print(f"{len(payload['headlines'])} headlines from {payload['source']} saved to {out}")
+        if payload["error"]:
+            print(f"  (earlier sources failed: {payload['error']})")
     return not payload["stale"]
 
 
