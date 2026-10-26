@@ -3,8 +3,10 @@
 import re
 from pathlib import Path
 
-# the brief's deliverable; only a run over every email writes it
+# the brief's deliverable, with exactly its ten fields; only a run over every email writes it
 DELIVERABLE = Path("classified_emails.json")
+# everything else about each email (sources, both answers, flags), keyed by folder number
+DETAILS = Path("classified_emails_details.json")
 
 OUTPUT = Path("output")
 CLEANED_EMAILS = OUTPUT / "cleaned_emails"  # what the model reads, one .txt per email

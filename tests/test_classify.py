@@ -3,7 +3,7 @@ import json
 import pytest
 
 import classify
-from classify import RunStopped, classify_all, summary, write_json
+from classify import RunStopped, classify_all, summary, write_deliverable, write_json
 from pipeline.llm_cache import Cache
 from pipeline.llm_client import CallResult, LLMError, Settings, StopRun
 from tests.factories import llm_output, prepared_email
@@ -77,6 +77,31 @@ def test_call_warnings_reach_the_record(tmp_path):
     ]
 
 
+BRIEF_FIELDS = [
+    "folder_name",
+    "bank",
+    "date",
+    "market_wrap",
+    "primary_asset_tag",
+    "asset_tags",
+    "companies_mentioned",
+    "industry_subindustry",
+    "pdf_attachment",
+    "source_file",
+]
+
+
+def test_deliverable_has_exactly_the_brief_fields_and_details_hold_the_rest(tmp_path):
+    outcomes = run(Cache(tmp_path / "cache"), FakeClassifier())
+    out, details = tmp_path / "classified_emails.json", tmp_path / "details.json"
+    write_deliverable([o.record for o in reversed(outcomes)], out, details)
+    records = json.loads(out.read_text())
+    assert [list(r) for r in records] == [BRIEF_FIELDS, BRIEF_FIELDS]
+    assert [r["source_file"] for r in records] == ["035300", "035301"]
+    meta = json.loads(details.read_text())
+    assert meta["035300"]["model"] == "ollama_chat/test"
+
+
 def test_output_is_sorted_and_written_whole(tmp_path):
     outcomes = run(Cache(tmp_path / "cache"), FakeClassifier())
     out = tmp_path / "classified_emails.json"
@@ -112,6 +137,7 @@ def test_the_command_writes_the_run_folder_and_only_a_full_run_writes_the_delive
     run = tmp_path / "output" / "runs" / "test-model_1-emails"
     assert sorted(p.name for p in run.iterdir()) == [
         "classified_emails.json",
+        "classified_emails_details.json",
         "review.csv",
         "summary.txt",
     ]
@@ -119,7 +145,12 @@ def test_the_command_writes_the_run_folder_and_only_a_full_run_writes_the_delive
 
     monkeypatch.setattr("sys.argv", ["classify.py"])
     classify.main()
-    assert len(json.loads((tmp_path / "classified_emails.json").read_text())) == 2
+    deliverable = json.loads((tmp_path / "classified_emails.json").read_text())
+    assert len(deliverable) == 2
+    assert list(deliverable[0]) == BRIEF_FIELDS
+    details = json.loads((tmp_path / "classified_emails_details.json").read_text())
+    assert sorted(details) == ["035300", "035301"]
+    assert {"bank_llm", "bank_python", "flags"} <= set(details["035300"])
     assert (tmp_path / "output" / "runs" / "test-model" / "summary.txt").exists()
 
     # --force must ignore the cache: every email is sent again
