@@ -97,9 +97,18 @@ def create_app(config: Config | None = None) -> FastAPI:
             )
         return result
 
+    def inside(email_id: str, name: str) -> Path | None:
+        """a file in the email's own folder; anything a link or "../" points elsewhere is not"""
+        root = config.data_dir.resolve()
+        folder = (root / email_id).resolve()
+        path = (folder / name).resolve()
+        if folder.parent != root or not path.is_relative_to(folder) or not path.is_file():
+            return None
+        return path
+
     def email_body(email_id: str) -> str | None:
-        path = config.data_dir / email_id / "emailbody.html"
-        return read_html(path)[0] if path.exists() else None
+        path = inside(email_id, "emailbody.html")
+        return read_html(path)[0] if path else None
 
     @app.get("/api/emails/{email_id}")
     def get_email(email_id: str):
@@ -127,12 +136,8 @@ def create_app(config: Config | None = None) -> FastAPI:
     @app.get("/api/emails/{email_id}/files/{name:path}")
     def email_file(email_id: str, name: str):
         known(email_id)
-        folder = (config.data_dir / email_id).resolve()
-        path = (folder / name).resolve()
-        # "../../.env" and similar resolve outside the email's folder and are refused
-        if not path.is_relative_to(folder) or path.suffix.lower() not in SERVED_SUFFIXES:
-            raise HTTPException(404, "no such file")
-        if not path.is_file():
+        path = inside(email_id, name)
+        if path is None or path.suffix.lower() not in SERVED_SUFFIXES:
             raise HTTPException(404, "no such file")
         return FileResponse(path)
 

@@ -1,4 +1,5 @@
 import json
+import shutil
 
 import pytest
 from fastapi.testclient import TestClient
@@ -123,3 +124,17 @@ def test_characters_lost_in_the_export_are_put_back():
     assert f"it{APOSTROPHE}s the {OPEN_QUOTE}Bank{CLOSE_QUOTE}" in html
     assert f'alt="13th {EN_DASH} 17th"' in html
     assert f"a{R}b" in html  # comments are left alone
+
+
+def test_an_email_folder_linked_from_elsewhere_is_not_served(client, tmp_path):
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "emailbody.html").write_text("<p>secret</p>")
+    (outside / "secret.pdf").write_bytes(b"%PDF secret")
+    folder = tmp_path / "Data" / "035300"
+    shutil.rmtree(folder)
+    folder.symlink_to(outside, target_is_directory=True)
+
+    assert client.get("/api/emails/035300/html").status_code == 404
+    assert client.get("/api/emails/035300/files/secret.pdf").status_code == 404
+
