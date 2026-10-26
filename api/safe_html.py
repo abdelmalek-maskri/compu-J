@@ -2,10 +2,13 @@
 
 every exported email carries an injected <script>, and many load tracking images from the
 banks' servers, which tell the bank who opened the email and when. this removes anything that
-can run, blocks remote images unless asked for, and opens links in a new tab
+can run, blocks remote images unless asked for, opens links in a new tab, and puts back the
+characters the export lost (see pipeline/repair_text.py)
 """
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, NavigableString
+
+from pipeline.repair_text import R, repair
 
 # tags that can run code, load other pages or send data somewhere
 REMOVED_TAGS = ["script", "noscript", "iframe", "frame", "object", "embed", "form", "base", "link"]
@@ -50,6 +53,14 @@ def make_safe(html: str, allow_images: bool = False, files_url: str | None = Non
                 tag["data-blocked-src"] = src
                 del tag["src"]
             tag.attrs.pop("srcset", None)
+
+    for text in soup.find_all(string=lambda s: R in s):
+        if type(text) is NavigableString:  # not comments or doctypes
+            text.replace_with(repair(str(text)))
+    for tag in soup.find_all(attrs={"alt": True}) + soup.find_all(attrs={"title": True}):
+        for attr in ("alt", "title"):
+            if isinstance(tag.get(attr), str):
+                tag[attr] = repair(tag[attr])
 
     head = soup.head or soup.new_tag("head")
     if soup.head is None and soup.html:

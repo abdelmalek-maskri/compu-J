@@ -3,6 +3,7 @@
 from pipeline.check_metadata import check_metadata
 from pipeline.clean_emails import PreparedEmail
 from pipeline.flags import hint_flags, logic_flags, metadata_flags
+from pipeline.repair_text import repair
 from pipeline.schema import ClassifiedEmail, LLMOutput, Meta
 from pipeline.tag_rules import apply_tag_rules
 
@@ -12,14 +13,15 @@ def build_record(
 ) -> ClassifiedEmail:
     tags = apply_tag_rules(output)
     meta = check_metadata(email, output)
+    # the title is checked against the text as exported, then repaired for people to read
     return ClassifiedEmail(
-        folder_name=meta.title,
+        folder_name=meta.title and repair(meta.title),
         bank=meta.bank,
         date=meta.date,
         market_wrap=tags.market_wrap,
         primary_asset_tag=tags.primary_asset_tag,
         asset_tags=tags.asset_tags,
-        companies_mentioned=tags.companies_mentioned,
+        companies_mentioned=[repair(c) for c in tags.companies_mentioned],
         industry_subindustry=tags.industry_subindustry,
         pdf_attachment=email.attachments.pdfs or None,
         source_file=email.id,

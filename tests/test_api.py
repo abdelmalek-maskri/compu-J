@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 
 from api.main import Config, create_app
 from api.safe_html import make_safe
+from pipeline.repair_text import APOSTROPHE, CLOSE_QUOTE, EN_DASH, OPEN_QUOTE, R
 
 EMAIL = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <script>let baseHref=document.querySelector("base")</script></head>
@@ -114,3 +115,10 @@ def test_headlines_before_the_news_script_ran(client):
 def test_cleaning_keeps_the_content():
     html = make_safe("<p>Rates <b>rallied</b></p>")
     assert "Rates <b>rallied</b>" in html and '<meta charset="utf-8"/>' in html
+
+
+def test_characters_lost_in_the_export_are_put_back():
+    html = make_safe(f'<p>it{R}s the {R}Bank{R}</p><img alt="13th {R} 17th"><!-- a{R}b -->')
+    assert f"it{APOSTROPHE}s the {OPEN_QUOTE}Bank{CLOSE_QUOTE}" in html
+    assert f'alt="13th {EN_DASH} 17th"' in html
+    assert f"a{R}b" in html  # comments are left alone
