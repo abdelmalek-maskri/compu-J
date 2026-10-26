@@ -109,7 +109,7 @@ def create_app(config: Config | None = None) -> FastAPI:
             raise HTTPException(404, f"no email body for {email_id}")
         html, _ = read_html(path)
         return HTMLResponse(
-            make_safe(html, allow_images=images),
+            make_safe(html, allow_images=images, files_url=f"/api/emails/{email_id}/files/"),
             # stated here, so browsers ignore the outdated labels inside the files
             media_type="text/html; charset=utf-8",
             headers={"Content-Security-Policy": content_security_policy(images)},

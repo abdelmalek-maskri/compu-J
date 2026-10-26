@@ -9,6 +9,7 @@ from api.safe_html import make_safe
 EMAIL = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 <script>let baseHref=document.querySelector("base")</script></head>
 <body onload="track()"><img src="https://live.barcap.com/pixel.gif" width="1">
+<img src="/filestore/market_research/035300/inline/image001.png">
 <p>Rates rallied</p><a href="https://research.db.com/report">Read</a>
 <a href="javascript:alert(1)">bad</a></body></html>"""
 
@@ -32,6 +33,8 @@ def client(tmp_path):
     folder.mkdir(parents=True)
     (folder / "emailbody.html").write_text(EMAIL)
     (folder / "report.pdf").write_bytes(b"%PDF-1.4 fake")
+    (folder / "inline").mkdir()
+    (folder / "inline" / "image001.png").write_bytes(b"\x89PNG fake")
     (tmp_path / ".env").write_text("GEMINI_API_KEY=secret")
     (tmp_path / "classified_emails.json").write_text(json.dumps([RECORD]))
     details = {"035300": {"content_type": "research", "date_hint": None, "flags": [{"kind": "x"}]}}
@@ -70,13 +73,19 @@ def test_the_email_html_is_cleaned_and_labelled_utf8(client):
     assert 'data-blocked-src="https://live.barcap.com/pixel.gif"' in html
     assert 'target="_blank"' in html and "javascript:" not in html
     policy = response.headers["content-security-policy"]
-    assert "img-src data:;" in policy and "sandbox" in policy
+    assert "img-src 'self' data:;" in policy and "sandbox" in policy
 
 
 def test_images_load_only_when_asked(client):
     response = client.get("/api/emails/035300/html?images=true")
     assert 'src="https://live.barcap.com/pixel.gif"' in response.text
-    assert "img-src data: https:;" in response.headers["content-security-policy"]
+    assert "img-src 'self' data: https:;" in response.headers["content-security-policy"]
+
+
+def test_images_saved_with_the_email_point_at_its_files(client):
+    html = client.get("/api/emails/035300/html").text
+    assert 'src="/api/emails/035300/files/inline/image001.png"' in html
+    assert client.get("/api/emails/035300/files/inline/image001.png").status_code == 200
 
 
 def test_attachments_are_served(client):
