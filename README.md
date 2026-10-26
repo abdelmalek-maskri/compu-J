@@ -39,7 +39,20 @@ but that could not be confirmed: the quote must be in the email, give the full d
 
 ## Run it
 
-You need three things installed: [uv](https://docs.astral.sh/uv/) (it sets up Python 3.11 and
+**The quickest way, with [Docker](https://www.docker.com/products/docker-desktop/):** copy the
+email folders into `Data/`, optionally copy `.env.example` to `.env` and add a free
+[Finnhub key](https://finnhub.io) for the headlines (without one, CNBC's public feed is used),
+then:
+
+```bash
+docker compose up --build          # then open http://localhost:8000
+```
+
+This starts the dashboard and the headline fetcher, which refreshes every 10 minutes. It shows
+the results already in this repository; nothing is sent to an AI model. The emails are read
+from `Data/` but never copied into the image, and neither is `.env`.
+
+**Without Docker, or to classify the emails again**, you need three things installed: [uv](https://docs.astral.sh/uv/) (it sets up Python 3.11 and
 the project's packages), [Node 22](https://nodejs.org) (for the dashboard), and the email
 folders, copied into `Data/`. The emails are licensed research, so they are not in this
 repository.
@@ -64,7 +77,7 @@ cd web && npm ci && npm run dev            # the dashboard: open http://localhos
 ```
 
 Tests use made up emails and a fake model, so they need no key and no data:
-`uv run pytest` (196 tests) and `cd web && npm test` (10 tests). They run on every pull request.
+`uv run pytest` (197 tests) and `cd web && npm test` (10 tests). They run on every pull request.
 
 ## How it works
 
@@ -170,4 +183,5 @@ web/                 the dashboard
 scripts/             preview what the model reads, test a model, compare two models, accuracy
 evaluation/          the hand labels and the accuracy report
 tests/               made up data only, never the licensed emails
+Dockerfile, docker-compose.yml   the one command setup
 ```

@@ -1,0 +1,24 @@
+# licensed data and secrets never go into the image; Data/ is mounted at run time
+Data
+Data.zip
+.env
+
+# made again inside the image
+.venv
+web/node_modules
+web/dist
+output
+
+# private notes and tool folders
+private
+NOTES.md
+DECISIONS.md
+CLAUDE.md
+.claude
+.playwright-mcp
+.git
+.github
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.DS_Store
