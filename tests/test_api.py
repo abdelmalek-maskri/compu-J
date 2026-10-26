@@ -126,6 +126,13 @@ def test_characters_lost_in_the_export_are_put_back():
     assert f"a{R}b" in html  # comments are left alone
 
 
+def test_the_built_dashboard_is_served_next_to_the_api(tmp_path):
+    (tmp_path / "index.html").write_text("<title>Research Desk</title>")
+    client = TestClient(create_app(Config(data_dir=tmp_path, web_dir=tmp_path)))
+    assert "Research Desk" in client.get("/").text
+    assert client.get("/api/health").json()["status"] == "ok"
+
+
 def test_an_email_folder_linked_from_elsewhere_is_not_served(client, tmp_path):
     outside = tmp_path / "outside"
     outside.mkdir()

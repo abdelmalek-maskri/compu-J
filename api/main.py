@@ -2,6 +2,9 @@
 
 run from the repo root:  uv run uvicorn api.main:app --reload
 then the interactive documentation is at http://localhost:8000/docs
+
+when the dashboard has been built (web/dist, as in the Docker image), it is served here too,
+so one address gives both
 """
 
 import json
@@ -13,6 +16,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from api.safe_html import content_security_policy, make_safe, remote_images
 from pipeline.allowed_tags import ASSET_TAXONOMY, BANK_NAMES, INDUSTRY_TAXONOMY
@@ -36,6 +40,7 @@ class Config:
     deliverable: Path = DELIVERABLE
     details: Path = DETAILS
     headlines: Path = HEADLINES
+    web_dir: Path = Path("web/dist")
     # the React dev server; the browser refuses other sites reading this API
     dashboard_origin: str = field(
         default_factory=lambda: os.getenv("DASHBOARD_ORIGIN", "http://localhost:5173")
@@ -154,6 +159,9 @@ def create_app(config: Config | None = None) -> FastAPI:
     def headlines():
         return _read_json(config.headlines, NO_HEADLINES)
 
+    # last, so the /api routes above are matched first
+    if (config.web_dir / "index.html").exists():
+        app.mount("/", StaticFiles(directory=config.web_dir, html=True), name="dashboard")
     return app
 
 

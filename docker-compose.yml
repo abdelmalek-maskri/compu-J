@@ -1,0 +1,28 @@
+# docker compose up --build, then open http://localhost:8000
+# needs the email folders in ./Data; keys come from .env when it exists
+
+services:
+  dashboard:
+    build: .
+    image: research-desk
+    ports:
+      # this computer only: the API has no login and serves licensed emails
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./Data:/app/Data:ro
+      - news:/app/output
+    restart: unless-stopped
+
+  news:
+    build: .
+    image: research-desk
+    command: ["python", "fetch_news.py", "--every", "10"]
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - news:/app/output
+    restart: unless-stopped
+
+volumes:
+  news:
