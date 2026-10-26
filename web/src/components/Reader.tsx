@@ -2,11 +2,24 @@ import { useState, type ReactNode } from 'react'
 import { emailFileUrl, emailHtmlUrl, useJson, type Details, type Email, type EmailDetail } from '../api'
 import { formatDate } from '../filters'
 
+// the reader knows neither the AI nor the rules, so each flag says which two answers differ
 const FLAG_KINDS: Record<string, string> = {
-  model_vs_python: 'Model and rules disagree',
-  model_logic: 'Model contradicts itself',
-  model_vs_model: 'Two models disagree',
-  inferred: 'Filled in by the model',
+  model_vs_python: 'the AI and the rules disagree',
+  model_logic: 'the AI contradicts itself',
+  model_vs_model: 'two AI models disagree',
+  inferred: 'a guess, not stated in the email',
+}
+
+const FIELDS: Record<string, string> = {
+  bank: 'Bank',
+  date: 'Date',
+  folder_name: 'Title',
+  title: 'Title',
+  market_wrap: 'Market wrap',
+  primary_asset_tag: 'Main asset class',
+  asset_tags: 'Asset classes',
+  companies_mentioned: 'Companies',
+  industry_subindustry: 'Industries',
 }
 
 const CONTENT_TYPES: Record<string, string> = {
@@ -30,12 +43,17 @@ function Sidebar({ email, details }: { email: Email; details: Details | undefine
   return (
     <aside className="text-[14px]">
       {flags.length > 0 && (
-        <Section title="To review">
+        <Section title="Worth checking">
+          <p className="text-[13px] text-muted mb-3">
+            Each email is read twice: by an AI model, and by fixed rules written in code that
+            find the bank in the logo or signature and the date near the top. Where the two
+            disagree, or the AI contradicts itself, the reason is below.
+          </p>
           <ul className="space-y-2">
             {flags.map((f, i) => (
               <li key={i} className="bg-flag text-flag-ink px-3 py-2">
                 <span className="block font-semibold text-[13px]">
-                  {FLAG_KINDS[f.kind] ?? f.kind}: {f.field}
+                  {FIELDS[f.field] ?? f.field}: {FLAG_KINDS[f.kind] ?? f.kind}
                 </span>
                 {f.note}
               </li>
