@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.main import Config, create_app
-from api.safe_html import make_safe
+from api.safe_html import make_safe, remote_images
 from pipeline.repair_text import APOSTROPHE, CLOSE_QUOTE, EN_DASH, OPEN_QUOTE, R
 
 EMAIL = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
@@ -138,3 +138,14 @@ def test_an_email_folder_linked_from_elsewhere_is_not_served(client, tmp_path):
     assert client.get("/api/emails/035300/html").status_code == 404
     assert client.get("/api/emails/035300/files/secret.pdf").status_code == 404
 
+
+def test_noscript_content_is_kept_and_cleaned():
+    html = make_safe('<noscript><p>Read</p><img src="https://x.com/p.gif"></noscript>')
+    assert "<p>Read</p>" in html and 'data-blocked-src="https://x.com/p.gif"' in html
+
+
+def test_remote_srcset_candidates_count_and_never_replace_a_saved_image():
+    img = '<img src="/filestore/x/inline/a.png" srcset="https://bank.com/a.png 2x">'
+    assert remote_images(img) == 1
+    html = make_safe(img, files_url="/api/emails/035300/files/")
+    assert "srcset" not in html and 'src="/api/emails/035300/files/inline/a.png"' in html

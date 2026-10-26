@@ -11,16 +11,23 @@ from bs4 import BeautifulSoup, NavigableString
 from pipeline.repair_text import R, repair
 
 # tags that can run code, load other pages or send data somewhere
-REMOVED_TAGS = ["script", "noscript", "iframe", "frame", "object", "embed", "form", "base", "link"]
+# <noscript> stays: scripts never run in the sandbox, so browsers show its content
+REMOVED_TAGS = ["script", "iframe", "frame", "object", "embed", "form", "base", "link"]
 
 
 REMOTE = ("http://", "https://", "//")
 
 
+def _is_remote(img) -> bool:
+    """from an outside server, through src or any srcset candidate"""
+    candidates = [img.get("src", ""), *img.get("srcset", "").split(",")]
+    return any(c.strip().lower().startswith(REMOTE) for c in candidates)
+
+
 def remote_images(html: str) -> int:
     """how many images would be fetched from outside servers, so the dashboard can say so"""
     soup = BeautifulSoup(html, "lxml")
-    return sum(1 for img in soup.find_all("img") if img.get("src", "").lower().startswith(REMOTE))
+    return sum(1 for img in soup.find_all("img") if _is_remote(img))
 
 
 def make_safe(html: str, allow_images: bool = False, files_url: str | None = None) -> str:
@@ -53,6 +60,8 @@ def make_safe(html: str, allow_images: bool = False, files_url: str | None = Non
                 tag["src"] = f"{files_url}inline/{name}"
             else:
                 del tag["src"]
+            if not allow_images:
+                tag.attrs.pop("srcset", None)  # a remote candidate would win and be blocked
         elif tag.name == "img" and not allow_images:
             if src.lower().startswith(REMOTE):
                 # kept aside, so the dashboard can say an image was blocked
