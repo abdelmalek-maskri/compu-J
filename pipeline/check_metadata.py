@@ -24,11 +24,14 @@ class Metadata:
     date_python: date | None
 
 
+# removed inside words: the export replaced lost apostrophes with \ufffd, and models retype
+# them as plain ones or drop them, so "Europe\ufffds", "Europe's" and "Europes" must all match
+INSIDE_WORD = re.compile(r"['\u2018\u2019\ufffd]")
+
+
 def _words(text: str) -> str:
-    """lower case words only. punctuation does not count: models retype curly quotes and dashes
-    as plain ones, and the export replaced characters it could not convert with \ufffd, which
-    is not a word character either ("week\ufffds" and "week's" both become "week s")"""
-    return " ".join(re.findall(r"\w+", text.casefold()))
+    """lower case words only; other punctuation and spacing do not count"""
+    return " ".join(re.findall(r"\w+", INSIDE_WORD.sub("", text.casefold())))
 
 
 def appears_in(snippet: str | None, text: str) -> bool:
