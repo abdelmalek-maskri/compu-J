@@ -26,16 +26,10 @@ export type Flag = {
 }
 
 // classified_emails_details.json for one email; empty when no details file exists
+// the parts of classified_emails_details.json the dashboard shows; the file has more
 export type Details = {
-  bank_source?: string
-  date_source?: string | null
-  date_quote?: string | null
-  title_verified?: boolean | null
   flags?: Flag[]
-  corrections?: string[]
   content_type?: string
-  warnings?: string[]
-  model?: string
 }
 
 // remote_images: images on the banks' servers, blocked unless the reader asks for them
@@ -73,27 +67,27 @@ export function useJson<T>(url: string, refreshMs?: number): State<T> {
   })
 
   useEffect(() => {
-    let controller = new AbortController()
+    // each request has its own controller and cancels the one before, so a slow older answer
+    // can never overwrite a newer one, and leaving cancels whatever is still in flight
+    let current: AbortController | undefined
     const load = async () => {
+      current?.abort()
+      const own = new AbortController()
+      current = own
       try {
-        const response = await fetch(url, { signal: controller.signal })
+        const response = await fetch(url, { signal: own.signal })
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`)
         const data = (await response.json()) as T
-        setState({ url, data, error: null })
+        if (!own.signal.aborted) setState({ url, data, error: null })
       } catch (e) {
-        if (controller.signal.aborted) return
+        if (own.signal.aborted) return
         setState((s) => ({ ...s, url, error: e instanceof Error ? e.message : String(e) }))
       }
     }
     load()
-    const timer = refreshMs
-      ? setInterval(() => {
-          controller = new AbortController()
-          load()
-        }, refreshMs)
-      : undefined
+    const timer = refreshMs ? setInterval(load, refreshMs) : undefined
     return () => {
-      controller.abort()
+      current?.abort()
       clearInterval(timer)
     }
   }, [url, refreshMs])
