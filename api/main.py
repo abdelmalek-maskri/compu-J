@@ -14,7 +14,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 
-from api.safe_html import content_security_policy, make_safe
+from api.safe_html import content_security_policy, make_safe, remote_images
 from pipeline.allowed_tags import ASSET_TAXONOMY, BANK_NAMES, INDUSTRY_TAXONOMY
 from pipeline.clean_emails import read_html
 from pipeline.paths import DELIVERABLE, DETAILS, HEADLINES
@@ -97,17 +97,26 @@ def create_app(config: Config | None = None) -> FastAPI:
             )
         return result
 
+    def email_body(email_id: str) -> str | None:
+        path = config.data_dir / email_id / "emailbody.html"
+        return read_html(path)[0] if path.exists() else None
+
     @app.get("/api/emails/{email_id}")
     def get_email(email_id: str):
-        return {"record": known(email_id), "details": details().get(email_id, {})}
+        record = known(email_id)
+        html = email_body(email_id)
+        return {
+            "record": record,
+            "details": details().get(email_id, {}),
+            "remote_images": remote_images(html) if html else 0,
+        }
 
     @app.get("/api/emails/{email_id}/html", response_class=HTMLResponse)
     def email_html(email_id: str, images: bool = False):
         known(email_id)
-        path = config.data_dir / email_id / "emailbody.html"
-        if not path.exists():
+        html = email_body(email_id)
+        if html is None:
             raise HTTPException(404, f"no email body for {email_id}")
-        html, _ = read_html(path)
         return HTMLResponse(
             make_safe(html, allow_images=images, files_url=f"/api/emails/{email_id}/files/"),
             # stated here, so browsers ignore the outdated labels inside the files

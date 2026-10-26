@@ -59,6 +59,7 @@ def test_one_email_returns_its_record_and_details(client):
     body = client.get("/api/emails/035300").json()
     assert body["record"] == RECORD
     assert body["details"]["content_type"] == "research"
+    assert body["remote_images"] == 1  # the tracking pixel, not the image saved with the email
 
 
 @pytest.mark.parametrize("email_id", ["999999", "035300x", "..%2F.env"])

@@ -17,6 +17,12 @@ REMOVED_TAGS = ["script", "noscript", "iframe", "frame", "object", "embed", "for
 REMOTE = ("http://", "https://", "//")
 
 
+def remote_images(html: str) -> int:
+    """how many images would be fetched from outside servers, so the dashboard can say so"""
+    soup = BeautifulSoup(html, "lxml")
+    return sum(1 for img in soup.find_all("img") if img.get("src", "").lower().startswith(REMOTE))
+
+
 def make_safe(html: str, allow_images: bool = False, files_url: str | None = None) -> str:
     """`files_url` is where the email's own files are served; the export points the images it
     saved in `inline/` at "/filestore/market_research/<id>/inline/<name>", a path that only
