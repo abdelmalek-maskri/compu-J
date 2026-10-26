@@ -10,7 +10,7 @@ import csv
 from datetime import date
 from pathlib import Path
 
-from pipeline.allowed_tags import EQUITY, SUB_TO_PARENT
+from pipeline.allowed_tags import EQUITY, MARKET_WRAP, SUB_TO_PARENT
 from pipeline.check_metadata import Metadata, appears_in
 from pipeline.schema import ClassifiedEmail, Flag, LLMOutput
 
@@ -59,6 +59,19 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
             )
         )
 
+    # the model saying there is no publication date is a disagreement too: 035274's rules date
+    # is an "as of" date the model rightly refused
+    if meta.date_llm is None and meta.date_python:
+        flags.append(
+            Flag(
+                kind="model_vs_python",
+                field="date",
+                value_b=_text(meta.date_python),
+                note="the model found no publication date; "
+                f"kept the rules' date ({meta.date_source})",
+            )
+        )
+
     if not meta.title_verified:
         flags.append(
             Flag(
@@ -97,6 +110,21 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
                 value_a=output.market_wrap,
                 value_b=value_b,
                 note=note,
+            )
+        )
+
+    if output.market_wrap == "NO" and output.primary_asset_tag == MARKET_WRAP:
+        others = [t for t in output.asset_tags if t != MARKET_WRAP]
+        note = (
+            "named Market Wrap as the main class but decided it is not a wrap; the tag was removed"
+        )
+        flags.append(
+            Flag(
+                kind="model_logic",
+                field="primary_asset_tag",
+                value_a=MARKET_WRAP,
+                value_b="decision: NO",
+                note=note if others else note + ", leaving no asset class",
             )
         )
 
