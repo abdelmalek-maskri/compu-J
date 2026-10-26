@@ -52,10 +52,10 @@ This starts the dashboard and the headline fetcher, which refreshes every 10 min
 the results already in this repository; nothing is sent to an AI model. The emails are read
 from `Data/` but never copied into the image, and neither is `.env`.
 
-**Without Docker, or to classify the emails again**, you need three things installed: [uv](https://docs.astral.sh/uv/) (it sets up Python 3.11 and
-the project's packages), [Node 22](https://nodejs.org) (for the dashboard), and the email
-folders, copied into `Data/`. The emails are licensed research, so they are not in this
-repository.
+**Without Docker, or to classify the emails again**, you need three things installed:
+[uv](https://docs.astral.sh/uv/) (it sets up Python 3.11 and the project's packages),
+[Node 22](https://nodejs.org) (for the dashboard), and the email folders, copied into `Data/`.
+The emails are licensed research, so they are not in this repository.
 
 ```bash
 uv sync                            # install the Python packages
@@ -75,6 +75,10 @@ uv run uvicorn api.main:app --reload       # the server the dashboard reads from
 uv run python fetch_news.py --every 10     # fetches headlines now, then every 10 minutes
 cd web && npm ci && npm run dev            # the dashboard: open http://localhost:5173
 ```
+
+**With `make`** (macOS and Linux have it), the same steps have short names: `make setup`,
+`make classify`, `make dev` (the three above in one terminal; Ctrl+C stops them),
+`make docker` and `make test`. `make` alone lists them all.
 
 Tests use made up emails and a fake model, so they need no key and no data:
 `uv run pytest` (197 tests) and `cd web && npm test` (10 tests). They run on every pull request.
