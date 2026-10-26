@@ -39,3 +39,12 @@ jobs:
       # tsc -b type checks, then vite builds
       - run: npm run build
       - run: npm test
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # the image builds the dashboard and installs the locked Python packages, so a broken
+      # Dockerfile, lock file or web build fails here rather than on a reviewer's machine
+      - run: docker build --tag research-desk .
