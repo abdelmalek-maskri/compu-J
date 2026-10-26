@@ -11,6 +11,8 @@ dependencies = [
     "pydantic>=2",
     "litellm",
     "python-dotenv",
+    "httpx>=0.28.1",
+    "defusedxml>=0.7.1",
 ]
 
 [dependency-groups]
