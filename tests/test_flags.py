@@ -24,7 +24,9 @@ def test_a_consistent_answer_raises_no_flags():
 
 
 def test_bank_disagreement_says_which_answer_was_kept():
-    email = prepared_email(body=UBP_FLYER, bank="Goldman Sachs", bank_source="top_text")
+    email = prepared_email(
+        body=UBP_FLYER, bank="Goldman Sachs", bank_source="top_text", date=None, date_source=None
+    )
     title = "Structured Product Investment Proposal"
     output = llm_output(bank="UBP", date=None, date_quote=None, title=title)
     [flag] = metadata_flags(check_metadata(email, output))
@@ -53,6 +55,15 @@ def test_rejected_model_date_is_flagged_with_its_quote():
     assert "did not check out (quote '17.04.2026'" in flag.note
 
 
+def test_model_finding_no_date_while_the_rules_did_is_flagged():
+    # 035274: the rules took "report as of 31.03.2026", the model rightly found no date
+    [flag] = metadata_flags(
+        check_metadata(prepared_email(), llm_output(date=None, date_quote=None))
+    )
+    assert (flag.field, flag.value_a, flag.value_b) == ("date", None, "2026-04-10")
+    assert flag.note == "the model found no publication date; kept the rules' date (python:text)"
+
+
 def test_title_not_in_the_email_is_flagged():
     flags = metadata_flags(check_metadata(prepared_email(), llm_output(title="Weekly FX Outlook")))
     assert fields(flags) == [("model_vs_python", "title")]
@@ -76,6 +87,19 @@ def test_decision_against_its_own_checklist_is_flagged():
     assert logic_flags(llm_output(market_wrap="NO", market_wrap_checklist=checklist(yes=6)))[
         0
     ].note == ("decided not a wrap against most of its own checklist")
+
+
+def test_market_wrap_as_main_class_while_deciding_no_is_flagged():
+    # 035437: "Market Wrap" as primary tag, decision NO, nothing else, so no class was left
+    [flag] = logic_flags(llm_output(primary_asset_tag="Market Wrap", asset_tags=["Market Wrap"]))
+    assert (flag.field, flag.value_a, flag.value_b) == (
+        "primary_asset_tag",
+        "Market Wrap",
+        "decision: NO",
+    )
+    assert flag.note.endswith("leaving no asset class")
+    [flag] = logic_flags(llm_output(primary_asset_tag="Market Wrap", asset_tags=["FX"]))
+    assert not flag.note.endswith("leaving no asset class")
 
 
 def test_event_called_a_wrap_is_flagged():

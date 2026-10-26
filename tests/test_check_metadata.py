@@ -22,7 +22,15 @@ def test_export_damage_and_retyped_punctuation_do_not_count():
     damaged = f"aims to summarise the previous week{chr(0xFFFD)}s major events"
     assert appears_in("the previous week's major events", damaged)
     assert appears_in(f"the previous week{chr(0x2019)}s major events", damaged)
-    assert appears_in("Previous week s major events", damaged)
+    assert appears_in("Previous weeks major events", damaged)
+
+
+def test_a_lost_apostrophe_matches_however_the_model_writes_it():
+    # 035372: the email has "Europe\ufffds", the model wrote "Europes"
+    email = "This week's most read research Equities \ufffd Europe\ufffds top ten"
+    assert appears_in("This week's most read research Equities  Europes top ten", email)
+    assert appears_in("Equities - Europe's top ten", email)
+    assert appears_in(f"Europe{chr(0x2019)}s top ten", email)
 
 
 def test_whole_words_only_and_punctuation_alone_never_matches():
