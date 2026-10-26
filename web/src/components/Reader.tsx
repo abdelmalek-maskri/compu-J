@@ -14,15 +14,6 @@ const CONTENT_TYPES: Record<string, string> = {
   marketing: 'Marketing',
 }
 
-/** "llm+python", "llm", "python:logo" as plain words */
-function describeSource(source: string | null | undefined): string {
-  if (!source) return 'not found'
-  if (source === 'llm+python') return 'model and rules agree'
-  if (source === 'llm') return 'model, confirmed in the text'
-  const [, where] = source.split(':')
-  return where ? `rules (${where.replace('_', ' ')})` : source
-}
-
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="py-4 border-t border-rule first:border-t-0 first:pt-0">
@@ -35,6 +26,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Sidebar({ email, details }: { email: Email; details: Details | undefined }) {
   const flags = details?.flags ?? []
   const isEquity = email.asset_tags.includes('Equity')
+  if (flags.length === 0 && !isEquity) return null
   return (
     <aside className="text-[14px]">
       {flags.length > 0 && (
@@ -84,28 +76,6 @@ function Sidebar({ email, details }: { email: Email; details: Details | undefine
         </Section>
       )}
 
-      <Section title="How this was read">
-        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[13px]">
-          <dt className="text-muted">Bank</dt>
-          <dd>{describeSource(details?.bank_source)}</dd>
-          <dt className="text-muted">Date</dt>
-          <dd>{describeSource(details?.date_source)}</dd>
-          {details?.date_quote && (
-            <>
-              <dt className="text-muted">Quote</dt>
-              <dd className="font-serif italic">{'\u201C'}{details.date_quote}{'\u201D'}</dd>
-            </>
-          )}
-          {details?.model && (
-            <>
-              <dt className="text-muted">Model</dt>
-              <dd className="break-all">{details.model}</dd>
-            </>
-          )}
-          <dt className="text-muted">Folder</dt>
-          <dd className="tabular-nums">{email.source_file}</dd>
-        </dl>
-      </Section>
     </aside>
   )
 }
@@ -137,6 +107,7 @@ export function Reader({ email, onBack }: { email: Email; onBack: () => void }) 
   const [images, setImages] = useState(readImagesChoice)
   const pdfs = email.pdf_attachment ?? []
   const remote = data?.remote_images ?? 0
+  const hasSidebar = Boolean(data?.details.flags?.length) || email.asset_tags.includes('Equity')
   const kind = CONTENT_TYPES[data?.details.content_type ?? email.content_type ?? '']
 
   const tab = (label: string, value: string | null) => (
@@ -188,10 +159,18 @@ export function Reader({ email, onBack }: { email: Email; onBack: () => void }) 
               {kind}
             </>
           )}
+          <span aria-hidden> {'\u00B7'} </span>
+          <span className="tabular-nums" title="Folder in Data/">
+            {id}
+          </span>
         </p>
       </header>
 
-      <div className="mt-6 flex-1 grid gap-8 xl:grid-cols-[minmax(0,1fr)_17rem]">
+      <div
+        className={`mt-6 flex-1 grid gap-8 ${
+          hasSidebar ? 'xl:grid-cols-[minmax(0,1fr)_17rem]' : ''
+        }`}
+      >
         <div className="flex flex-col min-h-[70vh]">
           <div className="flex items-end gap-5 border-b border-rule" role="tablist">
             {tab('Email', null)}
