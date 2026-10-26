@@ -1,5 +1,9 @@
 """find what a person should look at, and write it to a review file
 
+each email is read twice: by the AI model, and by fixed rules written in Python (the bank from
+the logo or signature, the date from the top of the email or a PDF's name). notes are written
+for someone who knows neither, because they are shown in the dashboard and in review.csv
+
 model_vs_python: the model and the rules gave different answers
 model_logic:     the model's answer contradicts itself
 model_vs_model:  two models disagree on the same email (made by scripts/compare_models.py)
@@ -23,14 +27,35 @@ def _text(value: date | str | None) -> str | None:
     return value.isoformat() if isinstance(value, date) else value
 
 
+# where the rules found a value, from Metadata's "python:<where>" sources
+WHERE = {
+    "logo": "the bank's logo",
+    "signature": "the signature",
+    "top_text": "the top of the email",
+    "text": "the email's text",
+    "pdf_name": "a PDF's file name",
+}
+
+
+def _day(value: date) -> str:
+    return f"{value.day} {value:%B %Y}"
+
+
+def _where(source: str | None) -> str:
+    where = (source or "").removeprefix("python:")
+    return WHERE.get(where, where)
+
+
 def metadata_flags(meta: Metadata) -> list[Flag]:
     flags = []
     # the model naming a bank the rules did not find is filling a gap, not disagreeing
     filled_gap = meta.bank_python is None and meta.bank == meta.bank_llm
     if meta.bank_llm != "Other" and meta.bank_llm != meta.bank_python and not filled_gap:
-        note = f"kept {meta.bank} ({meta.bank_source})"
-        if meta.bank != meta.bank_llm:
-            note += ", the model's bank is not named in the email"
+        note = f"The AI says {meta.bank_llm}; the rules say {meta.bank_python or 'no bank'}. "
+        if meta.bank == meta.bank_llm:
+            note += "Kept the AI's answer, because the email names that bank."
+        else:
+            note += "Kept the rules' answer, because the AI's bank is not named in the email."
         flags.append(
             Flag(
                 kind="model_vs_python",
@@ -43,11 +68,22 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
 
     filled_gap = meta.date_python is None and meta.date == meta.date_llm
     if meta.date_llm and meta.date_llm != meta.date_python and not filled_gap:
-        note = f"kept {_text(meta.date)} ({meta.date_source})"
-        if meta.date != meta.date_llm:
+        rules = _day(meta.date_python) if meta.date_python else "no date"
+        if meta.date == meta.date_llm:
+            note = (
+                f"The AI dated it {_day(meta.date_llm)}; the rules found {rules}. Kept the AI's "
+                f"date, because the email states it ('{meta.date_quote}')."
+            )
+        else:
+            note = (
+                f"The AI dated it {_day(meta.date_llm)}, quoting '{meta.date_quote}', but that "
+                "could not be confirmed: the quote must be in the email, give the full date, "
+                "and fall between a month before the email arrived and a day after. "
+            )
             note += (
-                f", the model's date did not check out (quote {meta.date_quote!r}: missing, "
-                "another date, or outside the arrival window)"
+                f"Kept the rules' date, found in {_where(meta.date_source)}."
+                if meta.date
+                else "The date was left empty."
             )
         flags.append(
             Flag(
@@ -67,8 +103,9 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
                 kind="model_vs_python",
                 field="date",
                 value_b=_text(meta.date_python),
-                note="the model found no publication date; "
-                f"kept the rules' date ({meta.date_source})",
+                note=f"The AI found no publication date; the rules found {_day(meta.date_python)} "
+                f"in {_where(meta.date_source)}. Kept it, but it may be another kind of date, "
+                "such as the day data is 'as of'.",
             )
         )
 
@@ -78,7 +115,7 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
                 kind="model_vs_python",
                 field="title",
                 value_a=meta.title,
-                note="the model's title is not in the email",
+                note="The AI's title could not be found in the email, word for word.",
             )
         )
     return flags
@@ -92,7 +129,8 @@ def hint_flags(date_found: date | None, hint: date | None) -> list[Flag]:
             kind="inferred",
             field="date",
             value_a=_text(hint),
-            note="the email states no date; this one is inferred from a link address",
+            note=f"The email states no date. A link in it contains {_day(hint)}, probably the "
+            "day it was sent; shown as a hint, not used as the date.",
         )
     ]
 
@@ -116,7 +154,8 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
     if output.market_wrap == "NO" and output.primary_asset_tag == MARKET_WRAP:
         others = [t for t in output.asset_tags if t != MARKET_WRAP]
         note = (
-            "named Market Wrap as the main class but decided it is not a wrap; the tag was removed"
+            "The AI gave Market Wrap as the main asset class, but decided the email is not a "
+            "market wrap. The Market Wrap tag was removed"
         )
         flags.append(
             Flag(
@@ -124,7 +163,7 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
                 field="primary_asset_tag",
                 value_a=MARKET_WRAP,
                 value_b="decision: NO",
-                note=note if others else note + ", leaving no asset class",
+                note=note + "." if others else note + ", leaving no main asset class.",
             )
         )
 
@@ -132,15 +171,27 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
         if not checks["purpose"]:
             wrap_flag(
                 "purpose: no",
-                "a wrap is descriptive with no forward-looking view, "
-                "yet the model says this email's purpose is not",
+                "The AI called this a market wrap, but its own checklist says the email does more "
+                "than recap what happened. A market wrap only recaps.",
             )
         if yes <= FEW_CHECKS_FOR_A_WRAP:
-            wrap_flag(f"{yes}/7 checks", "decided wrap against most of its own checklist")
+            wrap_flag(
+                f"{yes}/7 checks",
+                f"The AI called this a market wrap, but only {yes} of the brief's 7 market wrap "
+                "checks were met.",
+            )
         if output.content_type != "research":
-            wrap_flag(f"content type: {output.content_type}", "an event or offer is not a recap")
+            wrap_flag(
+                f"content type: {output.content_type}",
+                f"The AI called this a market wrap, but also says it is {output.content_type}, "
+                "not research. A market wrap is a recap of the markets.",
+            )
     elif yes >= MANY_CHECKS_FOR_A_NON_WRAP:
-        wrap_flag(f"{yes}/7 checks", "decided not a wrap against most of its own checklist")
+        wrap_flag(
+            f"{yes}/7 checks",
+            f"The AI decided this is not a market wrap, although {yes} of the brief's 7 market "
+            "wrap checks were met.",
+        )
 
     classes = {SUB_TO_PARENT.get(t, t) for t in [output.primary_asset_tag, *output.asset_tags]}
     if output.market_wrap == "NO" and output.companies_mentioned and EQUITY not in classes:
@@ -150,7 +201,9 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
                 field="companies_mentioned",
                 value_a=f"{len(output.companies_mentioned)} companies",
                 value_b=f"primary tag: {output.primary_asset_tag}",
-                note="named companies but gave no Equity tag, so they were dropped",
+                note=f"The AI named {len(output.companies_mentioned)} companies but did not tag "
+                "the email as Equity. The brief lists companies only for Equity, so they were "
+                "dropped.",
             )
         )
 
@@ -162,7 +215,8 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
                 field="date",
                 value_a=_text(output.date),
                 value_b=output.date_quote,
-                note="a date without a quote, or a quote without a date",
+                note="The AI gave a date without quoting where it appears, or a quote without a "
+                "date.",
             )
         )
     return flags
@@ -209,7 +263,7 @@ def model_vs_model_flags(
             field=field,
             value_a=_value(a, field),
             value_b=_value(b, field),
-            note=f"{name_a} vs {name_b}",
+            note=f"{name_a} and {name_b} answered differently.",
         )
         for field in COMPARED_FIELDS
         if not same_answer(a, b, field)

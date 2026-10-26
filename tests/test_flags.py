@@ -31,13 +31,14 @@ def test_bank_disagreement_says_which_answer_was_kept():
     output = llm_output(bank="UBP", date=None, date_quote=None, title=title)
     [flag] = metadata_flags(check_metadata(email, output))
     assert (flag.field, flag.value_a, flag.value_b) == ("bank", "UBP", "Goldman Sachs")
-    assert flag.note == "kept UBP (llm)"
+    assert flag.note.endswith("Kept the AI's answer, because the email names that bank.")
 
 
 def test_model_bank_missing_from_the_email_is_flagged():
     [flag] = metadata_flags(check_metadata(prepared_email(), llm_output(bank="Barclays")))
     assert (
-        flag.note == "kept Deutsche Bank (python:logo), the model's bank is not named in the email"
+        flag.note == "The AI says Barclays; the rules say Deutsche Bank. Kept the rules' answer, "
+        "because the AI's bank is not named in the email."
     )
 
 
@@ -52,7 +53,7 @@ def test_rejected_model_date_is_flagged_with_its_quote():
     output = llm_output(date="2026-04-17", date_quote="17.04.2026")
     [flag] = metadata_flags(check_metadata(prepared_email(), output))
     assert (flag.field, flag.value_a, flag.value_b) == ("date", "2026-04-17", "2026-04-10")
-    assert "did not check out (quote '17.04.2026'" in flag.note
+    assert "quoting '17.04.2026', but that could not be confirmed" in flag.note
 
 
 def test_model_finding_no_date_while_the_rules_did_is_flagged():
@@ -61,7 +62,9 @@ def test_model_finding_no_date_while_the_rules_did_is_flagged():
         check_metadata(prepared_email(), llm_output(date=None, date_quote=None))
     )
     assert (flag.field, flag.value_a, flag.value_b) == ("date", None, "2026-04-10")
-    assert flag.note == "the model found no publication date; kept the rules' date (python:text)"
+    assert flag.note.startswith(
+        "The AI found no publication date; the rules found 10 April 2026 in the email's text."
+    )
 
 
 def test_title_not_in_the_email_is_flagged():
@@ -86,7 +89,7 @@ def test_decision_against_its_own_checklist_is_flagged():
     assert any(f.value_b == "2/7 checks" for f in against)
     assert logic_flags(llm_output(market_wrap="NO", market_wrap_checklist=checklist(yes=6)))[
         0
-    ].note == ("decided not a wrap against most of its own checklist")
+    ].note.startswith("The AI decided this is not a market wrap")
 
 
 def test_market_wrap_as_main_class_while_deciding_no_is_flagged():
@@ -97,9 +100,9 @@ def test_market_wrap_as_main_class_while_deciding_no_is_flagged():
         "Market Wrap",
         "decision: NO",
     )
-    assert flag.note.endswith("leaving no asset class")
+    assert flag.note.endswith("leaving no main asset class.")
     [flag] = logic_flags(llm_output(primary_asset_tag="Market Wrap", asset_tags=["FX"]))
-    assert not flag.note.endswith("leaving no asset class")
+    assert not flag.note.endswith("leaving no main asset class.")
 
 
 def test_event_called_a_wrap_is_flagged():

@@ -38,7 +38,7 @@ def test_each_differing_field_is_flagged_with_both_answers():
     by_field = {f.field: (f.value_a, f.value_b) for f in flags}
     assert by_field["market_wrap"] == ("NO", "YES")
     assert by_field["primary_asset_tag"] == ("FX", "Market Wrap")
-    assert {f.note for f in flags} == {"gemma vs gemini-flash-lite"}
+    assert {f.note for f in flags} == {"gemma and gemini-flash-lite answered differently."}
 
 
 def test_the_command_compares_two_models_and_writes_one_folder(tmp_path, monkeypatch):
