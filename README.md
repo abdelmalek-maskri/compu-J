@@ -39,7 +39,7 @@ Choose a model in `.env` with `LLM_MODEL`:
 | 4. Review | open `output/runs/<run>/review.csv` | Lists every disagreement found (see "Flags" below), with an empty `your_verdict` column | A person checks the doubtful cases |
 | 5. Compare models | `uv run python -m scripts.compare_models --models gemma gemini-flash-lite --emails 10` | Runs the same emails through each model and compares speed and answers | Decide which model to trust |
 | 6. News headlines | `uv run python fetch_news.py --every 10` | Fetches financial headlines every 10 minutes into `output/headlines.json` for the dashboard's ticker | The ticker reads a local file, so it is fast and keeps working when the news source is down |
-| 7. Tests | `uv run pytest` | 152 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
+| 7. Tests | `uv run pytest` | 160 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
 
 Useful options:
 
@@ -168,13 +168,15 @@ Looking closely at the 200 emails before and while building changed several deci
 ## Output
 
 ```text
-classified_emails.json        the deliverable; only written by a run over every email
+classified_emails.json        the deliverable: the brief's ten fields, nothing else
+classified_emails_details.json  everything else about each email, by folder number
 output/                       everything else the pipeline creates (not committed)
   cleaned_emails/<id>.txt     what the model reads
   headlines.json              the ticker's headlines (fetch_news.py)
   llm_answers/<model>/        saved answers: <id>_<prompt version>_<key>.json
   runs/<run>/                 one folder per classify.py run
     classified_emails.json
+    classified_emails_details.json
     review.csv                flags, with an empty your_verdict column
     summary.txt
   comparisons/<models>_<emails>/
@@ -183,9 +185,12 @@ output/                       everything else the pipeline creates (not committe
     agreement.txt             speed and agreement per field
 ```
 
-Each record has the brief's ten fields, in its order, plus a `meta` object with everything
-else: where each value came from, both answers for bank and date, the market wrap checklist,
-flags, warnings and the model and prompt version used.
+`classified_emails.json` has exactly the brief's ten fields for each email, in its order, so it
+matches the spec. Everything else is in `classified_emails_details.json`, keyed by folder number
+(`source_file`): where each value came from, both the model's and Python's answers for bank
+and date, a date hint, the market wrap checklist, corrections, flags, warnings, and the model
+and prompt version used. The dashboard joins the two by folder number. Both files are only
+written by a finished run over every email.
 
 ## Files
 

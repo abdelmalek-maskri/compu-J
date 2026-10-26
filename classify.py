@@ -5,7 +5,8 @@ uv run python classify.py --limit 10      the first 10
 uv run python classify.py --only 035299   one or more emails by folder id
 uv run python classify.py --force         ignore cached answers
 
-each run writes output/runs/<run>/: classified_emails.json, review.csv and summary.txt
+each run writes output/runs/<run>/: classified_emails.json (the brief's ten fields),
+classified_emails_details.json (sources, both answers, flags), review.csv and summary.txt
 """
 
 import argparse
@@ -25,7 +26,7 @@ from pipeline.clean_emails import PreparedEmail, prepare_all
 from pipeline.flags import review_rows, write_review
 from pipeline.llm_cache import Cache, cache_key
 from pipeline.llm_client import LLMError, Settings, StopRun, classify_email
-from pipeline.paths import DELIVERABLE, LLM_ANSWERS, RUNS, run_name
+from pipeline.paths import DELIVERABLE, DETAILS, LLM_ANSWERS, RUNS, run_name
 from pipeline.prompt import PROMPT_VERSION
 from pipeline.schema import ClassifiedEmail
 
@@ -93,12 +94,26 @@ def classify_all(
     return outcomes
 
 
-def write_json(records: list[ClassifiedEmail], path: Path) -> None:
+def _write(data, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    data = [r.model_dump(mode="json") for r in sorted(records, key=lambda r: r.source_file)]
+    # write then rename, so a crash never leaves half a file
     tmp = path.with_suffix(".tmp")
     tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     os.replace(tmp, path)
+
+
+def write_json(records: list[ClassifiedEmail], path: Path) -> None:
+    """full records, meta included; used for model comparisons"""
+    ordered = sorted(records, key=lambda r: r.source_file)
+    _write([r.model_dump(mode="json") for r in ordered], path)
+
+
+def write_deliverable(records: list[ClassifiedEmail], path: Path, details: Path) -> None:
+    """the brief's ten fields and nothing else in path, so it matches the spec exactly;
+    each email's meta goes in details, keyed by folder number, for the dashboard"""
+    ordered = sorted(records, key=lambda r: r.source_file)
+    _write([r.model_dump(mode="json", exclude={"meta"}) for r in ordered], path)
+    _write({r.source_file: r.meta.model_dump(mode="json") for r in ordered}, details)
 
 
 def summary(outcomes: list[Outcome], settings: Settings) -> str:
@@ -175,7 +190,9 @@ def main() -> int:
         outcomes, stopped = e.outcomes, str(e)
     records = [o.record for o in outcomes]
 
-    write_json(records, run / "classified_emails.json")
+    write_deliverable(
+        records, run / "classified_emails.json", run / "classified_emails_details.json"
+    )
     write_review(review_rows(records, settings.name), run / "review.csv")
     text = summary(outcomes, settings)
     if stopped:
@@ -184,8 +201,8 @@ def main() -> int:
     print(f"\n{text}\nwritten to {run}/")
     # only a finished run over every email may replace the deliverable
     if not (args.only or args.limit or stopped):
-        write_json(records, DELIVERABLE)
-        print(f"and to {DELIVERABLE}")
+        write_deliverable(records, DELIVERABLE, DETAILS)
+        print(f"and to {DELIVERABLE} and {DETAILS}")
     if stopped:
         return 2
     return 1 if failures else 0
