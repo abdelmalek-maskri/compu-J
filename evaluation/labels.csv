@@ -1,0 +1,21 @@
+email,link,bank,date,market_wrap,primary_asset_tag,notes
+035239,http://localhost:5173/#035239,Barclays,2026-04-09,NO,Equity,an invitation to an investor trip with European MedTech companies
+035240,http://localhost:5173/#035240,Barclays,2026-04-09,NO,Fixed Income,
+035241,http://localhost:5173/#035241,Barclays,2026-04-09,NO,Commodities,
+035242,http://localhost:5173/#035242,UBP,2026-04-09,YES,Market Wrap,"the attached PDF opens with yesterday's market moves across equities, oil and companies"
+035250,http://localhost:5173/#035250,Deutsche Bank,2026-04-09,NO,Macro,
+035252,http://localhost:5173/#035252,Julius Baer,2026-04-02,NO,Commodities,
+035259,http://localhost:5173/#035259,Julius Baer,2026-04-02,NO,Thematics,
+035262,http://localhost:5173/#035262,Julius Baer,2026-04-01,NO,FX,
+035265,http://localhost:5173/#035265,Deutsche Bank,2026-04-01,NO,Fixed Income,"a monthly recap, but of one asset class (credit default swaps)"
+035284,http://localhost:5173/#035284,Deutsche Bank,2026-04-09,NO,Equity,
+035289,http://localhost:5173/#035289,Barclays,2026-04-09,NO,Macro,
+035315,http://localhost:5173/#035315,Morgan Stanley,2026-04-10,NO,Thematics,
+035340,http://localhost:5173/#035340,Morgan Stanley,2026-04-10,NO,Equity,
+035344,http://localhost:5173/#035344,Barclays,2026-04-10,NO,Fixed Income,
+035350,http://localhost:5173/#035350,UBP,2026-04-10,YES,Market Wrap,same daily series as 035242
+035353,http://localhost:5173/#035353,Deutsche Bank,2026-04-10,NO,Commodities,
+035366,http://localhost:5173/#035366,Goldman Sachs,2026-04-10,NO,Macro,
+035405,http://localhost:5173/#035405,Barclays,2026-04-12,NO,FX,
+035431,http://localhost:5173/#035431,Barclays,2026-04-13,NO,Macro,"debatable: a weekly digest of research notes across asset classes, not a recap of market moves; dated by its newest item"
+035437,http://localhost:5173/#035437,T. Rowe Price,none,YES,Market Wrap,a weekly market recap; the email states no date
