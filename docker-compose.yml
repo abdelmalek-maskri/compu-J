@@ -6,7 +6,8 @@ services:
     build: .
     image: research-desk
     ports:
-      - "8000:8000"
+      # this computer only: the API has no login and serves licensed emails
+      - "127.0.0.1:8000:8000"
     volumes:
       - ./Data:/app/Data:ro
       - news:/app/output
