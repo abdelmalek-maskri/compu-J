@@ -11,6 +11,7 @@ from pipeline.clean_emails import (
     could_be_published,
     find_bank,
     find_date,
+    find_date_hint,
     find_duplicates,
     list_files,
     prepare_all,
@@ -137,6 +138,25 @@ def test_date_formats_in_text():
 def test_date_earliest_in_text_wins():
     text = "9 April 2026\nMonday, 21 September 2026 investor trip"
     assert find_date(text, []) == (date(2026, 4, 9), "text")
+
+
+def test_commas_and_ordinal_days_are_read():
+    assert find_date("Published 13 Apr, 2026 3:15 AM EDT", []) == (date(2026, 4, 13), "text")
+    assert find_date("10th April 2026", []) == (date(2026, 4, 10), "text")
+    assert find_date("Published on 1st April 2026", []) == (date(2026, 4, 1), "text")
+    assert find_date("April 7th, 2026", []) == (date(2026, 4, 7), "text")
+
+
+def test_date_hint_comes_from_link_addresses_only():
+    # 035437: a T. Rowe Price campaign code; "Jan21" and "2024" in the same address are ignored
+    html = (
+        '<p>Weekly market recap</p><a href="https://example.com/?guid=UK_2024_Recap&amp;'
+        'PlacementGUID=em_GIS_EMEA_Jan21_Weekly_Market_Recap-PDM556126_20260413">Read</a>'
+    )
+    assert find_date_hint(html, received=None) == date(2026, 4, 13)
+    assert find_date_hint("<p>written on 20260413</p>", received=None) is None
+    # the same arrival window as every other date
+    assert find_date_hint(html, received=date(2026, 3, 1)) is None
 
 
 def test_impossible_and_ambiguous_dates_are_skipped():
@@ -306,8 +326,16 @@ def test_real_data_prepares_cleanly():
     assert failures == {}
     assert len(emails) == 200
     assert all(e.bank for e in emails)
-    # 184 found, minus a subscription deadline (035243) and an event (035341) dated after arrival
-    assert sum(e.date is not None for e in emails) == 182
+    # minus a subscription deadline (035243) and an event (035341) dated after arrival,
+    # plus "10 Apr, 2026" (035368) once commas after the month were accepted
+    assert sum(e.date is not None for e in emails) == 183
+    # inferred from link addresses, never put in the date field
+    hints = {e.id: e.date_hint for e in emails if e.date_hint}
+    assert hints == {
+        "035330": date(2026, 4, 10),
+        "035429": date(2026, 4, 13),
+        "035437": date(2026, 4, 13),
+    }
     assert all(could_be_published(e.date, e.received) for e in emails if e.date)
     assert [e.id for e in emails if e.duplicate_of] == ["035428"]
     # banks that were wrong when the top of the email was read before the signature

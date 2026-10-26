@@ -103,6 +103,22 @@ def test_half_a_date_answer_is_flagged():
     ]
 
 
+def test_an_inferred_date_is_kept_apart_and_flagged_for_a_person():
+    email = prepared_email(date=None, date_source=None, date_hint=date(2026, 4, 13))
+    record = build_record(email, llm_output(date=None, date_quote=None), "model", "v2")
+    assert (record.date, record.meta.date_hint) == (None, date(2026, 4, 13))
+    assert [(f.kind, f.field, f.value_a) for f in record.meta.flags] == [
+        ("inferred", "date", "2026-04-13")
+    ]
+
+
+def test_no_hint_when_the_email_states_a_date():
+    email = prepared_email(date_hint=date(2026, 4, 13))
+    record = build_record(email, llm_output(), "model", "v2")
+    assert (record.date, record.meta.date_hint) == (date(2026, 4, 10), None)
+    assert all(f.kind != "inferred" for f in record.meta.flags)
+
+
 def test_review_file_has_one_row_per_flag_and_an_empty_verdict(tmp_path):
     record = build_record(
         prepared_email(), llm_output(bank="Barclays", title="Weekly FX Outlook"), "model", "v2"

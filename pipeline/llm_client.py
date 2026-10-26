@@ -52,6 +52,7 @@ class Settings:
     preset: str | None = None
     seconds_between_calls: float = 0
     api_key_env: str | None = None
+    temperature: float | None = 0
 
     @property
     def name(self) -> str:
@@ -83,6 +84,10 @@ class Settings:
             preset=name if preset else None,
             seconds_between_calls=preset.seconds_between_calls if preset else 0,
             api_key_env=preset.api_key_env if preset else None,
+            # a model given by its full name keeps temperature 0 only when it runs in Ollama
+            temperature=preset.temperature
+            if preset
+            else (0 if model.startswith("ollama") else None),
         )
 
     @classmethod
@@ -108,6 +113,8 @@ def complete(settings: Settings, messages: list[dict], schema: type[BaseModel] =
         options = {"api_base": settings.api_base, "num_ctx": settings.num_ctx}
     if settings.reasoning_effort:
         options["reasoning_effort"] = settings.reasoning_effort
+    if settings.temperature is not None:
+        options["temperature"] = settings.temperature
     return litellm.completion(
         model=settings.model,
         messages=messages,
@@ -115,7 +122,6 @@ def complete(settings: Settings, messages: list[dict], schema: type[BaseModel] =
             "type": "json_schema",
             "json_schema": {"name": schema.__name__.lower(), "schema": schema.model_json_schema()},
         },
-        temperature=0,
         timeout=settings.timeout,
         **options,
     )

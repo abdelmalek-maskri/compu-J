@@ -52,7 +52,7 @@ class Flag(BaseModel):
     """something a person should look at: two answers that disagree, or an answer that
     contradicts itself. corrections the rules make on their own are not flags"""
 
-    kind: Literal["model_vs_python", "model_logic", "model_vs_model"]
+    kind: Literal["model_vs_python", "model_logic", "model_vs_model", "inferred"]
     field: str
     value_a: str | None = None
     value_b: str | None = None
@@ -66,6 +66,9 @@ class Meta(BaseModel):
     date_source: str | None = None
     date_quote: str | None = None
     received: date | None = None
+    # a date the email does not state but that was inferred (from a link address); only set
+    # when the date field is empty, so a guess is never passed off as the publication date
+    date_hint: date | None = None
     title_verified: bool | None = None
     # both answers kept on every record, so the model and the rules can be compared
     bank_llm: str | None = None
