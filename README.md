@@ -1,137 +1,173 @@
 # Research email classifier
 
-Reads 200 market research emails from investment banks, tags each one with asset classes,
-companies and industries, and writes `classified_emails.json`. A dashboard shows each result
-next to the email it came from, under a live news ticker.
+Investment banks send their clients research by email: daily market recaps, notes on a
+company, views on currencies or interest rates. This project takes 200 of those emails and,
+for each one, works out who sent it, when, what it is about, and whether it is a "market
+wrap" (a recap of what the markets did). It writes the answers to `classified_emails.json`,
+and a small website (the dashboard) lets you search the results and read each email next to
+its answers, under a strip of live market headlines.
+
+## What you get
+
+* **`classified_emails.json`**: one entry per email with the ten fields the brief asks for:
+  title, bank, date, market wrap (YES or NO), main asset class, all asset classes, companies
+  and industries (for company research only), PDF attachments, and the email's folder number.
+* **`classified_emails_details.json`**: for each email, where every answer came from, so any
+  value can be traced back to the email.
+* **The dashboard**: search and filter the 200 emails, read each one safely, open its PDFs, and
+  see which emails are worth a second look and why.
+
+**Result:** all 200 emails classified, none failed. 15 emails are marked "worth checking",
+each with the reason in plain words. On 20 independently labelled emails, bank and date are
+20 of 20 right, and market wrap and main asset class 18 of 20 (details below).
+
+## How each email is read
 
 Every email is read twice, by two readers that work in different ways:
 
-* **The model**: an AI language model (Gemini, or a local model through Ollama). It reads the
-  whole email and answers every field: the tags, the companies, whether it is a market wrap,
-  and also the bank, date and title.
-* **The rules**: plain Python, no AI. They find the bank in the logo or the signature, and the
-  date near the top of the email or in a PDF's file name. They cannot judge meaning, but they
-  never invent anything.
+* **The model**: an AI language model (an LLM) that reads the whole email, like a person
+  would. It answers every field. It understands meaning, but it can be wrong with confidence.
+* **The rules**: ordinary Python code, no AI. They look for the bank's name in the logo or the
+  signature, and for a date near the top of the email or in a PDF's file name. They cannot
+  understand meaning, but they never invent anything.
 
-The model's answer is used when the email confirms it. When the two disagree, nothing is
-decided silently: the email is marked "worth checking", with the reason in plain words.
-
-**Result on the full set:** 200 emails classified, none failed. The model and the rules agree
-on the sending bank for all 200, and 17 disagreements on 15 emails are marked for a person to
-check.
+The model's answer is used when the email confirms it: the bank it names must appear in the
+email, and the date it gives must be quoted from the email. Otherwise the rules' answer is
+used. When the two disagree, nothing is decided silently: the email is marked "worth
+checking", with the reason, for example *"The AI dated it 13 April 2026, quoting 'April 13',
+but that could not be confirmed: the quote must be in the email, give the full date..."*
 
 ## Run it
 
-You need [uv](https://docs.astral.sh/uv/) (it installs Python 3.11 itself), Node 22, and the
-email folders in `Data/`. They are licensed research, so they are not in this repository.
+You need three things installed: [uv](https://docs.astral.sh/uv/) (it sets up Python 3.11 and
+the project's packages), [Node 22](https://nodejs.org) (for the dashboard), and the email
+folders, copied into `Data/`. The emails are licensed research, so they are not in this
+repository.
 
 ```bash
-uv sync
-cp .env.example .env               # choose LLM_MODEL, add GEMINI_API_KEY and FINNHUB_API_KEY
-uv run python classify.py          # writes classified_emails.json
+uv sync                            # install the Python packages
+cp .env.example .env               # then fill in the two keys below
+uv run python classify.py          # classify every email, writes classified_emails.json
 ```
 
-Then the dashboard, in three terminals:
+`.env` needs a free [Gemini key](https://aistudio.google.com) for the model and a free
+[Finnhub key](https://finnhub.io) for the headlines. To run the model on your own machine
+instead, install [Ollama](https://ollama.com) and set `LLM_MODEL=gemma` (it needs about 15 GB
+of memory). Answers are saved, so running `classify.py` again costs nothing.
+
+Then start the dashboard, in three terminals:
 
 ```bash
-uv run uvicorn api.main:app --reload       # the API, on port 8000 (docs at /docs)
-uv run python fetch_news.py --every 10     # the news, now and every 10 minutes
-cd web && npm ci && npm run dev            # the dashboard, on http://localhost:5173
+uv run uvicorn api.main:app --reload       # the server the dashboard reads from (port 8000)
+uv run python fetch_news.py --every 10     # fetches headlines now, then every 10 minutes
+cd web && npm ci && npm run dev            # the dashboard: open http://localhost:5173
 ```
 
-Tests need no model, no key and no data: `uv run pytest` (194 tests) and `cd web && npm test`.
-CI runs both, plus linting and the type check, on every pull request.
-
-| `LLM_MODEL` | Runs | Notes |
-| --- | --- | --- |
-| `gemini-flash-lite` | Google cloud, free key from [AI Studio](https://aistudio.google.com) | used for the submitted results |
-| `gemma` | your machine, through [Ollama](https://ollama.com) | private and free, needs about 15 GB of memory |
-| `gpt-oss-20b` | your machine, through Ollama | a second local model to compare against |
-
-Answers are saved per email, prompt and model, so a second run only asks the model what it
-has not answered yet. `scripts/compare_models.py` runs the same emails through two models and
-lists every field they answer differently.
+Tests use made up emails and a fake model, so they need no key and no data:
+`uv run pytest` (196 tests) and `cd web && npm test` (10 tests). They run on every pull request.
 
 ## How it works
 
 ```text
-Data/<id>/  ─►  clean_emails.py   HTML to text, PDFs' first pages, arrival time,
-                                  and the rules' own answer for the bank and date
-            ─►  the model (AI)    one structured answer per email, its shape fixed
-                                  by the brief's tag lists (schema.py, prompt.py)
-            ─►  tag_rules.py      the brief's rules: market wrap values, parent tags,
-                                  companies and industries only for Equity
-            ─►  check_metadata.py the model's bank, date and title, kept only when
-                                  the email confirms them
-            ─►  flags.py          every disagreement, in plain words (review.csv)
-            ─►  classified_emails.json            the brief's ten fields, nothing else
-                classified_emails_details.json    where each value came from
-
-api/   FastAPI: reads those files and the emails, serves them safely
-web/   React + TypeScript + Tailwind: list, search, filters, reader, ticker
+Data/<folder>/        the email (HTML), its PDFs, its images
+   │
+   ▼  clean_emails.py       turn the HTML into plain text, read the PDFs' first pages,
+   │                        and let the rules find the bank and date
+   ▼  the model             one answer per email, in a fixed shape: only the brief's
+   │                        tag names are accepted
+   ▼  tag_rules.py          the brief's rules, for example: a market wrap gets no companies
+   ▼  check_metadata.py     keep the model's bank, date and title only if the email confirms them
+   ▼  flags.py              note every disagreement, in plain words
+   │
+classified_emails.json + classified_emails_details.json
+   │
+   ▼  api/                  a small server that reads those files and the emails
+   ▼  web/                  the dashboard (React)
 ```
 
-## The decisions that matter
+## What I found in the data, and what I did about it
 
-* **The model decides meaning, the rules check facts.** Every wrong value the rules produced
-  during development was a reading mistake: "issued by Goldman Sachs" made a UBP email look
-  like Goldman's. So the model decides, and its bank, date and title are kept only if the
-  email confirms them: the bank's name must appear, and a date must be quoted from the email
-  and fall between 31 days before and 1 day after the email arrived.
-* **Disagreements are marked, never settled silently.** Both answers are stored on every
-  record. Each disagreement, or answer where the model contradicts itself, gets a plain
-  reason ("The AI dated it 13 April 2026, quoting 'April 13', but that could not be
-  confirmed..."), shown in the dashboard and listed in `review.csv` with a column for a
-  person's verdict.
-* **The deliverable matches the brief exactly.** `classified_emails.json` has the brief's ten
-  fields in its order. Everything else (sources, both answers, flags, the model and prompt
-  version) is in a separate details file keyed by folder number.
-* **Emails are shown in three layers of protection.** Every exported email carries an
-  injected script and many load tracking pixels. The API removes scripts and blocks remote
-  images, sends a Content Security Policy, and the dashboard shows the email in a sandboxed
-  frame. File requests cannot leave the email's folder.
-* **The news is fetched by a script, not by the page.** One request every 10 minutes serves
-  every viewer, the key never reaches the browser, and if Finnhub fails the CNBC feed takes
-  over; if both fail, the last good headlines stay up, marked as old. Finviz was left out: it
-  has no API and its terms discourage scraping.
-* **Local models get the whole email.** Ollama reads 4,096 tokens by default and silently cuts
-  the rest; the longest email is about 24,700, so the window is set to 32,768 and a smoke test
-  proves it is applied.
+I read through the emails before writing any rules. Most of the design comes from what turned
+up:
 
-## What we found in the data
+1. **The emails have no subject, sender or date lines.** The brief says the folder name is the
+   subject, but the folders are just numbers (`035239`). So the title, bank and date all have
+   to be read from the body. The title goes in `folder_name`, the number in `source_file`.
+2. **The first bank named is often not the sender.** A UBP email says "issued by Goldman
+   Sachs"; a J. Safra Sarasin email quotes Barclays. So the rules look where the sender
+   really appears (the logo, then the signature) instead of taking the first bank they see.
+3. **Most dates in an email are not when it was published.** Subscription deadlines, webinar
+   times, "data as of" dates, old dates on charts. I found that the times on each email's
+   attached files show when it arrived, so a date is only accepted if it falls between a month
+   before and a day after that.
+4. **The AI first rejected good titles.** It retyped `’` as `'`, so its title did not match
+   the email letter for letter. Titles are now compared word by word, ignoring punctuation.
+5. **Local AI models were silently reading only part of each email.** Ollama reads 4,096
+   tokens unless told otherwise; the longest email is about 24,700. I set it to 32,768 and
+   wrote a test that proves the whole email is read.
+6. **1,563 characters were lost when the emails were exported.** In 119 emails, apostrophes,
+   quotes, accents and currency signs became `�`. The real character is gone from the file,
+   so I worked each one out from its context: `KO�s` is `KO’s`, `Z�rich` is `Zürich`, and
+   Whitbread's `c�800m` is `c£800m` because Whitbread reports in pounds. Every rule was checked
+   against every place it applies. Only what people read is repaired; the files and what the
+   AI reads are untouched.
+7. **138 files say they use an old text encoding, but do not.** Browsers believed the label
+   and garbled the accents, so the server ignores it and states the real one (UTF-8).
+8. **Every email contains a hidden script, and many contain tracking images** that tell the
+   bank who opened the email and when. The dashboard shows emails with scripts removed,
+   blocked by the browser, and inside a sealed frame; images from the banks' servers load only
+   if you ask.
+9. **381 images pointed at the bank's internal mail archive** instead of the copy saved next
+   to the email, so every saved logo and chart showed as broken. The server now points them at
+   the saved copy.
+10. **One email appears twice** (`035428` is a copy of `035427`), and 32 start with a security
+    warning from the company's email filter. The warning is removed before the AI reads them.
 
-Reading the 200 emails closely, before writing rules, changed the design:
+## Accuracy
 
-* **No headers.** Folders are numbered and the emails have no subject, sender or date lines,
-  so the brief's "folder name is the subject" cannot hold: `folder_name` holds the title read
-  from the email, and `source_file` the folder number.
-* **The first bank named is often not the sender.** Emails quote other banks' research. The
-  sender is in the logo or the signature, and that is where the rules look.
-* **Most dates in an email are not its publication date**: deadlines, webinar times, "data as
-  of", old chart dates. The arrival window above, taken from the attachments' file times,
-  rejects them. Dates like `04/10/2026` are never guessed, because one bank writes both orders.
-* **1,563 characters were lost in the export.** Apostrophes, quotes, accents and currency signs
-  became `�` in 119 emails. They are put back from context for reading (`KO�s` to `KO’s`,
-  `Z�rich` to `Zürich`, `c�800m` to `c£800m` for Whitbread, which reports in pounds). The
-  files are never changed, and the model reads the original text.
-* **138 files declare the wrong encoding**, and 381 images point at the bank's mail archive
-  instead of the copy saved with the email. The API corrects both when it serves an email.
+20 emails, picked to cover all seven main asset classes and seven banks, were labelled
+independently and compared with the results (`evaluation/labels.csv`, scored by
+`uv run python -m scripts.accuracy --score`):
+
+| Field | Right | The model alone | The rules alone |
+| --- | --- | --- | --- |
+| Bank | 20 of 20 | 20 of 20 | 20 of 20 |
+| Date | 20 of 20 | 19 of 20 | 20 of 20 |
+| Market wrap | 18 of 20 | | |
+| Main asset class | 18 of 20 | | |
+
+Both mistakes are in emails the system had already marked "worth checking", so the marking
+pointed a person at exactly the errors. One is T. Rowe Price's "Weekly market recap", which
+the model wrongly called not a market wrap; the other is a Barclays digest of research notes
+that it called a market wrap (debatable: it recaps research, not the markets). Combining the
+two readers also fixed the one date the model missed on its own.
+
+The labels were made by Claude, a different AI model from the one being scored, reading each
+email; the judgement calls are explained in the file. 20 emails give a rough figure, not a
+precise one.
 
 ## Known limits
 
-* No accuracy figure yet: that needs emails labelled by hand. Until then the flags show where the model and the rules disagree.
-* 14 emails have no date in the output, because none is stated in a form that can be proven.
-* The character repair is a checked guess, not a recovery: a currency is taken as the euro unless the sentence was read and listed.
-* Built to run on one machine: the API has no login, which it would need before the licensed emails were shown to anyone else.
+* The accuracy check covers 20 emails, labelled by a second AI model: a rough figure, not a
+  precise one.
+* 14 emails have no date in the output, because none is stated in a way that can be proven.
+* The character repair is a careful guess: a currency sign is taken as the euro unless the
+  sentence was checked by hand.
+* The dashboard is built to run on one computer. It has no login, which it would need before
+  the licensed emails were shown to anyone else.
+* The headlines come from Finnhub, with CNBC's public feed as a backup. Finviz, suggested in
+  the brief, has no API and its terms discourage scraping, so it is not used.
 
-## Layout
+## Where things are
 
 ```text
-classify.py, fetch_news.py   the two scripts
-pipeline/                    cleaning, prompt, model calls, rules, checks, flags, repair
-news/                        headline sources and the last good set
-api/                         the dashboard's API and the email sanitiser
-web/                         the dashboard
-scripts/                     preview the cleaned text, smoke test a model, compare models
-tests/                       one file per module, made up data only
+classify.py          classify every email
+fetch_news.py        fetch the headlines
+pipeline/            reading, cleaning, the model, the rules, the checks, the character repair
+news/                the headline sources, and keeping the last good headlines if both fail
+api/                 the server for the dashboard, and the code that makes emails safe to show
+web/                 the dashboard
+scripts/             preview what the model reads, test a model, compare two models, accuracy
+evaluation/          the hand labels and the accuracy report
+tests/               made up data only, never the licensed emails
 ```
