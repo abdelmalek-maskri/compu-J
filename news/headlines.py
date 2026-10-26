@@ -176,7 +176,8 @@ def fetch_once(sources, previous: dict | None, now: datetime) -> dict:
             "checked_at": now.isoformat(),
             "source": name,
             "stale": False,
-            "error": None,
+            # fresh news from the backup still says why the first choice failed
+            "error": "; ".join(errors) or None,
             "headlines": [asdict(h) for h in headlines],
         }
     reason = "; ".join(errors) or "no news source configured"

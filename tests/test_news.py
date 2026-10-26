@@ -149,7 +149,8 @@ def test_the_first_working_source_wins():
 
 def test_the_backup_is_used_when_the_main_source_fails_or_returns_too_little():
     sources = [("finnhub", failing("rate limited (429)")), ("rss:CNBC", lambda: enough("rss"))]
-    assert fetch_once(sources, None, NOW)["source"] == "rss:CNBC"
+    payload = fetch_once(sources, None, NOW)
+    assert (payload["source"], payload["error"]) == ("rss:CNBC", "finnhub: rate limited (429)")
     too_few = [
         ("finnhub", lambda: enough("fh")[: MIN_HEADLINES - 1]),
         ("rss:CNBC", lambda: enough("rss")),
