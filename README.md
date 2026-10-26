@@ -39,7 +39,7 @@ Choose a model in `.env` with `LLM_MODEL`:
 | 4. Review | open `output/runs/<run>/review.csv` | Lists every disagreement found (see "Flags" below), with an empty `your_verdict` column | A person checks the doubtful cases |
 | 5. Compare models | `uv run python -m scripts.compare_models --models gemma gemini-flash-lite --emails 10` | Runs the same emails through each model and compares speed and answers | Decide which model to trust |
 | 6. News headlines | `uv run python fetch_news.py --every 10` | Fetches financial headlines every 10 minutes into `output/headlines.json` for the dashboard's ticker | The ticker reads a local file, so it is fast and keeps working when the news source is down |
-| 7. Tests | `uv run pytest` | 160 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
+| 7. Tests | `uv run pytest` | 194 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
 
 Useful options:
 
@@ -159,11 +159,38 @@ Looking closely at the 200 emails before and while building changed several deci
   it. Three of the 17 have a likely send date hidden in a link address; those are kept as
   hints, not dates.
 * **The export damaged some characters.** 140 emails contain `�` where an apostrophe, quote,
-  dash or accent was lost when the emails were exported (see Known limits).
+  dash, accent or currency sign was lost when the emails were exported. They are put back for
+  reading (see the next section).
 * **Every email contains an injected script** and many load tracking images from the banks'
   servers, so the dashboard must show emails in a sandbox, without scripts.
 * **One email appears twice** (`035428` is a copy of `035427`), and 32 start with an email
   security warning that is removed before classifying.
+
+### Putting back the lost characters
+
+When the emails were exported, every character the exporter could not read became `�`. The
+file itself holds `�`, so the original character is gone and cannot be decoded back; it has to
+be worked out from the words around it. `pipeline/repair_text.py` does that for all 1,563 signs
+in the 200 emails, and none are left in what the dashboard shows. Some real examples:
+
+| In the file | Shown | How it is decided |
+| --- | --- | --- |
+| `KO�s fundamentals`, `don�t`, `we�ll` | `KO’s`, `don’t`, `we’ll` | a letter, the sign, then `s`, `t`, `ll`, `re`, `ve`, `d` or `m` is an apostrophe (about 480) |
+| `the �Bank�`, `(�DFSA�)` | `the “Bank”`, `(“DFSA”)` | before a word it opens a quote, after one it closes it (about 380) |
+| `Union Bancaire Priv�e`, `Rh�ne`, `Z�rich`, `BOTA� regulates` | `Privée`, `Rhône`, `Zürich`, `BOTAŞ` | a list of the 28 damaged words found in the emails, mostly accented names in the banks' legal footers |
+| `Copyright � 2026 Deutsche Bank` | `Copyright © 2026` | the sign before a year (about 100) |
+| `utilities�not staples`, `Mexico � Short-term` | `utilities—not`, `Mexico – Short-term` | between words it is a dash (about 200) |
+| `revenue reached �848M` | `€848M` | before a number it is a currency; the research is mostly about European companies, so the euro |
+| `Whitbread ... c�800m`, `PAL Group revenue �234.70B` | `c£800m`, `¥234.70B` | 9 phrases about UK or Japanese companies, listed by hand after reading each sentence |
+| `Aug �20`, `Q4�25`, `200�000`, `2026�2028` | `Aug ’20`, `Q4’25`, `200’000`, `2026–2028` | years, Swiss thousands and ranges |
+| a sign alone in its own cell, before a line of text | `•` | a bullet (about 190) |
+
+Every rule was checked against every place it fires in the real emails, and the tests use
+made up sentences for each one. Two limits are worth knowing. A guess can still be wrong where
+the text gives too little to go on: a currency is assumed to be the euro unless the sentence
+was read and listed. And the repair is for people reading: the dashboard and the titles in
+`classified_emails.json` show the repaired text, but the model read the emails as exported, so
+its saved answers, and the check that a title really appears in the email, are unchanged.
 
 ## Output
 
@@ -227,8 +254,9 @@ tests/                        one test file per module, plus shared test data in
 * The emails were converted to UTF-8 when they were exported into these folders, but the
   export did not update the encoding written inside the HTML (138 files still say
   `windows-1252`, `iso-8859-1` or similar), and in 140 files it replaced characters it could
-  not convert with `�`, mostly apostrophes, quotes, dashes and accents. Those characters are
-  lost. The pipeline reads every file as UTF-8 (one file, `035432`, was never converted and is
-  read as Windows-1252), ignores the outdated labels, and leaves the `�` as they are.
+  not convert with `�`, mostly apostrophes, quotes, dashes and accents. The pipeline reads
+  every file as UTF-8 (one file, `035432`, was never converted and is read as Windows-1252)
+  and ignores the outdated labels. The `�` are put back from their context for reading (see
+  "Putting back the lost characters"); that is a well checked guess, not a recovery.
 * The Gemini model names and free limits come from current guides; Google AI Studio shows the
   real ones for your project, and a name is one line in `model_presets.py`.

@@ -2,6 +2,7 @@ from datetime import date
 
 from pipeline.build_record import build_record, error_record
 from pipeline.clean_emails import Attachments
+from pipeline.repair_text import EN_DASH, R
 from tests.factories import checklist, llm_output, prepared_email
 
 MODEL, PROMPT = "ollama_chat/gemma4:26b-a4b-it-qat", "v1"
@@ -65,3 +66,13 @@ def test_failed_call_keeps_what_python_found():
     )
     assert (record.folder_name, record.market_wrap, record.asset_tags) == (None, None, [])
     assert record.meta.error == "Timeout: no reply within 300s"
+
+
+def test_the_title_is_repaired_after_it_is_checked_against_the_email():
+    title = f"Mexico {R} Short-term outlook"
+    email = prepared_email(body=f"{title}\n10 April 2026")
+
+    record = build_record(email, llm_output(title=title), MODEL, PROMPT)
+
+    assert record.folder_name == f"Mexico {EN_DASH} Short-term outlook"
+    assert record.meta.title_verified
