@@ -163,17 +163,6 @@ The labels were made by Claude, a different AI model from the one being scored, 
 email; the judgement calls are explained in the file. 20 emails give a rough figure, not a
 precise one.
 
-## Known limits
-
-* The accuracy check covers 20 emails, labelled by a second AI model: a rough figure, not a
-  precise one.
-* 14 emails have no date in the output, because none is stated in a way that can be proven.
-* The character repair is a careful guess: a currency sign is taken as the euro unless the
-  sentence was checked by hand.
-* The dashboard is built to run on one computer. It has no login, which it would need before
-  the licensed emails were shown to anyone else.
-* The headlines come from Finnhub, with CNBC's public feed as a backup. Finviz, suggested in
-  the brief, has no API and its terms discourage scraping, so it is not used.
 
 ## Where things are
 
