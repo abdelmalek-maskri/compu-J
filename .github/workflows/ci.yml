@@ -20,3 +20,22 @@ jobs:
       - run: uv run ruff format --check .
       # Data/ is not in the repository, so the real data test skips here
       - run: uv run pytest -rs
+
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      # tsc -b type checks, then vite builds
+      - run: npm run build
+      - run: npm test
