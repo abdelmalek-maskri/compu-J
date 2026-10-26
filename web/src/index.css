@@ -1,0 +1,47 @@
+@import '@fontsource-variable/literata/opsz.css';
+@import '@fontsource-variable/public-sans';
+@import 'tailwindcss';
+
+/* Broadsheet: warm paper, ink, one oxblood accent, hairlines instead of boxes */
+@theme {
+  --color-paper: #f5f0e7;
+  --color-paper-deep: #ece3d4;
+  --color-ink: #211d18;
+  --color-muted: #6b6257;
+  --color-rule: #d9cfc0;
+  --color-accent: #7d2a2a;
+  --color-flag: #efe1c9;
+  --color-flag-ink: #5a3a12;
+  --font-serif: 'Literata Variable', Georgia, serif;
+  --font-sans: 'Public Sans Variable', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+  ::selection {
+    @apply bg-accent text-paper;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* the list is drawn twice side by side, so moving by half loops without a jump */
+.ticker-track {
+  animation: ticker var(--ticker-duration, 120s) linear infinite;
+}
+/* the brief asks for scrolling, so it scrolls even with "reduce motion" on; the pause button
+   is what lets anyone stop it for good */
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track,
+.ticker[data-paused] .ticker-track {
+  animation-play-state: paused;
+}

@@ -2,11 +2,11 @@
 
 Reads market research emails from investment banks, asks an LLM to tag each one with asset
 classes, companies and industries, checks the answer, and writes `classified_emails.json`.
-A dashboard to browse the results comes next.
+A dashboard shows the results next to the emails themselves, under a live news ticker.
 
-> **Status:** the classification pipeline is done. Still to come: a full run over all 200
-> emails, an accuracy check on hand labelled emails, the news ticker and the dashboard. This
-> README is updated as each part lands.
+> **Status:** the pipeline, the full run over all 200 emails, the news ticker and the
+> dashboard are done. Still to come: an accuracy check on hand labelled emails. This README is
+> updated as each part lands.
 
 ## Quick start
 
@@ -39,7 +39,10 @@ Choose a model in `.env` with `LLM_MODEL`:
 | 4. Review | open `output/runs/<run>/review.csv` | Lists every disagreement found (see "Flags" below), with an empty `your_verdict` column | A person checks the doubtful cases |
 | 5. Compare models | `uv run python -m scripts.compare_models --models gemma gemini-flash-lite --emails 10` | Runs the same emails through each model and compares speed and answers | Decide which model to trust |
 | 6. News headlines | `uv run python fetch_news.py --every 10` | Fetches financial headlines every 10 minutes into `output/headlines.json` for the dashboard's ticker | The ticker reads a local file, so it is fast and keeps working when the news source is down |
-| 7. Tests | `uv run pytest` | 194 tests with fake models | Need no model and no data (the one real data test skips without `Data/`) |
+| 7. Dashboard | `uv run uvicorn api.main:app --reload`, and in a second terminal `cd web && npm install && npm run dev` | Starts the API on port 8000 and the dashboard on <http://localhost:5173> | Browse, search and filter the classified emails, read each one safely, and see the news |
+| 8. Tests | `uv run pytest`, and `cd web && npm test` | 194 Python tests with fake models, 10 dashboard tests | Need no model and no data (the one real data test skips without `Data/`) |
+
+The dashboard needs Node 22. The API's documentation is at <http://localhost:8000/docs>.
 
 Useful options:
 

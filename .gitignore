@@ -14,6 +14,7 @@ node_modules/
 web/dist/
 playwright-report/
 test-results/
+.playwright-mcp/
 
 .DS_Store
 
