@@ -1,8 +1,9 @@
 """find what a person should look at, and write it to a review file
 
 each email is read twice: by the AI model, and by fixed rules written in Python (the bank from
-the logo or signature, the date from the top of the email or a PDF's name). notes are written
-for someone who knows neither, because they are shown in the dashboard and in review.csv
+the logo or signature, the date from the top of the email or a PDF's name). notes are shown in
+the dashboard to someone reading the email, who knows neither; date notes say what is wrong
+with the date itself, and their detail keeps the AI against the rules for review.csv
 
 model_vs_python: the model and the rules gave different answers
 model_logic:     the model's answer contradicts itself
@@ -66,48 +67,7 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
             )
         )
 
-    filled_gap = meta.date_python is None and meta.date == meta.date_llm
-    if meta.date_llm and meta.date_llm != meta.date_python and not filled_gap:
-        rules = _day(meta.date_python) if meta.date_python else "no date"
-        if meta.date == meta.date_llm:
-            note = (
-                f"The AI dated it {_day(meta.date_llm)}; the rules found {rules}. Kept the AI's "
-                f"date, because the email states it ('{meta.date_quote}')."
-            )
-        else:
-            note = (
-                f"The AI dated it {_day(meta.date_llm)}, quoting '{meta.date_quote}', but that "
-                "could not be confirmed: the quote must be in the email, give the full date, "
-                "and fall between a month before the email arrived and a day after. "
-            )
-            note += (
-                f"Kept the rules' date, found in {_where(meta.date_source)}."
-                if meta.date
-                else "The date was left empty."
-            )
-        flags.append(
-            Flag(
-                kind="model_vs_python",
-                field="date",
-                value_a=_text(meta.date_llm),
-                value_b=_text(meta.date_python),
-                note=note,
-            )
-        )
-
-    # the model saying there is no publication date is a disagreement too: 035274's rules date
-    # is an "as of" date the model rightly refused
-    if meta.date_llm is None and meta.date_python:
-        flags.append(
-            Flag(
-                kind="model_vs_python",
-                field="date",
-                value_b=_text(meta.date_python),
-                note=f"The AI found no publication date; the rules found {_day(meta.date_python)} "
-                f"in {_where(meta.date_source)}. Kept it, but it may be another kind of date, "
-                "such as the day data is 'as of'.",
-            )
-        )
+    flags += _date_flags(meta)
 
     if not meta.title_verified:
         flags.append(
@@ -121,16 +81,76 @@ def metadata_flags(meta: Metadata) -> list[Flag]:
     return flags
 
 
-def hint_flags(date_found: date | None, hint: date | None) -> list[Flag]:
-    if date_found or not hint:
+def _rejected_note(meta: Metadata) -> str:
+    said = _day(meta.date_llm)
+    match meta.date_problem:
+        case "after_arrival":
+            return (
+                f"The email mentions {said}, after the day it arrived, so it is probably an "
+                "event or a deadline, not the day it was published."
+            )
+        case "too_old":
+            return (
+                f"The email mentions {said}, more than a month before it arrived, so it is "
+                "probably the date of a chart or a past event, not the day it was published."
+            )
+        case "not_in_email":
+            return f"{said} could not be found in the email as written, so it is not used."
+        case _:
+            return (
+                f"The email says '{meta.date_quote}', which does not give the full date, so it "
+                "is not used."
+            )
+
+
+def _date_flags(meta: Metadata) -> list[Flag]:
+    """the reader is told what is wrong with the date; the AI and the rules go in the detail.
+    a model date the email confirms is not flagged, even when the rules found another one"""
+    rules = "none"
+    if meta.date_python:
+        rules = f"{meta.date_python} in {_where(meta.date_python_source)}"
+    if meta.date_problem:
+        return [
+            Flag(
+                kind="model_vs_python",
+                field="date",
+                value_a=_text(meta.date_llm),
+                value_b=_text(meta.date_python),
+                note=_rejected_note(meta),
+                detail=f"The AI said {meta.date_llm}, quoting '{meta.date_quote}' "
+                f"({meta.date_problem}). The rules found {rules}.",
+            )
+        ]
+    # 035274's rules date is "report as of 31.03.2026", which the model rightly refused
+    if meta.date_llm is None and meta.date_python:
+        where = "The email mentions"
+        if meta.date_python_source == "pdf_name":
+            where = "Its attachments' names carry"
+        return [
+            Flag(
+                kind="model_vs_python",
+                field="date",
+                value_b=_text(meta.date_python),
+                note=f"{where} {_day(meta.date_python)}, but nothing shows it is the "
+                "day the email was published: it may be the date of an item inside it, or the "
+                "day its figures refer to. So it is not used.",
+                detail=f"The AI found no publication date. The rules found {rules}, which is "
+                "never used on its own.",
+            )
+        ]
+    return []
+
+
+def link_date_flags(found: date | None, source: str | None) -> list[Flag]:
+    if source != "link":
         return []
     return [
         Flag(
             kind="inferred",
             field="date",
-            value_a=_text(hint),
-            note=f"The email states no date. A link in it contains {_day(hint)}, probably the "
-            "day it was sent; shown as a hint, not used as the date.",
+            value_a=_text(found),
+            note=f"Not confirmed. The email states no publication date; {_day(found)} comes "
+            "from a link in it and is probably the day it was sent.",
         )
     ]
 
@@ -271,7 +291,8 @@ def model_vs_model_flags(
 
 
 REVIEW_COLUMNS = [
-    "email", "title", "model", "kind", "field", "value_a", "value_b", "note", "your_verdict",
+    "email", "title", "model", "kind", "field", "value_a", "value_b", "note", "detail",
+    "your_verdict",
 ]  # fmt: skip
 
 

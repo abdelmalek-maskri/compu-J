@@ -96,7 +96,9 @@ def create_app(config: Config | None = None) -> FastAPI:
                 {
                     **record,
                     "content_type": meta.get("content_type"),
-                    "date_hint": meta.get("date_hint"),
+                    # a date from a link address is shown, but as not confirmed
+                    "date_confirmed": meta.get("date_source") != "link",
+                    "received": meta.get("received"),
                     "flag_count": len(meta.get("flags", [])),
                 }
             )

@@ -39,7 +39,9 @@ def client(tmp_path):
     (folder / "inline" / "image001.png").write_bytes(b"\x89PNG fake")
     (tmp_path / ".env").write_text("GEMINI_API_KEY=secret")
     (tmp_path / "classified_emails.json").write_text(json.dumps([RECORD]))
-    details = {"035300": {"content_type": "research", "date_hint": None, "flags": [{"kind": "x"}]}}
+    details = {
+        "035300": {"content_type": "research", "date_source": "link", "flags": [{"kind": "x"}]}
+    }
     (tmp_path / "details.json").write_text(json.dumps(details))
     config = Config(
         data_dir=tmp_path / "Data",
@@ -54,6 +56,7 @@ def test_the_list_joins_the_brief_fields_with_what_the_list_needs(client):
     [email] = client.get("/api/emails").json()
     assert email["folder_name"] == "FX Daily"
     assert (email["content_type"], email["flag_count"]) == ("research", 1)
+    assert (email["date_confirmed"], email["received"]) == (False, None)
 
 
 def test_one_email_returns_its_record_and_details(client):

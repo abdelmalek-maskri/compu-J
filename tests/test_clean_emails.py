@@ -18,6 +18,7 @@ from pipeline.clean_emails import (
     received_date,
     select_pages,
     strip_banner,
+    weekday_date,
 )
 
 
@@ -145,6 +146,15 @@ def test_commas_and_ordinal_days_are_read():
     assert find_date("10th April 2026", []) == (date(2026, 4, 10), "text")
     assert find_date("Published on 1st April 2026", []) == (date(2026, 4, 1), "text")
     assert find_date("April 7th, 2026", []) == (date(2026, 4, 7), "text")
+
+
+def test_weekday_settles_a_missing_year():
+    # 035427: "Monday, 13 April" fits 2026 only, among the years around it
+    assert weekday_date("Monday, 13 April", near=date(2026, 4, 10)) == date(2026, 4, 13)
+    assert weekday_date("Friday 10th Apr", near=date(2027, 1, 5)) == date(2026, 4, 10)
+    # 13 April is a Sunday, Monday and Tuesday in 2025 to 2027, so never a Wednesday
+    assert weekday_date("Wednesday, 13 April", near=date(2026, 4, 10)) is None
+    assert weekday_date("13 April", near=date(2026, 4, 10)) is None
 
 
 def test_date_hint_comes_from_link_addresses_only():
@@ -329,10 +339,13 @@ def test_real_data_prepares_cleanly():
     # minus a subscription deadline (035243) and an event (035341) dated after arrival,
     # plus "10 Apr, 2026" (035368) once commas after the month were accepted
     assert sum(e.date is not None for e in emails) == 183
-    # inferred from link addresses, never put in the date field
+    # inferred from link addresses; only emails with no confirmed date use them
     hints = {e.id: e.date_hint for e in emails if e.date_hint}
     assert hints == {
+        "035299": date(2026, 4, 9),
         "035330": date(2026, 4, 10),
+        "035360": date(2026, 4, 10),
+        "035389": date(2026, 4, 10),
         "035429": date(2026, 4, 13),
         "035437": date(2026, 4, 13),
     }
