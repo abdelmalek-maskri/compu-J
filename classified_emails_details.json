@@ -5975,7 +5975,7 @@
     ],
     "corrections": [],
     "reviewed": [
-      "Market wrap set to YES by a reviewer: titled \"Weekly market recap\", it delivers T. Rowe Price's summary of the previous week's markets; the recap itself is behind its link, so the model saw only the cover note"
+      "Market wrap set to YES by a reviewer (the AI said NO): titled \"Weekly market recap\", it delivers T. Rowe Price's summary of the previous week's markets; the recap itself is behind its link, so the model saw only the cover note"
     ],
     "content_type": "marketing",
     "market_wrap_checklist": {

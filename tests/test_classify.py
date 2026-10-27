@@ -170,6 +170,24 @@ def test_the_command_writes_the_run_folder_and_only_a_full_run_writes_the_delive
     assert len(fake.calls) == calls_before + 2
 
 
+def test_a_correction_for_an_unknown_email_stops_the_run(tmp_path, monkeypatch, capsys):
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("LLM_MODEL", "ollama_chat/test-model")
+    (tmp_path / "Data" / "035300").mkdir(parents=True)
+    (tmp_path / "Data" / "035300" / "emailbody.html").write_text("<p>FX Daily</p>")
+    (tmp_path / "evaluation").mkdir()
+    (tmp_path / "evaluation" / "reviewed.csv").write_text(
+        "email,field,value,reason\n035399,market_wrap,YES,a recap\n"
+    )
+    fake = FakeClassifier()
+    monkeypatch.setattr("classify.classify_email", fake)
+    monkeypatch.setattr("sys.argv", ["classify.py", "--only", "035300"])
+
+    assert classify.main() == 1
+    assert "no email '035399' in the data" in capsys.readouterr().out
+    assert fake.calls == []
+
+
 def test_cloud_models_wait_between_calls_but_not_for_cached_answers(tmp_path):
     cloud = Settings("gemini/x", None, 32768, None, seconds_between_calls=6.5)
     # the clock is read when each call starts: first call at 0 s, second email ready at 2 s

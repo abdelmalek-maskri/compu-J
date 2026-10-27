@@ -178,6 +178,12 @@ def main() -> int:
     emails, failures = prepare_all(args.data)
     for folder, reason in failures.items():
         print(f"could not prepare {folder}: {reason}")
+    # checked against every email before --only and --limit, so a mistyped id always stops
+    try:
+        reviewed = load_reviewed(REVIEWED, {e.id for e in emails} | set(failures))
+    except ValueError as e:
+        print(e)
+        return 1
     if args.only:
         missing = set(args.only) - {e.id for e in emails}
         if missing:
@@ -199,7 +205,7 @@ def main() -> int:
             settings,
             Cache(LLM_ANSWERS / settings.name),
             args.force,
-            reviewed=load_reviewed(REVIEWED),
+            reviewed=reviewed,
         )
     except RunStopped as e:
         outcomes, stopped = e.outcomes, str(e)
