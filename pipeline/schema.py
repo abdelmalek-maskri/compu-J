@@ -78,6 +78,8 @@ class Meta(BaseModel):
     date_python: date | None = None
     flags: list[Flag] = []
     corrections: list[str] = []
+    # answers a person changed after review, with their reason (see pipeline/reviewed.py)
+    reviewed: list[str] = []
     content_type: ContentType | None = None
     market_wrap_checklist: MarketWrapChecklist | None = None
     duplicate_of: str | None = None

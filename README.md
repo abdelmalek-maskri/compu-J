@@ -18,9 +18,10 @@ its answers, under a strip of live market headlines.
   see which emails are worth a second look and why.
 
 **Result:** all 200 emails classified, none failed. 11 emails are marked "worth checking",
-each with the reason in plain words. On 20 independently labelled emails, the bank is 20 of
-20 right, the date 18 of 20 (both misses are deliberate choices about uncertain dates), and
-market wrap and main asset class 18 of 20 (details below).
+each with the reason in plain words, and one answer was corrected by a person. On 20
+independently labelled emails, the bank is 20 of 20 right, the date 18 of 20 (both misses are
+deliberate choices about uncertain dates), and market wrap and main asset class 19 of 20
+(details below).
 
 ## What it looks like
 
@@ -46,6 +47,26 @@ the date works differently (see the next section). When something is uncertain, 
 decided silently: the email is marked "worth checking", with the reason in plain words, for
 example *"The email mentions 15 April 2026, after the day it arrived, so it is probably an
 event or a deadline, not the day it was published."*
+
+## What the rules fix on their own
+
+The brief sets some answers by rule, whatever the AI says. Python applies those rules after
+the AI answers (`pipeline/tag_rules.py`), and writes down every change it makes in the email's
+`corrections` list in `classified_emails_details.json`. These are not shown as "worth
+checking": the brief decides them, so there is nothing for a person to judge.
+
+| Rule from the brief | Changes on the 200 emails |
+| --- | --- |
+| A sub-tag brings its main class: "Emerging Markets" means "Macro" too | 63: Macro 30, FX 17, Fixed Income 9, Commodities 7 |
+| Companies and industries are listed only for Equity (research on shares) | 1: `035328`, research on a company's bonds |
+| A market wrap has the main class "Market Wrap", that tag only, and no companies | applied to all 30 market wraps, without a note, so not in the 64 |
+| An email that is not a market wrap cannot carry the "Market Wrap" tag | 0 after review |
+
+To list them all:
+
+```bash
+python3 -c "import json; [print(i, c) for i, m in json.load(open('classified_emails_details.json')).items() for c in m['corrections']]"
+```
 
 ## How dates are decided
 
@@ -192,6 +213,21 @@ up:
    the saved copy.
 10. **One email appears twice** (`035428` is a copy of `035427`), and 32 start with a security
     warning from the company's email filter. The warning is removed before the AI reads them.
+11. **The AI sometimes gives two answers that do not fit together, and the brief decides.**
+    `035328` (Barclays, "Vedanta Resources") is about the company's bonds, not its shares. The
+    AI named the company but did not call the email Equity (research on shares). The brief
+    lists companies only for Equity research, so the names were removed. The result is right;
+    the email is still marked "worth checking" so a person can see the AI disagreed with
+    itself.
+12. **Some emails only link to the report.** `035437` (T. Rowe Price, "Weekly market recap")
+    is a short cover note with a button to the recap. The AI judged only the note, met 2 of the
+    brief's 7 market wrap checks and said it is not a market wrap, while also choosing Market
+    Wrap as its main asset class. I reviewed it and set it to a market wrap in
+    `evaluation/reviewed.csv`: one line with the email, the field, the new value and the
+    reason. Every run applies that file last, so the correction is never lost; the brief's
+    market wrap tags follow from it, the dashboard shows it under "Reviewed" with the reason,
+    and the AI's own answers stay in the details file. Changing the AI's instructions instead
+    would have meant asking it about all 200 emails again, for one email.
 
 ## Accuracy
 
@@ -203,13 +239,16 @@ independently and compared with the results (`evaluation/labels.csv`, scored by
 | --- | --- | --- | --- |
 | Bank | 20 of 20 | 20 of 20 | 20 of 20 |
 | Date | 18 of 20 | 19 of 20 | 20 of 20 |
-| Market wrap | 18 of 20 | | |
-| Main asset class | 18 of 20 | | |
+| Market wrap | 19 of 20 | | |
+| Main asset class | 19 of 20 | | |
 
-All the mistakes are in two emails the system had already marked "worth checking", so the
-marking pointed a person at exactly the errors. One is T. Rowe Price's "Weekly market recap",
-which the model wrongly called not a market wrap; the other is a Barclays digest of research
-notes that it called a market wrap (debatable: it recaps research, not the markets).
+The model's mistakes are all in two emails the system had already marked "worth checking",
+so the marking pointed a person at exactly the errors. One is T. Rowe Price's "Weekly market
+recap", which the model wrongly called not a market wrap; a person reviewed it and corrected
+it (finding 12 above). That email is one of the 20 labelled ones, so the corrected figures
+flatter the system slightly: before the correction, both were 18 of 20. The other is
+a Barclays digest of research notes that the model called a market wrap (debatable: it
+recaps research, not the markets).
 
 The two date misses follow from choices described in
 [How dates are decided](#how-dates-are-decided). The Barclays digest lists notes with their
@@ -232,7 +271,7 @@ news/                the headline sources, and keeping the last good headlines i
 api/                 the server for the dashboard, and the code that makes emails safe to show
 web/                 the dashboard
 scripts/             preview what the model reads, test a model, compare two models, accuracy
-evaluation/          the hand labels and the accuracy report
+evaluation/          the hand labels, the accuracy report, and answers a person corrected
 tests/               made up data only, never the licensed emails
 Dockerfile, docker-compose.yml   the one command setup
 ```

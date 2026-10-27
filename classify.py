@@ -26,8 +26,9 @@ from pipeline.clean_emails import PreparedEmail, prepare_all
 from pipeline.flags import review_rows, write_review
 from pipeline.llm_cache import Cache, cache_key
 from pipeline.llm_client import LLMError, Settings, StopRun, classify_email
-from pipeline.paths import DELIVERABLE, DETAILS, LLM_ANSWERS, RUNS, run_name
+from pipeline.paths import DELIVERABLE, DETAILS, LLM_ANSWERS, REVIEWED, RUNS, run_name
 from pipeline.prompt import PROMPT_VERSION
+from pipeline.reviewed import Reviewed, load_reviewed
 from pipeline.schema import ClassifiedEmail
 
 
@@ -56,6 +57,7 @@ def classify_all(
     log: Callable[[str], None] = print,
     sleep: Callable[[float], None] = time.sleep,
     clock: Callable[[], float] = time.monotonic,
+    reviewed: dict[str, list[Reviewed]] | None = None,
 ) -> list[Outcome]:
     # looked up at call time, so tests can replace the model with a fake
     classify_fn = classify_fn or classify_email
@@ -83,7 +85,13 @@ def classify_all(
             # only successful answers are cached, so failures are retried on the next run
             cache.put(email.id, key, result)
 
-        record = build_record(email, result.output, settings.model, PROMPT_VERSION)
+        record = build_record(
+            email,
+            result.output,
+            settings.model,
+            PROMPT_VERSION,
+            (reviewed or {}).get(email.id, []),
+        )
         record.meta.warnings = [*email.warnings, *result.warnings]
         outcomes.append(Outcome(record, cached, result.seconds, result.prompt_tokens))
         how = "cached" if cached else f"{result.seconds:.0f}s"
@@ -132,6 +140,7 @@ def summary(outcomes: list[Outcome], settings: Settings) -> str:
         f"titles not found in the email: {unverified}",
         f"flags to review: {sum(flags.values())} {dict(flags.most_common())}",
         f"rule corrections: {sum(len(r.meta.corrections) for r in records)}",
+        f"reviewed by a person: {[r.source_file for r in records if r.meta.reviewed]}",
         f"warnings: {warnings}",
     ]
     if fresh:
@@ -169,6 +178,12 @@ def main() -> int:
     emails, failures = prepare_all(args.data)
     for folder, reason in failures.items():
         print(f"could not prepare {folder}: {reason}")
+    # checked against every email before --only and --limit, so a mistyped id always stops
+    try:
+        reviewed = load_reviewed(REVIEWED, {e.id for e in emails} | set(failures))
+    except ValueError as e:
+        print(e)
+        return 1
     if args.only:
         missing = set(args.only) - {e.id for e in emails}
         if missing:
@@ -185,7 +200,13 @@ def main() -> int:
     print(f"classifying {len(emails)} emails with {settings.name} ({settings.model}) into {run}/\n")
     stopped = None
     try:
-        outcomes = classify_all(emails, settings, Cache(LLM_ANSWERS / settings.name), args.force)
+        outcomes = classify_all(
+            emails,
+            settings,
+            Cache(LLM_ANSWERS / settings.name),
+            args.force,
+            reviewed=reviewed,
+        )
     except RunStopped as e:
         outcomes, stopped = e.outcomes, str(e)
     records = [o.record for o in outcomes]
