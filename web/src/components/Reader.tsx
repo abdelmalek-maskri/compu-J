@@ -2,14 +2,6 @@ import { useState, type ReactNode } from 'react'
 import { emailFileUrl, emailHtmlUrl, useJson, type Details, type Email, type EmailDetail } from '../api'
 import { formatDate } from '../filters'
 
-// the reader knows neither the AI nor the rules, so each flag says which two answers differ
-const FLAG_KINDS: Record<string, string> = {
-  model_vs_python: 'the AI and the rules disagree',
-  model_logic: 'the AI contradicts itself',
-  model_vs_model: 'two AI models disagree',
-  inferred: 'a guess, not stated in the email',
-}
-
 const FIELDS: Record<string, string> = {
   bank: 'Bank',
   date: 'Date',
@@ -44,17 +36,10 @@ function Sidebar({ email, details }: { email: Email; details: Details | undefine
     <aside className="text-[14px]">
       {flags.length > 0 && (
         <Section title="Worth checking">
-          <p className="text-[13px] text-muted mb-3">
-            Each email is read twice: by an AI model, and by fixed rules written in code that
-            find the bank in the logo or signature and the date near the top. Where the two
-            disagree, or the AI contradicts itself, the reason is below.
-          </p>
           <ul className="space-y-2">
             {flags.map((f, i) => (
               <li key={i} className="bg-flag text-flag-ink px-3 py-2">
-                <span className="block font-semibold text-[13px]">
-                  {FIELDS[f.field] ?? f.field}: {FLAG_KINDS[f.kind] ?? f.kind}
-                </span>
+                <span className="block font-semibold text-[13px]">{FIELDS[f.field] ?? f.field}</span>
                 {f.note}
               </li>
             ))}
@@ -164,11 +149,14 @@ export function Reader({ email, onBack }: { email: Email; onBack: () => void }) 
           <span className="text-ink">{email.bank}</span>
           <span aria-hidden> {'\u00B7'} </span>
           {email.date ? (
-            <time dateTime={email.date}>{formatDate(email.date)}</time>
+            <>
+              <time dateTime={email.date}>{formatDate(email.date)}</time>
+              {!email.date_confirmed && ' (not confirmed)'}
+            </>
           ) : (
             <span>
-              No date found
-              {email.date_hint && ` (a link in the email suggests ${formatDate(email.date_hint)})`}
+              No publication date found
+              {email.received && ` (it arrived on ${formatDate(email.received)})`}
             </span>
           )}
           {kind && (

@@ -16,7 +16,8 @@ const email: Email = {
   pdf_attachment: null,
   source_file: '035245',
   content_type: 'research',
-  date_hint: null,
+  date_confirmed: true,
+  received: null,
   flag_count: 1,
 }
 
@@ -26,11 +27,17 @@ describe('EmailList', () => {
     render(<EmailList emails={[email]} total={200} selectedId={null} onSelect={onSelect} />)
 
     expect(screen.getByText('1 of 200 emails')).toBeInTheDocument()
-    expect(screen.getByText('No date')).toBeInTheDocument()
+    expect(screen.getByText('No publication date found')).toBeInTheDocument()
     expect(screen.getByText('1 to check')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: /Market Update/ }))
     expect(onSelect).toHaveBeenCalledWith('035245')
+  })
+
+  it('marks a date that comes from a link as not confirmed', () => {
+    const linked = { ...email, date: '2026-04-13', date_confirmed: false }
+    render(<EmailList emails={[linked]} total={200} selectedId={null} onSelect={() => {}} />)
+    expect(screen.getByText(/\(not confirmed\)/)).toBeInTheDocument()
   })
 
   it('says how to recover when nothing matches', () => {

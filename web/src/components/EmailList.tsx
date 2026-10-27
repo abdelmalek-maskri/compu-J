@@ -48,7 +48,9 @@ export function EmailList({ emails, total, selectedId, onSelect }: Props) {
                   <span className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-muted">
                     <span>{email.bank}</span>
                     <span className="tabular-nums">
-                      {email.date ? formatDate(email.date) : 'No date'}
+                      {email.date
+                        ? `${formatDate(email.date)}${email.date_confirmed ? '' : ' (not confirmed)'}`
+                        : 'No publication date found'}
                     </span>
                     {email.primary_asset_tag && (
                       <span

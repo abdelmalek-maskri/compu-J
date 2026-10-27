@@ -14,7 +14,8 @@ const email = (over: Partial<Email>): Email => ({
   pdf_attachment: null,
   source_file: '035300',
   content_type: 'research',
-  date_hint: null,
+  date_confirmed: true,
+  received: null,
   flag_count: 0,
   ...over,
 })
