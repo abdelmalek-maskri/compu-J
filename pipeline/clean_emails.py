@@ -206,9 +206,29 @@ def _earliest_date(text: str, patterns: list, received: date | None) -> date | N
     return min(found)[1] if found else None
 
 
+WEEKDAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+# "Monday, 13 April": no year, but a weekday falls on a given day only once in any three years
+WEEKDAY_DATE = re.compile(
+    rf"\b({'|'.join(WEEKDAYS)})[a-z]*\.?,? (\d{{1,2}}){ORDINAL} ({MONTH})", re.I
+)
+
+
+def weekday_date(text: str, near: date) -> date | None:
+    """a date written with its weekday but no year, in the year around `near` that fits"""
+    if not (match := WEEKDAY_DATE.search(text)):
+        return None
+    weekday = WEEKDAYS.index(match[1][:3].lower())
+    for year in (near.year, near.year - 1, near.year + 1):
+        found = _to_date(match[2], match[3], str(year))
+        if found and found.weekday() == weekday:
+            return found
+    return None
+
+
 def find_date_hint(html: str, received: date | None) -> date | None:
     """a date inferred from link addresses, such as a campaign code ending _20260413. it is a
-    send date at best, not one the email states, so it is kept apart from the date field"""
+    send date at best, not one the email states, so it is only used, marked as unconfirmed,
+    when no publication date is confirmed (see check_metadata.py)"""
     hrefs = " ".join(html_lib.unescape(h) for h in re.findall(r'href="([^"]+)"', html, re.I))
     return _earliest_date(hrefs, [COMPACT_DATE], received)
 
@@ -283,7 +303,7 @@ class PreparedEmail:
     date_source: str | None
     received: date | None
     encoding: str
-    # only set when the email states no date (see find_date_hint)
+    # a date from link addresses (see find_date_hint)
     date_hint: date | None = None
     duplicate_of: str | None = None
     warnings: list[str] = field(default_factory=list)
@@ -325,7 +345,7 @@ def prepare_email(folder: Path) -> PreparedEmail:
         date_source=date_source,
         received=received,
         encoding=encoding,
-        date_hint=None if found_date else find_date_hint(html, received),
+        date_hint=find_date_hint(html, received),
         warnings=warnings,
     )
 

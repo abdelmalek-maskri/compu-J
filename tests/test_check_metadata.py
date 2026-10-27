@@ -87,9 +87,38 @@ def test_model_date_wins_when_its_quote_checks_out():
     assert (meta.date_llm, meta.date_python) == (date(2026, 4, 9), date(2026, 4, 10))
 
 
-def test_model_date_with_a_bad_quote_falls_back_to_python():
-    meta = check_metadata(prepared_email(), llm_output(date="2026-04-09", date_quote="9 April"))
-    assert (meta.date, meta.date_source) == (date(2026, 4, 10), "python:text")
+def test_rules_date_is_never_used_on_its_own():
+    email = prepared_email(body="Deutsche Bank\n10 April 2026\nTrade on 9 April")
+    meta = check_metadata(email, llm_output(date="2026-04-09", date_quote="9 April"))
+    assert (meta.date, meta.date_problem) == (None, "no_full_date")
+    meta = check_metadata(prepared_email(), llm_output(date=None, date_quote=None))
+    assert (meta.date, meta.date_python) == (None, date(2026, 4, 10))
+
+
+def test_both_readers_agreeing_confirms_a_date_despite_a_short_quote():
+    meta = check_metadata(prepared_email(), llm_output(date="2026-04-10", date_quote="10 April"))
+    assert (meta.date, meta.date_source, meta.date_problem) == (
+        date(2026, 4, 10),
+        "llm+python",
+        None,
+    )
+
+
+def test_weekday_quote_without_a_year_is_confirmed():
+    # 035427: the email only says "Monday, 13 April"
+    email = prepared_email(date=None, date_source=None, body="UBS House View\nMonday, 13 April")
+    output = llm_output(date="2026-04-13", date_quote="Monday, 13 April")
+    assert check_metadata(email, output).date == date(2026, 4, 13)
+    wrong_year = llm_output(date="2025-04-13", date_quote="Monday, 13 April")
+    assert check_metadata(email, wrong_year).date_problem == "no_full_date"
+
+
+def test_link_date_is_used_only_when_no_date_is_confirmed():
+    email = prepared_email(date=None, date_source=None, date_hint=date(2026, 4, 13))
+    meta = check_metadata(email, llm_output(date=None, date_quote=None))
+    assert (meta.date, meta.date_source) == (date(2026, 4, 13), "link")
+    meta = check_metadata(prepared_email(date_hint=date(2026, 4, 13)), llm_output())
+    assert (meta.date, meta.date_source) == (date(2026, 4, 10), "llm+python")
 
 
 def test_model_fills_a_missing_date_from_pdf_text():
@@ -111,4 +140,8 @@ def test_model_date_after_arrival_is_rejected():
         body="Subscription period until: 17.04.2026, 15:00 Geneva time",
     )
     meta = check_metadata(email, llm_output(date="2026-04-17", date_quote="17.04.2026"))
-    assert (meta.date, meta.date_llm) == (None, date(2026, 4, 17))
+    assert (meta.date, meta.date_llm, meta.date_problem) == (
+        None,
+        date(2026, 4, 17),
+        "after_arrival",
+    )

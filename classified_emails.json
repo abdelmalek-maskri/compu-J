@@ -276,7 +276,7 @@
   {
     "folder_name": "The defensive playbook isn’t your average inflation roadmap",
     "bank": "J.P. Morgan",
-    "date": "2026-03-27",
+    "date": null,
     "market_wrap": "NO",
     "primary_asset_tag": "Macro",
     "asset_tags": [
@@ -595,7 +595,7 @@
   {
     "folder_name": "UBP EAM Analysis report",
     "bank": "UBP",
-    "date": "2026-03-31",
+    "date": null,
     "market_wrap": "NO",
     "primary_asset_tag": "Macro",
     "asset_tags": [
@@ -1626,7 +1626,7 @@
   {
     "folder_name": "Will upcoming earnings be the next market catalyst?",
     "bank": "Pictet",
-    "date": null,
+    "date": "2026-04-10",
     "market_wrap": "NO",
     "primary_asset_tag": "Equity",
     "asset_tags": [
@@ -1708,7 +1708,7 @@
   {
     "folder_name": "Affording a war",
     "bank": "UBS",
-    "date": null,
+    "date": "2026-04-10",
     "market_wrap": "YES",
     "primary_asset_tag": "Market Wrap",
     "asset_tags": [
@@ -1999,7 +1999,7 @@
   {
     "folder_name": "US, Europe & Asia Market Update",
     "bank": "J. Safra Sarasin",
-    "date": "2026-04-10",
+    "date": null,
     "market_wrap": "YES",
     "primary_asset_tag": "Market Wrap",
     "asset_tags": [
@@ -3430,7 +3430,7 @@
   {
     "folder_name": "Optimistic bias versus bad news",
     "bank": "UBS",
-    "date": null,
+    "date": "2026-04-13",
     "market_wrap": "YES",
     "primary_asset_tag": "Market Wrap",
     "asset_tags": [
@@ -3444,7 +3444,7 @@
   {
     "folder_name": "Optimistic bias versus bad news",
     "bank": "UBS",
-    "date": null,
+    "date": "2026-04-13",
     "market_wrap": "YES",
     "primary_asset_tag": "Market Wrap",
     "asset_tags": [
@@ -3458,7 +3458,7 @@
   {
     "folder_name": "The Factory Daily Letter",
     "bank": "Pictet",
-    "date": null,
+    "date": "2026-04-13",
     "market_wrap": "YES",
     "primary_asset_tag": "Market Wrap",
     "asset_tags": [
@@ -3491,7 +3491,7 @@
   {
     "folder_name": "Signature Digest",
     "bank": "Barclays",
-    "date": "2026-04-13",
+    "date": null,
     "market_wrap": "YES",
     "primary_asset_tag": "Market Wrap",
     "asset_tags": [
@@ -3603,7 +3603,7 @@
   {
     "folder_name": "Weekly market recap",
     "bank": "T. Rowe Price",
-    "date": null,
+    "date": "2026-04-13",
     "market_wrap": "NO",
     "primary_asset_tag": null,
     "asset_tags": [],

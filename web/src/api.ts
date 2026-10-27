@@ -13,7 +13,9 @@ export type Email = {
   pdf_attachment: string[] | null
   source_file: string
   content_type: string | null
-  date_hint: string | null
+  // false when the date comes from a link in the email, not from the email's text
+  date_confirmed: boolean
+  received: string | null
   flag_count: number
 }
 
@@ -23,9 +25,9 @@ export type Flag = {
   value_a: unknown
   value_b: unknown
   note: string
+  detail?: string | null
 }
 
-// classified_emails_details.json for one email; empty when no details file exists
 // the parts of classified_emails_details.json the dashboard shows; the file has more
 export type Details = {
   flags?: Flag[]

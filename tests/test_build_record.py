@@ -59,13 +59,18 @@ def test_no_pdfs_means_null_attachment():
 def test_failed_call_keeps_what_python_found():
     email = prepared_email(received=date(2026, 4, 10))
     record = error_record(email, "Timeout: no reply within 300s", MODEL, PROMPT)
-    assert (record.bank, record.date, record.source_file) == (
-        "Deutsche Bank",
-        date(2026, 4, 10),
-        "035300",
-    )
+    # the rules' date is kept for review but never published on its own
+    assert (record.bank, record.date, record.source_file) == ("Deutsche Bank", None, "035300")
+    assert record.meta.date_python == date(2026, 4, 10)
     assert (record.folder_name, record.market_wrap, record.asset_tags) == (None, None, [])
     assert record.meta.error == "Timeout: no reply within 300s"
+
+
+def test_failed_call_uses_a_link_date_only_as_not_confirmed():
+    email = prepared_email(date_hint=date(2026, 4, 13))
+    record = error_record(email, "Timeout: no reply within 300s", MODEL, PROMPT)
+    assert (record.date, record.meta.date_source) == (date(2026, 4, 13), "link")
+    assert [f.kind for f in record.meta.flags] == ["inferred"]
 
 
 def test_the_title_is_repaired_after_it_is_checked_against_the_email():

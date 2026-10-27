@@ -2,7 +2,7 @@
 
 from pipeline.check_metadata import check_metadata
 from pipeline.clean_emails import PreparedEmail
-from pipeline.flags import hint_flags, logic_flags, metadata_flags
+from pipeline.flags import link_date_flags, logic_flags, metadata_flags
 from pipeline.repair_text import repair
 from pipeline.schema import ClassifiedEmail, LLMOutput, Meta
 from pipeline.tag_rules import apply_tag_rules
@@ -30,7 +30,6 @@ def build_record(
             date_source=meta.date_source,
             date_quote=meta.date_quote,
             received=email.received,
-            date_hint=None if meta.date else email.date_hint,
             title_verified=meta.title_verified,
             bank_llm=meta.bank_llm,
             bank_python=meta.bank_python,
@@ -38,7 +37,7 @@ def build_record(
             date_python=meta.date_python,
             flags=metadata_flags(meta)
             + logic_flags(output)
-            + hint_flags(meta.date, email.date_hint),
+            + link_date_flags(meta.date, meta.date_source),
             corrections=tags.corrections,
             content_type=output.content_type,
             market_wrap_checklist=output.market_wrap_checklist,
@@ -53,11 +52,14 @@ def build_record(
 def error_record(
     email: PreparedEmail, error: str, model: str, prompt_version: str
 ) -> ClassifiedEmail:
-    """the LLM call failed: keep everything Python found so the email still appears"""
+    """the LLM call failed: keep everything Python found so the email still appears. the
+    rules' date is still never used on its own; it stays in date_python for review"""
+    found = email.date_hint
+    source = "link" if found else None
     return ClassifiedEmail(
         folder_name=None,
         bank=email.bank,
-        date=email.date,
+        date=found,
         market_wrap=None,
         primary_asset_tag=None,
         asset_tags=[],
@@ -67,12 +69,11 @@ def error_record(
         source_file=email.id,
         meta=Meta(
             bank_source=f"python:{email.bank_source}" if email.bank else None,
-            date_source=f"python:{email.date_source}" if email.date else None,
+            date_source=source,
             bank_python=email.bank,
             date_python=email.date,
             received=email.received,
-            date_hint=email.date_hint,
-            flags=hint_flags(email.date, email.date_hint),
+            flags=link_date_flags(found, source),
             duplicate_of=email.duplicate_of,
             warnings=email.warnings,
             error=error,

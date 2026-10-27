@@ -49,22 +49,43 @@ def test_filling_a_gap_or_being_unsure_is_not_a_disagreement():
     assert metadata_flags(check_metadata(prepared_email(), llm_output(bank="Other"))) == []
 
 
-def test_rejected_model_date_is_flagged_with_its_quote():
-    output = llm_output(date="2026-04-17", date_quote="17.04.2026")
-    [flag] = metadata_flags(check_metadata(prepared_email(), output))
-    assert (flag.field, flag.value_a, flag.value_b) == ("date", "2026-04-17", "2026-04-10")
-    assert "quoting '17.04.2026', but that could not be confirmed" in flag.note
+def test_rejected_model_date_says_what_is_wrong_with_it():
+    # 035341: an event two weeks after the email arrived
+    email = prepared_email(date=None, date_source=None, received=date(2026, 4, 1))
+    output = llm_output(date="2026-04-10", date_quote="10 April 2026")
+    [flag] = metadata_flags(check_metadata(email, output))
+    assert (flag.field, flag.value_a, flag.value_b) == ("date", "2026-04-10", None)
+    assert flag.note.startswith("The email mentions 10 April 2026, after the day it arrived")
+    assert "quoting '10 April 2026' (after_arrival)" in flag.detail
 
 
-def test_model_finding_no_date_while_the_rules_did_is_flagged():
+def test_an_invented_date_is_never_described_as_mentioned():
+    # a date after arrival whose quote is not in the email: the note must not claim it is
+    email = prepared_email(date=None, date_source=None, received=date(2026, 4, 1))
+    output = llm_output(date="2026-04-20", date_quote="20 April 2026")
+    [flag] = metadata_flags(check_metadata(email, output))
+    assert flag.note.startswith("20 April 2026 could not be found in the email")
+
+
+def test_a_date_only_the_rules_found_is_flagged_and_not_used():
     # 035274: the rules took "report as of 31.03.2026", the model rightly found no date
-    [flag] = metadata_flags(
-        check_metadata(prepared_email(), llm_output(date=None, date_quote=None))
+    meta = check_metadata(prepared_email(), llm_output(date=None, date_quote=None))
+    [flag] = metadata_flags(meta)
+    assert (meta.date, flag.value_a, flag.value_b) == (None, None, "2026-04-10")
+    assert flag.note.startswith("The email mentions 10 April 2026, but nothing shows it is")
+    assert "AI" not in flag.note and "rules" not in flag.note
+    assert flag.detail.startswith("The AI found no publication date. The rules found 2026-04-10")
+
+
+def test_a_confirmed_date_overruling_the_rules_is_not_flagged():
+    # 035334: "Published 10 Apr, 2026", while the rules took an earlier date near the top
+    email = prepared_email(
+        body="Deutsche Bank\n9 April 2026\nPublished 10 Apr, 2026", date=date(2026, 4, 9)
     )
-    assert (flag.field, flag.value_a, flag.value_b) == ("date", None, "2026-04-10")
-    assert flag.note.startswith(
-        "The AI found no publication date; the rules found 10 April 2026 in the email's text."
-    )
+    output = llm_output(date="2026-04-10", date_quote="Published 10 Apr, 2026")
+    meta = check_metadata(email, output)
+    assert (meta.date, meta.date_python) == (date(2026, 4, 10), date(2026, 4, 9))
+    assert [f for f in metadata_flags(meta) if f.field == "date"] == []
 
 
 def test_title_not_in_the_email_is_flagged():
@@ -130,19 +151,19 @@ def test_half_a_date_answer_is_flagged():
     ]
 
 
-def test_an_inferred_date_is_kept_apart_and_flagged_for_a_person():
+def test_a_link_date_is_used_and_flagged_as_not_confirmed():
     email = prepared_email(date=None, date_source=None, date_hint=date(2026, 4, 13))
     record = build_record(email, llm_output(date=None, date_quote=None), "model", "v2")
-    assert (record.date, record.meta.date_hint) == (None, date(2026, 4, 13))
-    assert [(f.kind, f.field, f.value_a) for f in record.meta.flags] == [
-        ("inferred", "date", "2026-04-13")
-    ]
+    assert (record.date, record.meta.date_source) == (date(2026, 4, 13), "link")
+    [flag] = record.meta.flags
+    assert (flag.kind, flag.field, flag.value_a) == ("inferred", "date", "2026-04-13")
+    assert flag.note.startswith("Not confirmed.")
 
 
-def test_no_hint_when_the_email_states_a_date():
+def test_no_link_date_when_the_email_states_a_date():
     email = prepared_email(date_hint=date(2026, 4, 13))
     record = build_record(email, llm_output(), "model", "v2")
-    assert (record.date, record.meta.date_hint) == (date(2026, 4, 10), None)
+    assert (record.date, record.meta.date_source) == (date(2026, 4, 10), "llm+python")
     assert all(f.kind != "inferred" for f in record.meta.flags)
 
 

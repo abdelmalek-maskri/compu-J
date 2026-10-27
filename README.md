@@ -17,9 +17,10 @@ its answers, under a strip of live market headlines.
 * **The dashboard**: search and filter the 200 emails, read each one safely, open its PDFs, and
   see which emails are worth a second look and why.
 
-**Result:** all 200 emails classified, none failed. 15 emails are marked "worth checking",
-each with the reason in plain words. On 20 independently labelled emails, bank and date are
-20 of 20 right, and market wrap and main asset class 18 of 20 (details below).
+**Result:** all 200 emails classified, none failed. 11 emails are marked "worth checking",
+each with the reason in plain words. On 20 independently labelled emails, the bank is 20 of
+20 right, the date 18 of 20 (both misses are deliberate choices about uncertain dates), and
+market wrap and main asset class 18 of 20 (details below).
 
 ## What it looks like
 
@@ -27,7 +28,7 @@ each with the reason in plain words. On 20 independently labelled emails, bank a
 
 | Search and filters | Why an email is worth checking |
 | --- | --- |
-| ![Filters for bank, asset class and industry, with a count beside each option](docs/screenshots/filters.png) | ![The reasons the AI and the rules disagree, in plain words](docs/screenshots/worth-checking.png) |
+| ![Filters for bank, asset class and industry, with a count beside each option](docs/screenshots/filters.png) | ![Why an email is worth checking, in plain words](docs/screenshots/worth-checking.png) |
 
 ## How each email is read
 
@@ -40,10 +41,53 @@ Every email is read twice, by two readers that work in different ways:
   understand meaning, but they never invent anything.
 
 The model's answer is used when the email confirms it: the bank it names must appear in the
-email, and the date it gives must be quoted from the email. Otherwise the rules' answer is
-used. When the two disagree, nothing is decided silently: the email is marked "worth
-checking", with the reason, for example *"The AI dated it 13 April 2026, quoting 'April 13',
-but that could not be confirmed: the quote must be in the email, give the full date..."*
+email, and the date it gives must be quoted from the email. Otherwise the rules' bank is used;
+the date works differently (see the next section). When something is uncertain, nothing is
+decided silently: the email is marked "worth checking", with the reason in plain words, for
+example *"The email mentions 15 April 2026, after the day it arrived, so it is probably an
+event or a deadline, not the day it was published."*
+
+## How dates are decided
+
+The brief asks for the publication date. Most dates in a research email are something else,
+so a date is only used when the email confirms it, and an uncertain date is left empty rather
+than guessed:
+
+| What the email shows | What is used | What the reader sees | Example |
+| --- | --- | --- | --- |
+| A date the model quotes from the email, within a month before the email arrived and a day after | that date | the date | 182 of 200 emails |
+| A weekday with no year, such as "Monday, 13 April" | that date: the weekday fits only one year | the date | `035427` |
+| The model's date is confirmed, but the rules found another one higher up | the model's date | the date, no note: the email states it, so there is nothing to check | `035334`: "Published 10 Apr, 2026" |
+| A date after the email arrived | nothing | "probably an event or a deadline" | `035341`, `035375` |
+| A date only the rules found, which the model rejected | nothing | the date it mentions, and why it is not used | `035274`: "report as of 31.03.2026" |
+| A date the model quoted that is not in the email as written | nothing | why it is not used | `035356`: "as at9 April 2026" |
+| No date in the text, but one in a link address (a campaign code like `_20260413`) | the link's date | the date, marked **not confirmed** | `035330`, `035429`, `035437` |
+| No date at all | nothing | "No publication date found", and the day it arrived when known | `035243` |
+
+Why not use the day the email arrived instead? It is only known for 66 of the 200 emails (it
+comes from the times on attached files), and where both are known it matches the publication
+day in only 33 of 56. It is shown beside an empty date as a clue, never as the date.
+
+The rules' date is never used on its own: every time the rules found a date the model
+rejected, it was another kind of date (an article listed inside the email, a "data as of"
+day). The rules still check the model, and when both find the same date it is used even if
+the model's quote is incomplete.
+
+What this gives on the 200 emails:
+
+| Outcome | Emails | Which |
+| --- | --- | --- |
+| Date confirmed by the email | 182 | |
+| Date confirmed by its weekday | 3 | `035335`, `035427`, `035428` |
+| Date from a link, marked not confirmed | 3 | `035330`, `035429`, `035437` |
+| Empty: a date only the rules found | 4 | `035255` (an article in a "you might have missed" box), `035274` ("report as of"), `035348` (attachment names), `035431` (each note in a digest has its own date) |
+| Empty: a date after the email arrived | 2 | `035341`, `035375` |
+| Empty: a date not in the email as written | 1 | `035356` |
+| Empty: no date at all | 5 | `035243`, `035279`, `035327`, `035358`, `035359` |
+
+Every email in the last four rows and the link row is marked "worth checking" with its
+reason, except the five with no date at all: there is nothing to check, so they only say "No
+publication date found".
 
 ## Run it
 
@@ -124,7 +168,8 @@ up:
 3. **Most dates in an email are not when it was published.** Subscription deadlines, webinar
    times, "data as of" dates, old dates on charts. I found that the times on each email's
    attached files show when it arrived, so a date is only accepted if it falls between a month
-   before and a day after that.
+   before and a day after that. Uncertain dates are left empty, with the reason (see
+   [How dates are decided](#how-dates-are-decided)).
 4. **The AI first rejected good titles.** It retyped `’` as `'`, so its title did not match
    the email letter for letter. Titles are now compared word by word, ignoring punctuation.
 5. **Local AI models were silently reading only part of each email.** Ollama reads 4,096
@@ -157,15 +202,20 @@ independently and compared with the results (`evaluation/labels.csv`, scored by
 | Field | Right | The model alone | The rules alone |
 | --- | --- | --- | --- |
 | Bank | 20 of 20 | 20 of 20 | 20 of 20 |
-| Date | 20 of 20 | 19 of 20 | 20 of 20 |
+| Date | 18 of 20 | 19 of 20 | 20 of 20 |
 | Market wrap | 18 of 20 | | |
 | Main asset class | 18 of 20 | | |
 
-Both mistakes are in emails the system had already marked "worth checking", so the marking
-pointed a person at exactly the errors. One is T. Rowe Price's "Weekly market recap", which
-the model wrongly called not a market wrap; the other is a Barclays digest of research notes
-that it called a market wrap (debatable: it recaps research, not the markets). Combining the
-two readers also fixed the one date the model missed on its own.
+All the mistakes are in two emails the system had already marked "worth checking", so the
+marking pointed a person at exactly the errors. One is T. Rowe Price's "Weekly market recap",
+which the model wrongly called not a market wrap; the other is a Barclays digest of research
+notes that it called a market wrap (debatable: it recaps research, not the markets).
+
+The two date misses follow from choices described in
+[How dates are decided](#how-dates-are-decided). The Barclays digest lists notes with their
+own dates, and none is stated as the digest's, so its date is left empty; the labeller took
+the newest note's. The T. Rowe Price recap states no date, so it shows the date from its
+links, marked not confirmed; the label says none.
 
 The labels were made by Claude, a different AI model from the one being scored, reading each
 email; the judgement calls are explained in the file. 20 emails give a rough figure, not a
