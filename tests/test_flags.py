@@ -59,6 +59,14 @@ def test_rejected_model_date_says_what_is_wrong_with_it():
     assert "quoting '10 April 2026' (after_arrival)" in flag.detail
 
 
+def test_an_invented_date_is_never_described_as_mentioned():
+    # a date after arrival whose quote is not in the email: the note must not claim it is
+    email = prepared_email(date=None, date_source=None, received=date(2026, 4, 1))
+    output = llm_output(date="2026-04-20", date_quote="20 April 2026")
+    [flag] = metadata_flags(check_metadata(email, output))
+    assert flag.note.startswith("20 April 2026 could not be found in the email")
+
+
 def test_a_date_only_the_rules_found_is_flagged_and_not_used():
     # 035274: the rules took "report as of 31.03.2026", the model rightly found no date
     meta = check_metadata(prepared_email(), llm_output(date=None, date_quote=None))

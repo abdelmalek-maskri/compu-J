@@ -17,9 +17,10 @@ its answers, under a strip of live market headlines.
 * **The dashboard**: search and filter the 200 emails, read each one safely, open its PDFs, and
   see which emails are worth a second look and why.
 
-**Result:** all 200 emails classified, none failed. 15 emails are marked "worth checking",
-each with the reason in plain words. On 20 independently labelled emails, bank and date are
-20 of 20 right, and market wrap and main asset class 18 of 20 (details below).
+**Result:** all 200 emails classified, none failed. 11 emails are marked "worth checking",
+each with the reason in plain words. On 20 independently labelled emails, the bank is 20 of
+20 right, the date 18 of 20 (both misses are deliberate choices about uncertain dates), and
+market wrap and main asset class 18 of 20 (details below).
 
 ## What it looks like
 
