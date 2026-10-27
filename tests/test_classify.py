@@ -6,6 +6,7 @@ import classify
 from classify import RunStopped, classify_all, summary, write_deliverable, write_json
 from pipeline.llm_cache import Cache
 from pipeline.llm_client import CallResult, LLMError, Settings, StopRun
+from pipeline.reviewed import Reviewed
 from tests.factories import llm_output, prepared_email
 
 SETTINGS = Settings(model="ollama_chat/test", api_base=None, num_ctx=32768, reasoning_effort=None)
@@ -49,6 +50,15 @@ def test_every_email_gets_a_record_and_answers_are_cached(tmp_path):
     second = run(cache, fake)
     assert [o.cached for o in second] == [True, True]
     assert len(fake.calls) == 2  # nothing was sent again
+
+
+def test_reviewed_answers_reach_only_their_email(tmp_path):
+    reviewed = {"035301": [Reviewed("market_wrap", "YES", "a recap")]}
+    quiet = lambda line: None  # noqa: E731
+    outcomes = classify_all(
+        emails(), SETTINGS, Cache(tmp_path), False, FakeClassifier(), quiet, reviewed=reviewed
+    )
+    assert [o.record.market_wrap for o in outcomes] == ["NO", "YES"]
 
 
 def test_force_ignores_the_cache(tmp_path):

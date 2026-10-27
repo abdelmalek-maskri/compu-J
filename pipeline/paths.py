@@ -7,6 +7,8 @@ from pathlib import Path
 DELIVERABLE = Path("classified_emails.json")
 # everything else about each email (sources, both answers, flags), keyed by folder number
 DETAILS = Path("classified_emails_details.json")
+# answers a person corrected after review, applied on every run (see pipeline/reviewed.py)
+REVIEWED = Path("evaluation/reviewed.csv")
 
 OUTPUT = Path("output")
 CLEANED_EMAILS = OUTPUT / "cleaned_emails"  # what the model reads, one .txt per email

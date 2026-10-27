@@ -31,6 +31,8 @@ export type Flag = {
 // the parts of classified_emails_details.json the dashboard shows; the file has more
 export type Details = {
   flags?: Flag[]
+  // answers a person corrected after review, each with its reason
+  reviewed?: string[]
   content_type?: string
 }
 

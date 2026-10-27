@@ -30,10 +30,23 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Sidebar({ email, details }: { email: Email; details: Details | undefined }) {
   const flags = details?.flags ?? []
+  const reviewed = details?.reviewed ?? []
   const isEquity = email.asset_tags.includes('Equity')
-  if (flags.length === 0 && !isEquity) return null
+  if (flags.length === 0 && reviewed.length === 0 && !isEquity) return null
   return (
     <aside className="text-[14px]">
+      {reviewed.length > 0 && (
+        <Section title="Reviewed">
+          <ul className="space-y-2">
+            {reviewed.map((note) => (
+              <li key={note} className="border border-rule px-3 py-2">
+                {note}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
       {flags.length > 0 && (
         <Section title="Worth checking">
           <ul className="space-y-2">
@@ -110,7 +123,9 @@ export function Reader({ email, onBack }: { email: Email; onBack: () => void }) 
   const [images, setImages] = useState(readImagesChoice)
   const pdfs = email.pdf_attachment ?? []
   const remote = data?.remote_images ?? 0
-  const hasSidebar = Boolean(data?.details.flags?.length) || email.asset_tags.includes('Equity')
+  const hasSidebar =
+    Boolean(data?.details.flags?.length || data?.details.reviewed?.length) ||
+    email.asset_tags.includes('Equity')
   const kind = CONTENT_TYPES[data?.details.content_type ?? email.content_type ?? '']
 
   const tab = (label: string, value: string | null) => (
