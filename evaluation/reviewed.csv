@@ -1,0 +1,2 @@
+email,field,value,reason
+035437,market_wrap,YES,"titled ""Weekly market recap"", it delivers T. Rowe Price's summary of the previous week's markets; the recap itself is behind its link, so the model saw only the cover note"

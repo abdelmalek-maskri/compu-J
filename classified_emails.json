@@ -3604,9 +3604,11 @@
     "folder_name": "Weekly market recap",
     "bank": "T. Rowe Price",
     "date": "2026-04-13",
-    "market_wrap": "NO",
-    "primary_asset_tag": null,
-    "asset_tags": [],
+    "market_wrap": "YES",
+    "primary_asset_tag": "Market Wrap",
+    "asset_tags": [
+      "Market Wrap"
+    ],
     "companies_mentioned": [],
     "industry_subindustry": [],
     "pdf_attachment": null,

@@ -11,6 +11,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -39,6 +40,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -67,6 +69,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -95,6 +98,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -123,6 +127,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "marketing",
     "market_wrap_checklist": {
       "structure": false,
@@ -154,6 +159,7 @@
       "added parent Macro for Emerging Markets",
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -182,6 +188,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -212,6 +219,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -240,6 +248,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -268,6 +277,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -299,6 +309,7 @@
       "added parent Macro for Developed Markets",
       "added parent FX for EUR"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -327,6 +338,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -358,6 +370,7 @@
       "added parent Macro for Developed Markets",
       "added parent FX for CHF"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -386,6 +399,7 @@
     "date_python": "2026-04-02",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -416,6 +430,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -446,6 +461,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -483,6 +499,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -511,6 +528,7 @@
     "date_python": "2026-04-02",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -539,6 +557,7 @@
     "date_python": "2026-04-02",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -567,6 +586,7 @@
     "date_python": "2026-04-07",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "marketing",
     "market_wrap_checklist": {
       "structure": false,
@@ -595,6 +615,7 @@
     "date_python": "2026-04-02",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -625,6 +646,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -653,6 +675,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -681,6 +704,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -709,6 +733,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -737,6 +762,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -765,6 +791,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -793,6 +820,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -821,6 +849,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -849,6 +878,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -877,6 +907,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -905,6 +936,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -933,6 +965,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -961,6 +994,7 @@
     "date_python": "2026-04-01",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -991,6 +1025,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1028,6 +1063,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1058,6 +1094,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1086,6 +1123,7 @@
     "date_python": "2026-03-30",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -1114,6 +1152,7 @@
     "date_python": "2026-03-30",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1144,6 +1183,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "marketing",
     "market_wrap_checklist": {
       "structure": false,
@@ -1172,6 +1212,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1202,6 +1243,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1230,6 +1272,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1258,6 +1301,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1286,6 +1330,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1314,6 +1359,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1342,6 +1388,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1370,6 +1417,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1398,6 +1446,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1426,6 +1475,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1456,6 +1506,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1484,6 +1535,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1512,6 +1564,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1540,6 +1593,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1568,6 +1622,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1596,6 +1651,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1624,6 +1680,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1654,6 +1711,7 @@
     "corrections": [
       "added parent Commodities for Metals"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1682,6 +1740,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1710,6 +1769,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1738,6 +1798,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1766,6 +1827,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1796,6 +1858,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1826,6 +1889,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -1854,6 +1918,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -1882,6 +1947,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -1910,6 +1976,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1938,6 +2005,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1966,6 +2034,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -1994,6 +2063,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2022,6 +2092,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2052,6 +2123,7 @@
     "corrections": [
       "added parent Fixed Income for Credit Strategy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2080,6 +2152,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2108,6 +2181,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2139,6 +2213,7 @@
       "added parent Fixed Income for Rates Strategy",
       "added parent FX for JPY"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2169,6 +2244,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2200,6 +2276,7 @@
       "added parent Macro for Developed Markets",
       "added parent Commodities for Energy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2228,6 +2305,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2256,6 +2334,7 @@
     "date_python": "2026-04-07",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2286,6 +2365,7 @@
     "corrections": [
       "added parent Commodities for Energy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2314,6 +2394,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2342,6 +2423,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2372,6 +2454,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2400,6 +2483,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -2428,6 +2512,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2456,6 +2541,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2484,6 +2570,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2512,6 +2599,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2540,6 +2628,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2579,6 +2668,7 @@
     "corrections": [
       "dropped companies and industries without an Equity tag"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2607,6 +2697,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2644,6 +2735,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2672,6 +2764,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2700,6 +2793,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2728,6 +2822,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2756,6 +2851,7 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2784,6 +2880,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -2812,6 +2909,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2842,6 +2940,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2870,6 +2969,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2898,6 +2998,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2928,6 +3029,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -2965,6 +3067,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -2995,6 +3098,7 @@
     "corrections": [
       "added parent Fixed Income for Rates Strategy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3023,6 +3127,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -3053,6 +3158,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3081,6 +3187,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -3109,6 +3216,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3137,6 +3245,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3174,6 +3283,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -3202,6 +3312,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3230,6 +3341,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -3258,6 +3370,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3286,6 +3399,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -3314,6 +3428,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3344,6 +3459,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3372,6 +3488,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3409,6 +3526,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3439,6 +3557,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3467,6 +3586,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3497,6 +3617,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "marketing",
     "market_wrap_checklist": {
       "structure": false,
@@ -3528,6 +3649,7 @@
       "added parent Macro for Developed Markets",
       "added parent Commodities for Energy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3556,6 +3678,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -3586,6 +3709,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3614,6 +3738,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3642,6 +3767,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3670,6 +3796,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3698,6 +3825,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3728,6 +3856,7 @@
     "corrections": [
       "added parent FX for EUR"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3756,6 +3885,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "marketing",
     "market_wrap_checklist": {
       "structure": false,
@@ -3786,6 +3916,7 @@
     "corrections": [
       "added parent Fixed Income for Rates Strategy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3814,6 +3945,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3842,6 +3974,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3870,6 +4003,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -3898,6 +4032,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3928,6 +4063,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -3965,6 +4101,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -3993,6 +4130,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -4023,6 +4161,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4053,6 +4192,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -4081,6 +4221,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4109,6 +4250,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4137,6 +4279,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4165,6 +4308,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4193,6 +4337,7 @@
     "date_python": "2026-04-11",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4221,6 +4366,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4251,6 +4397,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4284,6 +4431,7 @@
       "added parent Commodities for Energy",
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4312,6 +4460,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4340,6 +4489,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4368,6 +4518,7 @@
     "date_python": "2026-04-11",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4398,6 +4549,7 @@
     "corrections": [
       "added parent Fixed Income for Rates Strategy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4426,6 +4578,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4454,6 +4607,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4482,6 +4636,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4510,6 +4665,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4538,6 +4694,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4566,6 +4723,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4594,6 +4752,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4624,6 +4783,7 @@
     "corrections": [
       "added parent Macro for Developed Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4652,6 +4812,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4683,6 +4844,7 @@
       "added parent Fixed Income for Rates Strategy",
       "added parent FX for GBP"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4711,6 +4873,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4739,6 +4902,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4767,6 +4931,7 @@
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4795,6 +4960,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4825,6 +4991,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4855,6 +5022,7 @@
     "corrections": [
       "added parent Commodities for Energy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4885,6 +5053,7 @@
     "corrections": [
       "added parent Fixed Income for Rates Strategy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4913,6 +5082,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4941,6 +5111,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -4969,6 +5140,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4997,6 +5169,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5025,6 +5198,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5053,6 +5227,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5081,6 +5256,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5109,6 +5285,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5137,6 +5314,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5165,6 +5343,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5195,6 +5374,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5225,6 +5405,7 @@
     "corrections": [
       "added parent Commodities for Energy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5255,6 +5436,7 @@
     "corrections": [
       "added parent Fixed Income for Rates Strategy"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5283,6 +5465,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5311,6 +5494,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5342,6 +5526,7 @@
       "added parent Macro for Developed Markets",
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5370,6 +5555,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5398,6 +5584,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5426,6 +5613,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5454,6 +5642,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5482,6 +5671,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5519,6 +5709,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5550,6 +5741,7 @@
       "added parent Macro for Developed Markets",
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5595,6 +5787,7 @@
       }
     ],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5625,6 +5818,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
       "structure": false,
@@ -5655,6 +5849,7 @@
     "corrections": [
       "added parent FX for USD"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5683,6 +5878,7 @@
     "date_python": "2026-04-12",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
@@ -5711,6 +5907,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5739,6 +5936,7 @@
     "date_python": "2026-04-13",
     "flags": [],
     "corrections": [],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5767,14 +5965,6 @@
     "date_python": null,
     "flags": [
       {
-        "kind": "model_logic",
-        "field": "primary_asset_tag",
-        "value_a": "Market Wrap",
-        "value_b": "decision: NO",
-        "note": "The AI gave Market Wrap as the main asset class, but decided the email is not a market wrap. The Market Wrap tag was removed, leaving no main asset class.",
-        "detail": null
-      },
-      {
         "kind": "inferred",
         "field": "date",
         "value_a": "2026-04-13",
@@ -5783,9 +5973,9 @@
         "detail": null
       }
     ],
-    "corrections": [
-      "removed Market Wrap tag: the model decided it is not a market wrap",
-      "no asset class left after removing Market Wrap"
+    "corrections": [],
+    "reviewed": [
+      "Market wrap set to YES by a reviewer: titled \"Weekly market recap\", it delivers T. Rowe Price's summary of the previous week's markets; the recap itself is behind its link, so the model saw only the cover note"
     ],
     "content_type": "marketing",
     "market_wrap_checklist": {
@@ -5817,6 +6007,7 @@
     "corrections": [
       "added parent Macro for Emerging Markets"
     ],
+    "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
