@@ -66,13 +66,14 @@ def _choose_bank(email: PreparedEmail, said: str) -> tuple[str | None, str | Non
 
 
 def _date_problem(email: PreparedEmail, said: date, quote: str | None) -> str | None:
-    """why the model's date cannot be confirmed as the publication date; None when it can"""
+    """why the model's date cannot be confirmed as the publication date; None when it can.
+    the quote is checked first, so a note never says the email mentions an invented date"""
+    if not appears_in(quote, email.llm_input):
+        return "not_in_email"
     if email.received and said > email.received + RECEIVED_MARGIN:
         return "after_arrival"
     if not could_be_published(said, email.received):
         return "too_old"
-    if not appears_in(quote, email.llm_input):
-        return "not_in_email"
     stated = find_date(quote, [])[0] or weekday_date(quote, email.received or said)
     return None if stated == said else "no_full_date"
 

@@ -58,10 +58,10 @@ def build_record(
 def error_record(
     email: PreparedEmail, error: str, model: str, prompt_version: str
 ) -> ClassifiedEmail:
-    """the LLM call failed: keep everything Python found so the email still appears. with no
-    model to check it against, the rules' date is the best there is"""
-    found = email.date or email.date_hint
-    source = f"python:{email.date_source}" if email.date else "link" if found else None
+    """the LLM call failed: keep everything Python found so the email still appears. the
+    rules' date is still never used on its own; it stays in date_python for review"""
+    found = email.date_hint
+    source = "link" if found else None
     return ClassifiedEmail(
         folder_name=None,
         bank=email.bank,

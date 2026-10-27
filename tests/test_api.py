@@ -59,6 +59,12 @@ def test_the_list_joins_the_brief_fields_with_what_the_list_needs(client):
     assert (email["date_confirmed"], email["received"]) == (False, None)
 
 
+def test_a_date_without_details_is_not_called_confirmed(client, tmp_path):
+    (tmp_path / "details.json").write_text("{}")
+    [email] = client.get("/api/emails").json()
+    assert email["date_confirmed"] is False
+
+
 def test_one_email_returns_its_record_and_details(client):
     body = client.get("/api/emails/035300").json()
     assert body["record"] == RECORD
