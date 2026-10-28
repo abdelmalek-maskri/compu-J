@@ -24,13 +24,15 @@ def build_record(
     prompt_version: str,
     reviewed: list[Reviewed] = (),
 ) -> ClassifiedEmail:
-    tags = apply_tag_rules(output.model_copy(update={r.field: r.value for r in reviewed}))
+    answers = {r.field: r.value for r in reviewed}
+    wrap = {"market_wrap": answers["market_wrap"]} if "market_wrap" in answers else {}
+    tags = apply_tag_rules(output.model_copy(update=wrap))
     meta = check_metadata(email, output)
     settled = {field for r in reviewed for field in r.settles()}
     flags = [f for f in metadata_flags(meta) + logic_flags(output) if f.field not in settled]
     # the title is checked against the text as exported, then repaired for people to read
     return ClassifiedEmail(
-        folder_name=meta.title and repair(meta.title),
+        folder_name=answers.get("folder_name") or (meta.title and repair(meta.title)),
         bank=meta.bank,
         date=meta.date,
         market_wrap=tags.market_wrap,
@@ -52,7 +54,7 @@ def build_record(
             date_python=meta.date_python,
             flags=flags + link_date_flags(meta.date, meta.date_source),
             corrections=tags.corrections + date_corrections(meta),
-            reviewed=[r.note(getattr(output, r.field)) for r in reviewed],
+            reviewed=[r.note(getattr(output, r.model_field)) for r in reviewed],
             content_type=output.content_type,
             market_wrap_checklist=output.market_wrap_checklist,
             duplicate_of=email.duplicate_of,

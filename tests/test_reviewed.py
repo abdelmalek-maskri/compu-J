@@ -65,6 +65,19 @@ def test_reviewed_wrap_gets_the_brief_tags_and_keeps_the_ai_answer():
     assert [f.field for f in record.meta.flags] == ["date"]
 
 
+def test_a_reviewed_title_replaces_the_label_the_ai_took():
+    # 035347: the AI took the company line, the headline is below it
+    email = prepared_email(body="Eli Lilly & Co. (LLY.N)\nMounjaro+Zepbound Script Tracker")
+    reviewed = [Reviewed("folder_name", "Mounjaro+Zepbound Script Tracker", "the headline")]
+    record = build_record(email, llm_output(title="Eli Lilly"), "model", "v4", reviewed)
+    assert record.folder_name == "Mounjaro+Zepbound Script Tracker"
+    assert record.meta.reviewed == [
+        "Title set to Mounjaro+Zepbound Script Tracker by a reviewer (the AI said Eli Lilly): "
+        "the headline"
+    ]
+    assert "title" not in [f.field for f in record.meta.flags]
+
+
 def test_confirming_no_leaves_the_flags_it_does_not_settle():
     # companies without an Equity tag stay questionable when the reviewer keeps NO
     output = llm_output(
