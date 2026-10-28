@@ -138,6 +138,34 @@ includes four emails that later runs got right, which I judged when comparing th
 To get the submitted column I read all 200 submitted results once more, the same way as in
 section 3.
 
+## Accuracy on 20 labelled emails
+
+20 emails, picked to cover all seven main asset classes and seven banks, were labelled
+independently and compared with the results (`evaluation/labels.csv`, scored by
+`uv run python -m scripts.accuracy --score`):
+
+| Field | Right | The model alone | The rules alone |
+| --- | --- | --- | --- |
+| Bank | 20 of 20 | 20 of 20 | 20 of 20 |
+| Date | 18 of 20 | 19 of 20 | 20 of 20 |
+| Market wrap | 20 of 20 | | |
+| Main asset class | 20 of 20 | | |
+
+"The model alone" and "the rules alone" score each reader's own answer before the two are
+combined; market wrap and main asset class come from the model only. One of the 20 labelled
+emails, T. Rowe Price's "Weekly market recap", is among the answers a person settled
+([finding 12](../docs/findings.md)), so without that correction market wrap and main asset class would be 19 of 20.
+
+The two date misses follow from choices described in
+[How dates are decided](../docs/how-it-works.md#how-dates-are-decided). The Barclays digest lists notes with their
+own dates, and none is stated as the digest's, so its date is left empty; the labeller took
+the newest note's. The T. Rowe Price recap states no date, so it shows the date from its
+links, marked not confirmed; the label says none.
+
+The labels were made by Claude, a different AI model from the one being scored, reading each
+email; the judgement calls are explained in the file. 20 emails give a rough figure, not a
+precise one, which is why I also read all 200 results, as described above.
+
 ## Known mistakes in the submitted file
 
 20 mistakes in 18 emails, none of them flagged, so none corrected by hand. The bank, the
