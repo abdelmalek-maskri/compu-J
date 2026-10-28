@@ -13,7 +13,7 @@ export type Email = {
   pdf_attachment: string[] | null
   source_file: string
   content_type: string | null
-  // false when the date comes from a link in the email, not from the email's text
+  // false when the date comes from a link in the email, or where it came from is unknown
   date_confirmed: boolean
   received: string | null
   flag_count: number

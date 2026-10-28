@@ -64,8 +64,6 @@ def make_safe(html: str, allow_images: bool = False, files_url: str | None = Non
                 tag.attrs.pop("srcset", None)  # a remote candidate would win and be blocked
         elif tag.name == "img" and not allow_images:
             if src.lower().startswith(REMOTE):
-                # kept aside, so the dashboard can say an image was blocked
-                tag["data-blocked-src"] = src
                 del tag["src"]
             tag.attrs.pop("srcset", None)
 

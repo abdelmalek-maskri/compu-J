@@ -82,7 +82,7 @@ def test_the_email_html_is_cleaned_and_labelled_utf8(client):
     html = response.text
     assert response.headers["content-type"] == "text/html; charset=utf-8"
     assert "<script" not in html and "onload" not in html and "windows-1252" not in html
-    assert 'data-blocked-src="https://live.barcap.com/pixel.gif"' in html
+    assert "live.barcap.com" not in html
     assert 'target="_blank"' in html and "javascript:" not in html
     policy = response.headers["content-security-policy"]
     assert "img-src 'self' data:;" in policy and "sandbox" in policy
@@ -157,7 +157,7 @@ def test_an_email_folder_linked_from_elsewhere_is_not_served(client, tmp_path):
 
 def test_noscript_content_is_kept_and_cleaned():
     html = make_safe('<noscript><p>Read</p><img src="https://x.com/p.gif"></noscript>')
-    assert "<p>Read</p>" in html and 'data-blocked-src="https://x.com/p.gif"' in html
+    assert "<p>Read</p>" in html and "x.com" not in html
 
 
 def test_remote_srcset_candidates_count_and_never_replace_a_saved_image():

@@ -100,7 +100,7 @@ def test_an_invented_date_is_never_described_as_mentioned():
 
 
 def test_a_date_only_the_rules_found_is_flagged_and_not_used():
-    # 035274: the rules took "report as of 31.03.2026", the model rightly found no date
+    # 035255: the rules took the date of an article listed in the email; the model found none
     meta = check_metadata(prepared_email(), llm_output(date=None, date_quote=None))
     [flag] = metadata_flags(meta)
     assert (meta.date, flag.value_a, flag.value_b) == (None, None, "2026-04-10")

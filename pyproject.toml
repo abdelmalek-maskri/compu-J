@@ -31,7 +31,7 @@ target-version = "py311"
 select = ["E", "F", "I", "UP", "B", "SIM"]
 
 [tool.ruff.lint.per-file-ignores]
-# prompt text is prose sent to the model; one sentence per line keeps prompt diffs readable
+# prompt text is prose sent to the model; one paragraph per line keeps prompt diffs readable
 "pipeline/prompt.py" = ["E501"]
 
 [tool.pytest.ini_options]

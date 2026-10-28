@@ -28,14 +28,8 @@ def _text(value: date | str | None) -> str | None:
     return value.isoformat() if isinstance(value, date) else value
 
 
-# where the rules found a value, from Metadata's "python:<where>" sources
-WHERE = {
-    "logo": "the bank's logo",
-    "signature": "the signature",
-    "top_text": "the top of the email",
-    "text": "the email's text",
-    "pdf_name": "a PDF's file name",
-}
+# where the rules found their date
+WHERE = {"text": "the email's text", "pdf_name": "a PDF's file name"}
 
 
 def _day(value: date) -> str:
@@ -43,8 +37,7 @@ def _day(value: date) -> str:
 
 
 def _where(source: str | None) -> str:
-    where = (source or "").removeprefix("python:")
-    return WHERE.get(where, where)
+    return WHERE.get(source or "", source or "")
 
 
 def metadata_flags(meta: Metadata) -> list[Flag]:
@@ -131,7 +124,7 @@ def _date_flags(meta: Metadata) -> list[Flag]:
                 f"({meta.date_problem}). The rules found {rules}.",
             )
         ]
-    # 035274's rules date is "report as of 31.03.2026", which the model rightly refused
+    # 035255's rules date belongs to an article listed in the email, which the model rightly refused
     if meta.date_llm is None and meta.date_python:
         where = "The email mentions"
         if meta.date_python_source == "pdf_name":
