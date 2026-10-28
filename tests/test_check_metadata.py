@@ -87,6 +87,17 @@ def test_model_date_wins_when_its_quote_checks_out():
     assert (meta.date_llm, meta.date_python) == (date(2026, 4, 9), date(2026, 4, 10))
 
 
+def test_the_title_is_taken_as_the_email_writes_it():
+    # 035331: the export lost a dash; the AI guessed "\x96" in its place
+    email = prepared_email(body=f"SPECIAL EDITION {chr(0xFFFD)} U.S. and Iran Reach Fragile Truce")
+    output = llm_output(title=f"SPECIAL EDITION {chr(0x96)} U.S. and Iran Reach Fragile Truce")
+    meta = check_metadata(email, output)
+    assert meta.title == f"SPECIAL EDITION {chr(0xFFFD)} U.S. and Iran Reach Fragile Truce"
+    assert meta.title_verified
+    # a title that is not a whole line is kept as the AI wrote it
+    assert check_metadata(email, llm_output(title="Fragile Truce")).title == "Fragile Truce"
+
+
 def test_rules_date_is_never_used_on_its_own():
     email = prepared_email(body="Deutsche Bank\n10 April 2026\nTrade on 9 April")
     meta = check_metadata(email, llm_output(date="2026-04-09", date_quote="9 April"))
@@ -109,8 +120,20 @@ def test_weekday_quote_without_a_year_is_confirmed():
     email = prepared_email(date=None, date_source=None, body="UBS House View\nMonday, 13 April")
     output = llm_output(date="2026-04-13", date_quote="Monday, 13 April")
     assert check_metadata(email, output).date == date(2026, 4, 13)
+    # the weekday decides the year, not the model
     wrong_year = llm_output(date="2025-04-13", date_quote="Monday, 13 April")
-    assert check_metadata(email, wrong_year).date_problem == "no_full_date"
+    assert check_metadata(email, wrong_year).date == date(2026, 4, 13)
+
+
+def test_the_date_is_read_from_the_quote_not_from_the_model():
+    # 035253: the model read "02.04.2026" as 4 February; the email means 2 April
+    email = prepared_email(body="Julius Baer\nResearch | 02.04.2026", received=date(2026, 4, 2))
+    meta = check_metadata(email, llm_output(date="2026-02-04", date_quote="02.04.2026"))
+    assert (meta.date, meta.date_llm, meta.date_problem) == (
+        date(2026, 4, 2),
+        date(2026, 2, 4),
+        None,
+    )
 
 
 def test_link_date_is_used_only_when_no_date_is_confirmed():

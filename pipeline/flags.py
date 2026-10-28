@@ -94,6 +94,11 @@ def _rejected_note(meta: Metadata) -> str:
                 f"The email mentions {said}, more than a month before it arrived, so it is "
                 "probably the date of a chart or a past event, not the day it was published."
             )
+        case "as_of":
+            return (
+                f'The email gives {said} as an "as of" date, the day its figures refer to, not '
+                "the day it was published, so it is not used."
+            )
         case "not_in_email":
             return f"{said} could not be found in the email as written, so it is not used."
         case _:
@@ -188,6 +193,13 @@ def logic_flags(output: LLMOutput) -> list[Flag]:
         )
 
     if output.market_wrap == "YES":
+        # a market wrap's main class is Market Wrap; another one means the call contradicts itself
+        if output.primary_asset_tag != MARKET_WRAP:
+            wrap_flag(
+                f"main class: {output.primary_asset_tag}",
+                f"The AI called this a market wrap, but chose {output.primary_asset_tag} as its "
+                "main asset class, so it treats the email as being about one asset class.",
+            )
         if not checks["purpose"]:
             wrap_flag(
                 "purpose: no",

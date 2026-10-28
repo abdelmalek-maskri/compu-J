@@ -55,6 +55,23 @@ def appears_in(snippet: str | None, text: str) -> bool:
     return bool(words) and f" {words} " in f" {_words(text)} "
 
 
+def _as_written(title: str, text: str) -> str:
+    """the email's own line when the title matches one word for word: the model retypes
+    punctuation, drops lost characters ("isnt") or guesses them ("\x96"), the line does not"""
+    words = _words(title)
+    return next(
+        (line.strip() for line in text.splitlines() if words and _words(line) == words), title
+    )
+
+
+def _as_of(quote: str, text: str) -> bool:
+    """every place the quote appears follows "as of" or "as at": the day figures refer to"""
+    starts = [m.start() for m in re.finditer(re.escape(quote), text)]
+    return bool(starts) and all(
+        re.search(r"\bas (?:of|at)\s*$", text[max(0, s - 12) : s], re.I) for s in starts
+    )
+
+
 def _choose_bank(email: PreparedEmail, said: str) -> tuple[str | None, str | None]:
     """returns (bank, source); "Other" means the model was unsure"""
     pattern = BANK_PATTERNS.get(said)
@@ -70,6 +87,8 @@ def _date_problem(email: PreparedEmail, said: date, quote: str | None) -> str | 
     the quote is checked first, so a note never says the email mentions an invented date"""
     if not appears_in(quote, email.llm_input):
         return "not_in_email"
+    if _as_of(quote, email.llm_input):
+        return "as_of"
     if email.received and said > email.received + RECEIVED_MARGIN:
         return "after_arrival"
     if not could_be_published(said, email.received):
@@ -78,13 +97,24 @@ def _date_problem(email: PreparedEmail, said: date, quote: str | None) -> str | 
     return None if stated == said else "no_full_date"
 
 
+def _read_quote(email: PreparedEmail, said: date, quote: str | None) -> date:
+    """the date the quote states, read by Python: the model can misread its own quote, such as
+    02.04.2026 (day first) as 4 February. the model's date stands when the quote gives none"""
+    if not appears_in(quote, email.llm_input):
+        return said
+    return find_date(quote, [])[0] or weekday_date(quote, email.received or said) or said
+
+
 def _choose_date(
     email: PreparedEmail, said: date | None, quote: str | None
 ) -> tuple[date | None, str | None, str | None]:
     """returns (date, source, problem)"""
+    if said:
+        said = _read_quote(email, said, quote)
     problem = _date_problem(email, said, quote) if said else None
-    # both readers finding the same date confirms it, even when the model's quote falls short
-    if said and (problem is None or said == email.date):
+    # both readers finding the same date confirms it, even when the model's quote falls short,
+    # but never an "as of" date: the rules can pick those up too
+    if said and (problem is None or (said == email.date and problem != "as_of")):
         return said, "llm+python" if said == email.date else "llm", None
     if email.date_hint:
         return email.date_hint, "link", problem
@@ -95,7 +125,7 @@ def check_metadata(email: PreparedEmail, output: LLMOutput) -> Metadata:
     bank, bank_source = _choose_bank(email, output.bank)
     found, date_source, date_problem = _choose_date(email, output.date, output.date_quote)
     return Metadata(
-        title=output.title,
+        title=_as_written(output.title, email.llm_input),
         title_verified=appears_in(output.title, email.llm_input),
         bank=bank,
         bank_source=bank_source,
