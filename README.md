@@ -31,7 +31,7 @@ is described step by step in
 
 | Search and filters | Why an email is worth checking |
 | --- | --- |
-| ![Filters for bank, asset class and industry, with a count beside each option](docs/screenshots/filters.png) | ![Why an email is worth checking, in plain words](docs/screenshots/worth-checking.png) |
+| ![Market wraps or research first, then filters by date, bank and asset class, each with a count](docs/screenshots/filters.png) | ![The emails worth checking: a person's decision under Reviewed, and the reason a date is not confirmed](docs/screenshots/worth-checking.png) |
 
 ## How each email is read
 
