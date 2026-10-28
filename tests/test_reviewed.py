@@ -30,7 +30,8 @@ def test_reviewed_answers_are_read_by_email(tmp_path):
         (HEADER + "035437,market_wrap,yes,a recap\n", "'yes' is not a valid market_wrap"),
         (HEADER + "035437,bank,UBS,a recap\n", "'bank' cannot be reviewed here"),
         (HEADER + "035437,primary_asset_tag,Macro,a recap\n", "cannot be reviewed here"),
-        (HEADER + "035437,market_wrap,YES,\n", "needs an email and a reason"),
+        (HEADER + "035437,market_wrap,YES,\n", "needs an email, a value and a reason"),
+        (HEADER + "035437,folder_name,,the title is in an image\n", "a value and a reason"),
         (HEADER + "035999,market_wrap,YES,a recap\n", "no email '035999' in the data"),
         ("035437,market_wrap,YES,a recap\n", "the first line must be email,field,value,reason"),
         (
@@ -63,6 +64,19 @@ def test_reviewed_wrap_gets_the_brief_tags_and_keeps_the_ai_answer():
     ]
     # the contradiction is settled; the date has nothing to do with it and stays flagged
     assert [f.field for f in record.meta.flags] == ["date"]
+
+
+def test_a_reviewed_title_replaces_the_label_the_ai_took():
+    # 035347: the AI took the company line, the headline is below it
+    email = prepared_email(body="Eli Lilly & Co. (LLY.N)\nMounjaro+Zepbound Script Tracker")
+    reviewed = [Reviewed("folder_name", "Mounjaro+Zepbound Script Tracker", "the headline")]
+    record = build_record(email, llm_output(title="Eli Lilly"), "model", "v4", reviewed)
+    assert record.folder_name == "Mounjaro+Zepbound Script Tracker"
+    assert record.meta.reviewed == [
+        "Title set to Mounjaro+Zepbound Script Tracker by a reviewer (the AI said Eli Lilly): "
+        "the headline"
+    ]
+    assert "title" not in [f.field for f in record.meta.flags]
 
 
 def test_confirming_no_leaves_the_flags_it_does_not_settle():

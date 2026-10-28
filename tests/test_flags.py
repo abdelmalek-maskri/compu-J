@@ -49,6 +49,38 @@ def test_filling_a_gap_or_being_unsure_is_not_a_disagreement():
     assert metadata_flags(check_metadata(prepared_email(), llm_output(bank="Other"))) == []
 
 
+WRAP = {"market_wrap": "YES", "primary_asset_tag": "Market Wrap", "asset_tags": ["Market Wrap"]}
+
+
+def test_an_as_of_date_is_not_a_publication_date_even_when_both_readers_agree():
+    # 035274: "report as of 31.03.2026"; the AI quoted only the date and the rules agreed
+    email = prepared_email(
+        body="Please find enclosed our UBP EAM Analysis report as of 31.03.2026",
+        date=date(2026, 3, 31),
+    )
+    meta = check_metadata(email, llm_output(date="2026-03-31", date_quote="31.03.2026"))
+    assert (meta.date, meta.date_problem) == (None, "as_of")
+    [flag] = [f for f in metadata_flags(meta) if f.field == "date"]
+    assert '"as of" date' in flag.note
+    # the same date stated as the publication date elsewhere is still used
+    email = prepared_email(
+        body="Published 31.03.2026\nData as of 31.03.2026", date=date(2026, 3, 31)
+    )
+    meta = check_metadata(email, llm_output(date="2026-03-31", date_quote="31.03.2026"))
+    assert meta.date == date(2026, 3, 31)
+
+
+def test_as_of_inside_the_quote_is_caught_and_the_note_names_the_date_read():
+    # the AI quoted "as of 31.03.2026" and also misread it as 3 December
+    email = prepared_email(
+        body="UBP EAM Analysis report as of 31.03.2026", date=None, date_source=None
+    )
+    meta = check_metadata(email, llm_output(date="2026-12-03", date_quote="as of 31.03.2026"))
+    assert (meta.date, meta.date_problem, meta.date_read) == (None, "as_of", date(2026, 3, 31))
+    [flag] = [f for f in metadata_flags(meta) if f.field == "date"]
+    assert flag.note.startswith("The email gives 31 March 2026 as an")
+
+
 def test_rejected_model_date_says_what_is_wrong_with_it():
     # 035341: an event two weeks after the email arrived
     email = prepared_email(date=None, date_source=None, received=date(2026, 4, 1))
@@ -96,7 +128,7 @@ def test_title_not_in_the_email_is_flagged():
 def test_wrap_with_an_analytical_purpose_is_flagged():
     # gemma on Goldman's "Macro at a Glance": 6 of 7 checks, but purpose said no
     checks = checklist(yes=7) | {"purpose": False}
-    flags = logic_flags(llm_output(market_wrap="YES", market_wrap_checklist=checks))
+    flags = logic_flags(llm_output(market_wrap_checklist=checks, **WRAP))
     assert [(f.value_b, f.field) for f in flags] == [("purpose: no", "market_wrap")]
 
 
@@ -127,8 +159,20 @@ def test_market_wrap_as_main_class_while_deciding_no_is_flagged():
 
 
 def test_event_called_a_wrap_is_flagged():
-    output = llm_output(market_wrap="YES", content_type="event", market_wrap_checklist=checklist(7))
+    output = llm_output(content_type="event", market_wrap_checklist=checklist(7), **WRAP)
     assert [f.value_b for f in logic_flags(output)] == ["content type: event"]
+
+
+def test_a_wrap_with_another_main_class_is_flagged():
+    # 035410: a metals and mining weekly called a market wrap, with Commodities as main class
+    output = llm_output(
+        market_wrap="YES",
+        primary_asset_tag="Commodities",
+        asset_tags=["Commodities", "Metals"],
+        market_wrap_checklist=checklist(7),
+    )
+    assert [f.value_b for f in logic_flags(output)] == ["main class: Commodities"]
+    assert logic_flags(llm_output(market_wrap_checklist=checklist(7), **WRAP)) == []
 
 
 def test_companies_without_an_equity_tag_are_flagged():

@@ -1,2 +1,5 @@
 email,field,value,reason
 035437,market_wrap,YES,"titled ""Weekly market recap"", it delivers T. Rowe Price's summary of the previous week's markets; the recap itself is behind its link, so the model saw only the cover note"
+035375,market_wrap,NO,the email is not a recap of how prices moved across several asset classes: a preview of the week ahead for currencies only
+035410,market_wrap,NO,the email is not a recap of how prices moved across several asset classes: a weekly on the metals and mining sector only
+035368,folder_name,JOINING BASKETS LUNCH IN ZURICH 15 APRIL,"the headline is inside an image, so the model, which reads text only, could not see it"

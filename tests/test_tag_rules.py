@@ -45,7 +45,7 @@ def test_market_wrap_tag_removed_when_the_model_says_no():
     output = llm_output(primary_asset_tag="Market Wrap", asset_tags=["Market Wrap", "JPY"])
     tags = apply_tag_rules(output)
     assert (tags.primary_asset_tag, tags.asset_tags) == ("FX", ["FX", "JPY"])
-    assert "removed Market Wrap tag: the model decided it is not a market wrap" in tags.corrections
+    assert "removed Market Wrap tag: the email is not a market wrap" in tags.corrections
 
 
 def test_market_wrap_with_nothing_else_leaves_no_class():

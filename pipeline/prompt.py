@@ -3,7 +3,7 @@
 from pipeline.allowed_tags import ASSET_TAXONOMY, BANK_NAMES, INDUSTRY_TAXONOMY, PRIMARY_TAGS
 
 # stored in every record, so each answer can be traced to the prompt that produced it
-PROMPT_VERSION = "v2"
+PROMPT_VERSION = "v4"
 
 # the brief's market wrap checklist, keyed by the schema's field names
 MARKET_WRAP_CHECKLIST = {
@@ -68,16 +68,16 @@ The input has these sections:
 
 Fill in every field of the JSON answer as follows:
 
-title: the subject or headline of the email, copied word for word from the text. It is usually near the top. Do not shorten, translate or rephrase it. If the email has no headline, use the title of the attached report as written in the PDF text.
+title: the subject or headline of the email, copied word for word from the text. It is usually near the top. Do not shorten, translate or rephrase it. When the top starts with a label followed by a headline, such as a company name with its ticker, a sector or industry name, or a department name, use the headline, not the label. If the email has no headline, use the title of the attached report as written in the PDF text.
 
 bank: the bank or firm that published the email. Choose one of: {_quoted(BANK_NAMES)}. Use "Other" if it is none of these.
 
-date: the publication date, as YYYY-MM-DD. It is usually near the top. Do not use the date of an event, webinar, deadline or subscription period, a forecast date, or an "as of" date for data. Use null if the email states no publication date.
+date: the publication date, as YYYY-MM-DD. It is usually near the top. Do not use the date of an event, webinar, deadline or subscription period, a forecast date, or an "as of" date for data. Use null if the email states no publication date. Dates written with dots or dashes, such as 02.04.2026, are day.month.year.
 date_quote: the exact words of the text that give that date, copied character for character. Null when date is null.
 
 content_type: "research" for analysis or market commentary, "event" for invitations to conferences, webinars, trips or calls, "marketing" for product offers such as structured product proposals.
 
-market_wrap_checklist: a market wrap is a short daily recap of market moves: descriptive, cross-asset, multi-region, with several updates grouped together. Answer each group true only if more than half of its questions are answered yes:
+market_wrap_checklist: a market wrap is a short recap, daily or weekly, of how prices moved across several asset classes such as equities, bonds, currencies and commodities: descriptive, multi-region, with several updates grouped together. It is not a market wrap when it is a list or digest of research notes, reports or company updates, even one covering many topics; when it covers one asset class only, such as only equities, only rates, only currencies or only inflation markets; when it previews the week ahead; or when its main purpose is an investment view. Answer each group true only if more than half of its questions are answered yes:
 {checklist}
 
 market_wrap: "YES" or "NO", your own judgement of whether the email is a market wrap as defined above. Use your checklist answers as reasons, not as a count: no fixed number of groups decides it.
@@ -86,7 +86,10 @@ primary_asset_tag: the single most important asset class. One of: {_quoted(PRIMA
 
 asset_tags: every tag that is materially covered, including the primary tag. Do not tag topics that are only mentioned in passing. Allowed tags, as asset class: sub-tags:
 {asset_tags}
-Add a sub-tag only when the email discusses it in a focused way. Tag a currency such as USD or JPY only when the email has meaningful discussion of that specific currency. FX "Other" means a currency other than USD, EUR, JPY, GBP or CHF.
+Add a sub-tag only when the email discusses it in a focused way. A sub-tag is a topic, never a label for where something is or what it is priced in, and it always comes with its asset class, so use it only when that asset class is materially covered too:
+- Developed Markets and Emerging Markets (Macro): the email discusses those economies, such as growth, inflation or central banks. Not the country where a company, bond or stock market is.
+- USD, EUR, JPY, GBP, CHF and Other (FX): the email discusses that currency's moves or outlook. Not the currency that prices, rates or bonds are quoted in. FX "Other" means a currency other than USD, EUR, JPY, GBP or CHF.
+- Energy, Metals and Agriculture (Commodities): the email discusses the prices or supply of those commodities, such as oil, gas or copper. Not companies in those industries, and not electricity demand.
 
 companies_mentioned: only for Equity research. The companies the email materially discusses, named as in the text. Otherwise an empty list.
 

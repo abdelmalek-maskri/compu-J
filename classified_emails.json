@@ -6,11 +6,39 @@
     "market_wrap": "NO",
     "primary_asset_tag": "Equity",
     "asset_tags": [
-      "Equity"
+      "Equity",
+      "Company Research"
     ],
-    "companies_mentioned": [],
+    "companies_mentioned": [
+      "Fresenius SE",
+      "Sartorius",
+      "Siemens Healthineers",
+      "Schott Pharma",
+      "Carl Zeiss Meditec",
+      "Merck",
+      "Coloplast",
+      "Demant",
+      "GN Store Nord",
+      "Ambu",
+      "Straumann",
+      "Roche Diagnostics",
+      "Sonova",
+      "Polypeptide",
+      "Lonza",
+      "Alcon",
+      "EssilorLuxottica",
+      "Amplifon",
+      "Medacta",
+      "DiaSorin",
+      "ConvaTec",
+      "Spire Healthcare",
+      "Oxford Nanopore",
+      "Smith & Nephew"
+    ],
     "industry_subindustry": [
-      "Unknown"
+      "HEALTHCARE > Medical Technology",
+      "HEALTHCARE > Pharmaceuticals",
+      "HEALTHCARE > Life Sciences"
     ],
     "pdf_attachment": null,
     "source_file": "035239"
@@ -31,7 +59,7 @@
     "source_file": "035240"
   },
   {
-    "folder_name": "Energy Sigma",
+    "folder_name": "Fragile ceasefire",
     "bank": "Barclays",
     "date": "2026-04-09",
     "market_wrap": "NO",
@@ -68,7 +96,8 @@
     "market_wrap": "NO",
     "primary_asset_tag": "Equity",
     "asset_tags": [
-      "Equity"
+      "Equity",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -89,9 +118,7 @@
       "Fixed Income",
       "Credit Strategy",
       "Macro",
-      "Emerging Markets",
-      "FX",
-      "USD"
+      "Emerging Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -124,9 +151,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Rates Strategy",
-      "FX",
-      "USD"
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -175,11 +200,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Rates Strategy",
-      "Macro",
-      "Developed Markets",
-      "FX",
-      "EUR"
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -202,15 +223,14 @@
     "source_file": "035250"
   },
   {
-    "folder_name": "CIO WEEKLY",
+    "folder_name": "The Swiss hedgehog’s spines are selective",
     "bank": "Julius Baer",
     "date": "2026-04-09",
     "market_wrap": "NO",
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Macro",
-      "Developed Markets",
+      "Portfolio Strategy",
       "FX",
       "CHF"
     ],
@@ -244,8 +264,6 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Macro",
-      "Developed Markets",
       "Portfolio Strategy",
       "Thematic Investing"
     ],
@@ -264,9 +282,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "FX",
-      "USD"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -298,6 +314,7 @@
     "asset_tags": [
       "Macro",
       "Emerging Markets",
+      "Developed Markets",
       "Fixed Income",
       "Equity"
     ],
@@ -328,9 +345,9 @@
     "source_file": "035257"
   },
   {
-    "folder_name": "Refs :",
+    "folder_name": "DB Credit Linked Note",
     "bank": "Deutsche Bank",
-    "date": "2026-04-07",
+    "date": null,
     "market_wrap": "NO",
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
@@ -365,15 +382,13 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research",
-      "Macro",
-      "Emerging Markets"
+      "Company Research"
     ],
     "companies_mentioned": [
       "Busy Ming"
     ],
     "industry_subindustry": [
-      "CONSUMER STAPLES > Retail"
+      "CONSUMER CYCLICALS > Retail"
     ],
     "pdf_attachment": null,
     "source_file": "035260"
@@ -417,9 +432,8 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Macro",
-      "Developed Markets",
-      "Portfolio Strategy"
+      "Portfolio Strategy",
+      "Company Research"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -473,9 +487,7 @@
       "Company Research"
     ],
     "companies_mentioned": [
-      "Miniso",
-      "Top Toy",
-      "Yonghui"
+      "Miniso"
     ],
     "industry_subindustry": [
       "CONSUMER CYCLICALS > Retail"
@@ -484,7 +496,7 @@
     "source_file": "035266"
   },
   {
-    "folder_name": "CIO WEEKLY",
+    "folder_name": "US exceptionalism is not coming back",
     "bank": "Julius Baer",
     "date": "2026-04-01",
     "market_wrap": "NO",
@@ -492,8 +504,7 @@
     "asset_tags": [
       "Macro",
       "Developed Markets",
-      "Emerging Markets",
-      "Thematics"
+      "Emerging Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -507,8 +518,7 @@
     "market_wrap": "NO",
     "primary_asset_tag": "Thematics",
     "asset_tags": [
-      "Thematics",
-      "Macro"
+      "Thematics"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -535,12 +545,19 @@
     "bank": "Deutsche Bank",
     "date": "2026-04-01",
     "market_wrap": "NO",
-    "primary_asset_tag": "Thematics",
+    "primary_asset_tag": "Equity",
     "asset_tags": [
-      "Thematics"
+      "Equity",
+      "Company Research"
     ],
-    "companies_mentioned": [],
-    "industry_subindustry": [],
+    "companies_mentioned": [
+      "Archera",
+      "Snowflake",
+      "MongoDB"
+    ],
+    "industry_subindustry": [
+      "TECHNOLOGY > Software"
+    ],
     "pdf_attachment": null,
     "source_file": "035270"
   },
@@ -560,7 +577,7 @@
     "source_file": "035271"
   },
   {
-    "folder_name": "UK economic notes Can the energy price shock push the UK into recession?",
+    "folder_name": "Can the energy price shock push the UK into recession?",
     "bank": "Deutsche Bank",
     "date": "2026-04-01",
     "market_wrap": "NO",
@@ -575,17 +592,14 @@
     "source_file": "035272"
   },
   {
-    "folder_name": "Fixed Income Blog Opposing forces for German spreads",
+    "folder_name": "Opposing forces for German spreads",
     "bank": "Deutsche Bank",
     "date": "2026-04-01",
     "market_wrap": "NO",
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Rates Strategy",
-      "Credit Strategy",
-      "Macro",
-      "Developed Markets"
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -593,14 +607,13 @@
     "source_file": "035273"
   },
   {
-    "folder_name": "UBP EAM Analysis report",
+    "folder_name": "UBP EAM Analysis",
     "bank": "UBP",
     "date": null,
     "market_wrap": "NO",
     "primary_asset_tag": "Macro",
     "asset_tags": [
-      "Macro",
-      "Developed Markets"
+      "Macro"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -615,9 +628,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Macro",
-      "Developed Markets",
-      "Company Research"
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -630,10 +641,16 @@
     "folder_name": "dbDataInsights Gulf shipping tracker & global response, March 30th edition",
     "bank": "Deutsche Bank",
     "date": "2026-03-30",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Commodities",
     "asset_tags": [
-      "Market Wrap"
+      "Commodities",
+      "Energy",
+      "Metals",
+      "Macro",
+      "Developed Markets",
+      "Fixed Income",
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -660,20 +677,15 @@
     "source_file": "035277"
   },
   {
-    "folder_name": "Levels as of 30-Mar-26 11:51 GMT",
+    "folder_name": "DB Credit Linked Note",
     "bank": "Deutsche Bank",
-    "date": "2026-03-30",
+    "date": null,
     "market_wrap": "NO",
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
       "Credit Strategy",
-      "Rates Strategy",
-      "FX",
-      "USD",
-      "EUR",
-      "GBP",
-      "CHF"
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -689,9 +701,7 @@
     "asset_tags": [
       "FX",
       "EUR",
-      "USD",
-      "Macro",
-      "Developed Markets"
+      "USD"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -706,9 +716,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research",
-      "Macro",
-      "Developed Markets"
+      "Company Research"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -725,7 +733,9 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Emerging Markets"
+      "Emerging Markets",
+      "Commodities",
+      "Energy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -741,7 +751,8 @@
     "asset_tags": [
       "FX",
       "USD",
-      "Macro"
+      "Macro",
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -790,9 +801,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "Commodities",
-      "Energy"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -840,8 +849,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Securitisation",
-      "Credit Strategy"
+      "Securitisation"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -856,9 +864,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "FX",
-      "USD"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -896,7 +902,7 @@
     "source_file": "035291"
   },
   {
-    "folder_name": "Asia-Pacific Technology\nAI Supply Chain: Addressing Questions on Nvidia GPU/LPU and Google TPU",
+    "folder_name": "AI Supply Chain: Addressing Questions on Nvidia GPU/LPU and Google TPU",
     "bank": "Morgan Stanley",
     "date": "2026-04-09",
     "market_wrap": "NO",
@@ -911,9 +917,7 @@
       "Intel",
       "TSMC",
       "MediaTek",
-      "Broadcom",
-      "OpenAI",
-      "AWS"
+      "Broadcom"
     ],
     "industry_subindustry": [
       "TECHNOLOGY > Semiconductors"
@@ -922,7 +926,7 @@
     "source_file": "035292"
   },
   {
-    "folder_name": "Thematic Research How the war has disrupted markets and economies",
+    "folder_name": "How the war has disrupted markets and economies",
     "bank": "Deutsche Bank",
     "date": "2026-04-09",
     "market_wrap": "NO",
@@ -953,7 +957,7 @@
     "source_file": "035294"
   },
   {
-    "folder_name": "Biopharma",
+    "folder_name": "Clinical Trial Pipeline Tracker",
     "bank": "Morgan Stanley",
     "date": "2026-04-09",
     "market_wrap": "NO",
@@ -967,14 +971,14 @@
       "Rocket Pharmaceuticals",
       "Viking Therapeutics",
       "Bristol-Myers Squibb",
-      "Gilead Sciences, Inc.",
-      "Arcellx, Inc.",
+      "Gilead Sciences",
+      "Arcellx",
       "Galapagos NV",
       "Ouro Medicines"
     ],
     "industry_subindustry": [
-      "HEALTHCARE > Pharmaceuticals",
-      "HEALTHCARE > Biotechnology"
+      "HEALTHCARE > Biotechnology",
+      "HEALTHCARE > Pharmaceuticals"
     ],
     "pdf_attachment": null,
     "source_file": "035295"
@@ -988,6 +992,7 @@
     "asset_tags": [
       "Equity",
       "Company Research",
+      "Portfolio Strategy",
       "Commodities",
       "Metals"
     ],
@@ -1044,10 +1049,7 @@
     "asset_tags": [
       "Macro",
       "Developed Markets",
-      "Emerging Markets",
-      "Commodities",
-      "Energy",
-      "Metals"
+      "Emerging Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1062,7 +1064,9 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy",
+      "Thematic Investing"
     ],
     "companies_mentioned": [
       "AVGO",
@@ -1071,8 +1075,7 @@
       "NVDA",
       "AMD",
       "TXN",
-      "ADI",
-      "NXP"
+      "ADI"
     ],
     "industry_subindustry": [
       "TECHNOLOGY > Semiconductors"
@@ -1088,9 +1091,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research",
-      "Macro",
-      "Emerging Markets"
+      "Company Research"
     ],
     "companies_mentioned": [
       "Tencent Holdings Ltd."
@@ -1109,9 +1110,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Rates Strategy",
-      "Macro",
-      "Developed Markets"
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1122,10 +1121,13 @@
     "folder_name": "Back from the brink",
     "bank": "Barclays",
     "date": "2026-04-09",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Fixed Income",
     "asset_tags": [
-      "Market Wrap"
+      "Fixed Income",
+      "Rates Strategy",
+      "Macro",
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1147,7 +1149,7 @@
     "source_file": "035304"
   },
   {
-    "folder_name": "US Banks",
+    "folder_name": "Guidance Cheat Sheet for 1Q26 Earnings",
     "bank": "Morgan Stanley",
     "date": "2026-04-09",
     "market_wrap": "NO",
@@ -1192,7 +1194,7 @@
     "source_file": "035305"
   },
   {
-    "folder_name": "Amadeus IT Holdings S.A. Price Target has been lowered to EUR 64.00 from EUR 70.00",
+    "folder_name": "Amadeus IT Holdings S.A. Price Target has been lowered to EUR 64.00 from EUR 70.00 on April 9, 2026 GMT",
     "bank": "Morgan Stanley",
     "date": "2026-04-09",
     "market_wrap": "NO",
@@ -1218,10 +1220,7 @@
     "primary_asset_tag": "Commodities",
     "asset_tags": [
       "Commodities",
-      "Energy",
-      "Macro",
-      "Developed Markets",
-      "Emerging Markets"
+      "Energy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1268,9 +1267,8 @@
     "asset_tags": [
       "Macro",
       "Emerging Markets",
-      "Fixed Income",
-      "Credit Strategy",
-      "FX"
+      "FX",
+      "USD"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1278,7 +1276,7 @@
     "source_file": "035310"
   },
   {
-    "folder_name": "Apple, Inc. (AAPL.O)\nEvidence of Ramping Apple Silicon for Private Cloud Compute",
+    "folder_name": "Evidence of Ramping Apple Silicon for Private Cloud Compute",
     "bank": "Morgan Stanley",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -1304,9 +1302,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Credit Strategy",
-      "Macro",
-      "Developed Markets"
+      "Credit Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1341,9 +1337,8 @@
     "asset_tags": [
       "Equity",
       "Company Research",
-      "Thematic Investing",
-      "Macro",
-      "Developed Markets"
+      "Portfolio Strategy",
+      "Thematic Investing"
     ],
     "companies_mentioned": [
       "Novo Nordisk",
@@ -1375,29 +1370,22 @@
     "source_file": "035315"
   },
   {
-    "folder_name": "Gaming & Lodging\nRaising Estimates / PTs, Positive C-Corps, Selective Timeshare; Upgrade RHP to OW as HALO Play",
+    "folder_name": "Raising Estimates / PTs, Positive C-Corps, Selective Timeshare; Upgrade RHP to OW as HALO Play",
     "bank": "Morgan Stanley",
     "date": "2026-04-10",
     "market_wrap": "NO",
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [
-      "Marriott International Inc",
-      "Hilton Worldwide Holdings Inc",
       "Marriott",
       "Hilton",
       "Hyatt",
       "Wyndham",
-      "Choice",
-      "RHP",
-      "TNL",
-      "HGV",
-      "VAC",
-      "CHH",
-      "PEB"
+      "Choice"
     ],
     "industry_subindustry": [
       "CONSUMER CYCLICALS > Lodging"
@@ -1425,29 +1413,27 @@
     "source_file": "035317"
   },
   {
-    "folder_name": "Plains All American Pipeline / Plains GP Holdings LP",
+    "folder_name": "NGL divestiture in focus while macro tailwinds grow",
     "bank": "Barclays",
     "date": "2026-04-10",
     "market_wrap": "NO",
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research",
-      "Commodities",
-      "Energy"
+      "Company Research"
     ],
     "companies_mentioned": [
       "Plains All American Pipeline",
       "Plains GP Holdings LP"
     ],
     "industry_subindustry": [
-      "ENERGY > Energy"
+      "ENERGY > Oil Services"
     ],
     "pdf_attachment": null,
     "source_file": "035318"
   },
   {
-    "folder_name": "Cruise Lines: 1Q26 Preview: Easterly Headwinds Taking Hold",
+    "folder_name": "1Q26 Preview: Easterly Headwinds Taking Hold",
     "bank": "Barclays",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -1490,9 +1476,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Portfolio Strategy",
-      "Macro",
-      "Developed Markets"
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -1599,10 +1583,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Credit Strategy",
-      "Commodities",
-      "Energy",
-      "Metals"
+      "Credit Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1631,7 +1612,8 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -1660,10 +1642,11 @@
     "folder_name": "Inflation-Linked Daily",
     "bank": "Barclays",
     "date": "2026-04-10",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Fixed Income",
     "asset_tags": [
-      "Market Wrap"
+      "Fixed Income",
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1742,10 +1725,7 @@
     "primary_asset_tag": "Commodities",
     "asset_tags": [
       "Commodities",
-      "Metals",
-      "FX",
-      "USD",
-      "Macro"
+      "Metals"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1753,7 +1733,7 @@
     "source_file": "035337"
   },
   {
-    "folder_name": "Biopharma\n1Q26 Earnings Preview – Macro vs. Micro",
+    "folder_name": "Biopharma",
     "bank": "Morgan Stanley",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -1791,7 +1771,8 @@
     "asset_tags": [
       "Equity",
       "Company Research",
-      "Portfolio Strategy"
+      "Portfolio Strategy",
+      "Thematic Investing"
     ],
     "companies_mentioned": [
       "S4",
@@ -1818,6 +1799,7 @@
       "Rasan",
       "Scout24",
       "Pershing Square",
+      "SPARC",
       "Spotify",
       "Believe",
       "TuneCore",
@@ -1825,35 +1807,39 @@
       "ElevenLabs",
       "Suno",
       "Udio",
+      "160over90",
       "Microsoft",
+      "Sapient",
       "Epsilon",
-      "Wendy's",
+      "Wendy’s",
       "Pearson",
       "Playtech",
-      "Bally's",
+      "Bally’s",
       "Betfair",
       "Betsson",
+      "Vixio",
       "Meituan",
+      "Alibaba",
       "Keeta",
       "99Food",
       "Otodom",
       "OLX",
       "SeLoger",
       "Cars.com",
-      "ChatGPT"
+      "ChatGPT",
+      "Warner Music Group Corp."
     ],
     "industry_subindustry": [
       "TECHNOLOGY > Internet",
       "TECHNOLOGY > Software",
-      "CONSUMER CYCLICALS > Media",
-      "CONSUMER CYCLICALS > Retail",
+      "TELECOM SERVICES > Communication Services",
       "CONSUMER CYCLICALS > Entertainment & Leisure"
     ],
     "pdf_attachment": null,
     "source_file": "035339"
   },
   {
-    "folder_name": "The Week Ahead  Europe",
+    "folder_name": "The Week Ahead – Europe",
     "bank": "Morgan Stanley",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -1861,29 +1847,27 @@
     "asset_tags": [
       "Equity",
       "Company Research",
-      "Macro",
-      "Developed Markets"
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [
       "Hermes International S.C.A.",
       "LVMH Moet Hennessy Louis Vuitton SA"
     ],
     "industry_subindustry": [
-      "CONSUMER CYCLICALS > Textile, Apparel & Footwear"
+      "CONSUMER CYCLICALS > Branded Consumer Goods",
+      "CONSUMER CYCLICALS > Retail"
     ],
     "pdf_attachment": null,
     "source_file": "035340"
   },
   {
-    "folder_name": "Invitation | Market update on the Middle East",
+    "folder_name": "Market update on the Middle East",
     "bank": "Barclays",
     "date": null,
     "market_wrap": "NO",
     "primary_asset_tag": "Macro",
     "asset_tags": [
-      "Macro",
-      "Developed Markets",
-      "Emerging Markets"
+      "Macro"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1900,9 +1884,8 @@
       "FX",
       "Macro",
       "Emerging Markets",
-      "Fixed Income",
-      "Rates Strategy",
-      "USD"
+      "USD",
+      "Other"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -1933,10 +1916,7 @@
     "asset_tags": [
       "Fixed Income",
       "Credit Strategy",
-      "Rates Strategy",
-      "Securitisation",
-      "Macro",
-      "Developed Markets"
+      "Securitisation"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2023,15 +2003,16 @@
     "asset_tags": [
       "Macro",
       "Developed Markets",
+      "Emerging Markets",
       "Fixed Income",
-      "Rates Strategy",
       "Equity",
       "Portfolio Strategy",
       "Commodities",
       "Energy",
       "FX",
       "USD",
-      "EUR"
+      "EUR",
+      "CHF"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -2111,9 +2092,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Credit Strategy",
-      "Macro",
-      "Developed Markets"
+      "Credit Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2140,7 +2119,7 @@
     "source_file": "035355"
   },
   {
-    "folder_name": "UBP Currency Views - April 2026.pdf",
+    "folder_name": "UBP Currency Views",
     "bank": "UBP",
     "date": null,
     "market_wrap": "NO",
@@ -2152,6 +2131,7 @@
       "JPY",
       "GBP",
       "CHF",
+      "Other",
       "Commodities",
       "Energy"
     ],
@@ -2189,9 +2169,7 @@
     "primary_asset_tag": "Commodities",
     "asset_tags": [
       "Commodities",
-      "Energy",
-      "Macro",
-      "Developed Markets"
+      "Energy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2206,10 +2184,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "FX",
-      "USD",
-      "Thematics"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2220,20 +2195,13 @@
     "folder_name": "Japan Weekly Kickstart: Geopolitical uncertainties remain, but Japan appears to be in a relatively strong position",
     "bank": "Goldman Sachs",
     "date": "2026-04-10",
-    "market_wrap": "NO",
-    "primary_asset_tag": "Equity",
+    "market_wrap": "YES",
+    "primary_asset_tag": "Market Wrap",
     "asset_tags": [
-      "Equity",
-      "Portfolio Strategy",
-      "Macro",
-      "Developed Markets",
-      "Commodities",
-      "Energy"
+      "Market Wrap"
     ],
     "companies_mentioned": [],
-    "industry_subindustry": [
-      "Unknown"
-    ],
+    "industry_subindustry": [],
     "pdf_attachment": null,
     "source_file": "035360"
   },
@@ -2241,10 +2209,11 @@
     "folder_name": "Euro Weekly Digest Economic momentum softens, and households worry about inflation",
     "bank": "Deutsche Bank",
     "date": "2026-04-10",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Macro",
     "asset_tags": [
-      "Market Wrap"
+      "Macro",
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2259,9 +2228,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Rates Strategy",
-      "Macro",
-      "Developed Markets"
+      "Rates Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2307,7 +2274,7 @@
     "source_file": "035364"
   },
   {
-    "folder_name": "Thematic Research Next week...this week",
+    "folder_name": "Next week...this week",
     "bank": "Deutsche Bank",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -2355,7 +2322,7 @@
     "source_file": "035367"
   },
   {
-    "folder_name": "Sean Vogel",
+    "folder_name": "JOINING BASKETS LUNCH IN ZURICH 15 APRIL",
     "bank": "Goldman Sachs",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -2376,9 +2343,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "Fixed Income",
-      "Rates Strategy"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2416,21 +2381,42 @@
     "source_file": "035371"
   },
   {
-    "folder_name": "This week's most read research Equities  Europes top ten",
+    "folder_name": "This week's most read research Equities – Europe’s top ten",
     "bank": "Deutsche Bank",
     "date": "2026-04-10",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Equity",
     "asset_tags": [
-      "Market Wrap"
+      "Equity",
+      "Company Research",
+      "Portfolio Strategy",
+      "Macro",
+      "Commodities",
+      "Energy"
     ],
-    "companies_mentioned": [],
-    "industry_subindustry": [],
+    "companies_mentioned": [
+      "Universal Music",
+      "Safran",
+      "Balfour Beatty",
+      "Kier",
+      "Morgan Sindall",
+      "UBS",
+      "Diageo"
+    ],
+    "industry_subindustry": [
+      "INDUSTRIALS > Aerospace & Defense",
+      "INDUSTRIALS > Construction",
+      "FINANCIAL SERVICES > Banks",
+      "CONSUMER STAPLES > Beverages",
+      "BASIC MATERIALS > Chemicals",
+      "CONSUMER CYCLICALS > Media",
+      "TRANSPORTATION > Airlines"
+    ],
     "pdf_attachment": null,
     "source_file": "035372"
   },
   {
-    "folder_name": "Focus Europe Iran Shock and Economic Growth: Handle with Care!",
+    "folder_name": "Iran Shock and Economic Growth: Handle with Care!",
     "bank": "Deutsche Bank",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -2461,14 +2447,15 @@
       "WuXi XDC",
       "BioDlink",
       "WuXi Biologics",
-      "Genscript Biotech",
       "Huahai Pharmaceutical",
-      "Dong E E Jiao",
+      "Sinopharm",
       "China Traditional Chinese Medicine",
-      "Sinopharm"
+      "Dong E E Jiao",
+      "Genscript Biotech"
     ],
     "industry_subindustry": [
-      "HEALTHCARE > Pharmaceuticals"
+      "HEALTHCARE > Pharmaceuticals",
+      "HEALTHCARE > Biotechnology"
     ],
     "pdf_attachment": null,
     "source_file": "035374"
@@ -2477,10 +2464,17 @@
     "folder_name": "The Week Ahead FX",
     "bank": "UBP",
     "date": null,
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "FX",
     "asset_tags": [
-      "Market Wrap"
+      "FX",
+      "USD",
+      "EUR",
+      "JPY",
+      "GBP",
+      "CHF",
+      "Other",
+      "Macro"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2512,9 +2506,9 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Portfolio Strategy",
       "Macro",
-      "Emerging Markets"
+      "Emerging Markets",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -2531,9 +2525,7 @@
     "primary_asset_tag": "Commodities",
     "asset_tags": [
       "Commodities",
-      "Energy",
-      "Macro",
-      "Emerging Markets"
+      "Energy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2590,7 +2582,7 @@
     "source_file": "035381"
   },
   {
-    "folder_name": "Latam Macro Notes Brazil  Inflation surpasses 4% as oil shock reverberates",
+    "folder_name": "Latam Macro Notes Brazil – Inflation surpasses 4% as oil shock reverberates",
     "bank": "Deutsche Bank",
     "date": "2026-04-10",
     "market_wrap": "NO",
@@ -2645,9 +2637,7 @@
     "primary_asset_tag": "Fixed Income",
     "asset_tags": [
       "Fixed Income",
-      "Credit Strategy",
-      "Macro",
-      "Emerging Markets"
+      "Credit Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2659,24 +2649,13 @@
     "bank": "Barclays",
     "date": "2026-04-10",
     "market_wrap": "NO",
-    "primary_asset_tag": "Equity",
+    "primary_asset_tag": "Fixed Income",
     "asset_tags": [
-      "Equity",
-      "Macro",
-      "Developed Markets",
       "Fixed Income",
-      "Credit Strategy",
-      "Rates Strategy",
-      "Commodities",
-      "Energy",
-      "Metals",
-      "FX",
-      "USD"
+      "Credit Strategy"
     ],
     "companies_mentioned": [],
-    "industry_subindustry": [
-      "Unknown"
-    ],
+    "industry_subindustry": [],
     "pdf_attachment": null,
     "source_file": "035386"
   },
@@ -2688,13 +2667,10 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy"
     ],
-    "companies_mentioned": [
-      "Novo Nordisk",
-      "JNJ",
-      "MRK"
-    ],
+    "companies_mentioned": [],
     "industry_subindustry": [
       "HEALTHCARE > Pharmaceuticals"
     ],
@@ -2720,13 +2696,18 @@
     "folder_name": "China Weekly Kickstart: Markets gained 3-4%; Regulators urged for more disciplined competitions; PPI turned positive",
     "bank": "Goldman Sachs",
     "date": "2026-04-11",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Equity",
     "asset_tags": [
-      "Market Wrap"
+      "Equity",
+      "Portfolio Strategy",
+      "Macro",
+      "Emerging Markets"
     ],
     "companies_mentioned": [],
-    "industry_subindustry": [],
+    "industry_subindustry": [
+      "Unknown"
+    ],
     "pdf_attachment": null,
     "source_file": "035389"
   },
@@ -2738,9 +2719,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "Fixed Income",
-      "Rates Strategy"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2755,13 +2734,14 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [
       "Starbucks",
       "Burger King",
       "Taco Bell",
-      "Domino's",
+      "Domino’s",
       "Panera"
     ],
     "industry_subindustry": [
@@ -2778,10 +2758,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research",
-      "Portfolio Strategy",
-      "Macro",
-      "Developed Markets"
+      "Company Research"
     ],
     "companies_mentioned": [
       "CAVA",
@@ -2805,13 +2782,16 @@
     "bank": "Deutsche Bank",
     "date": "2026-04-10",
     "market_wrap": "NO",
-    "primary_asset_tag": "Macro",
+    "primary_asset_tag": "FX",
     "asset_tags": [
+      "FX",
       "Macro",
       "Emerging Markets",
-      "FX",
       "USD",
       "EUR",
+      "JPY",
+      "GBP",
+      "CHF",
       "Other"
     ],
     "companies_mentioned": [],
@@ -2827,10 +2807,15 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [
-      "Kering"
+      "Kering",
+      "LVMH",
+      "Hermès",
+      "Richemont",
+      "Burberry"
     ],
     "industry_subindustry": [
       "CONSUMER CYCLICALS > Textile, Apparel & Footwear"
@@ -2846,13 +2831,11 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Portfolio Strategy",
-      "Macro",
-      "Developed Markets"
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
-      "TECHNOLOGY > Software"
+      "Unknown"
     ],
     "pdf_attachment": null,
     "source_file": "035395"
@@ -2866,8 +2849,7 @@
     "asset_tags": [
       "Fixed Income",
       "Rates Strategy",
-      "Macro",
-      "Developed Markets"
+      "Macro"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2897,10 +2879,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research",
-      "Portfolio Strategy",
-      "Macro",
-      "Developed Markets"
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -2933,11 +2912,7 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets",
-      "Fixed Income",
-      "Rates Strategy",
-      "FX",
-      "GBP"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2967,7 +2942,9 @@
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Developed Markets"
+      "Developed Markets",
+      "FX",
+      "EUR"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -2979,10 +2956,8 @@
     "bank": "Barclays",
     "date": "2026-04-10",
     "market_wrap": "NO",
-    "primary_asset_tag": "Fixed Income",
+    "primary_asset_tag": "Macro",
     "asset_tags": [
-      "Fixed Income",
-      "Rates Strategy",
       "Macro",
       "Developed Markets"
     ],
@@ -2999,10 +2974,9 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Macro",
-      "Developed Markets",
       "Portfolio Strategy",
-      "Company Research"
+      "Macro",
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -3051,16 +3025,14 @@
     "source_file": "035406"
   },
   {
-    "folder_name": "Latam Macro Notes Colombia  Strong inflationary pressures despite lower gasoline prices",
+    "folder_name": "Latam Macro Notes Colombia – Strong inflationary pressures despite lower gasoline prices",
     "bank": "Deutsche Bank",
     "date": "2026-04-12",
     "market_wrap": "NO",
     "primary_asset_tag": "Macro",
     "asset_tags": [
       "Macro",
-      "Emerging Markets",
-      "Fixed Income",
-      "Rates Strategy"
+      "Emerging Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -3071,10 +3043,11 @@
     "folder_name": "US Economic Notes What you need to know for the week ahead",
     "bank": "Deutsche Bank",
     "date": "2026-04-12",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Macro",
     "asset_tags": [
-      "Market Wrap"
+      "Macro",
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -3096,18 +3069,18 @@
       "Rillet",
       "Sage",
       "SAP",
+      "NetSuite",
+      "Salesforce",
+      "ServiceNow",
       "OVH",
       "IONOS",
       "TCS",
-      "Salesforce",
-      "ServiceNow",
       "Microsoft",
       "Dassault",
       "Temenos"
     ],
     "industry_subindustry": [
-      "TECHNOLOGY > Software",
-      "TECHNOLOGY > IT Services"
+      "TECHNOLOGY > Software"
     ],
     "pdf_attachment": null,
     "source_file": "035409"
@@ -3116,10 +3089,11 @@
     "folder_name": "Metals & Mining Latest trends & week ahead. Aluminium disruption. Cobre Panama partial restart",
     "bank": "Deutsche Bank",
     "date": "2026-04-12",
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Commodities",
     "asset_tags": [
-      "Market Wrap"
+      "Commodities",
+      "Metals"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -3152,7 +3126,10 @@
       "EUR",
       "GBP",
       "JPY",
-      "CHF"
+      "CHF",
+      "Other",
+      "Macro",
+      "Emerging Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -3160,7 +3137,7 @@
     "source_file": "035412"
   },
   {
-    "folder_name": "Tencent Holdings Ltd. (0700.HK)\n1Q26 Preview: Normalized Games; AI Spend Weighs on Margins",
+    "folder_name": "Tencent Holdings Ltd. (0700.HK)",
     "bank": "Morgan Stanley",
     "date": "2026-04-12",
     "market_wrap": "NO",
@@ -3202,6 +3179,7 @@
     ],
     "industry_subindustry": [
       "CONSUMER CYCLICALS > Lodging",
+      "CONSUMER CYCLICALS > Entertainment & Leisure",
       "CONSUMER CYCLICALS > Gaming"
     ],
     "pdf_attachment": null,
@@ -3239,7 +3217,7 @@
     "source_file": "035416"
   },
   {
-    "folder_name": "The Coca-Cola Company What we're watching for in 1Q26 results",
+    "folder_name": "What we're watching for in 1Q26 results",
     "bank": "Deutsche Bank",
     "date": "2026-04-13",
     "market_wrap": "NO",
@@ -3274,7 +3252,7 @@
     "source_file": "035418"
   },
   {
-    "folder_name": "US Equity Strategy",
+    "folder_name": "Weekly Warm-up: The Market Waits for No One",
     "bank": "Morgan Stanley",
     "date": "2026-04-13",
     "market_wrap": "NO",
@@ -3282,10 +3260,7 @@
     "asset_tags": [
       "Equity",
       "Portfolio Strategy",
-      "Macro",
-      "Developed Markets",
-      "Commodities",
-      "Energy"
+      "Macro"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -3322,10 +3297,7 @@
       "Company Research"
     ],
     "companies_mentioned": [
-      "Spotify Technology SA",
-      "Spotify",
-      "Tencent Music",
-      "TME"
+      "Spotify Technology SA"
     ],
     "industry_subindustry": [
       "TECHNOLOGY > Internet"
@@ -3341,13 +3313,14 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Company Research"
+      "Company Research",
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [
+      "SU",
       "ABB",
       "LR",
       "RXL",
-      "SU",
       "SIE"
     ],
     "industry_subindustry": [
@@ -3364,11 +3337,7 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Portfolio Strategy",
-      "Macro",
-      "Developed Markets",
-      "FX",
-      "USD"
+      "Portfolio Strategy"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [
@@ -3422,7 +3391,7 @@
       "Visa Inc."
     ],
     "industry_subindustry": [
-      "FINANCIAL SERVICES > Diversified Financials"
+      "FINANCIAL SERVICES > Specialty Finance"
     ],
     "pdf_attachment": null,
     "source_file": "035426"
@@ -3456,7 +3425,7 @@
     "source_file": "035428"
   },
   {
-    "folder_name": "The Factory Daily Letter",
+    "folder_name": "Monday Kick-off",
     "bank": "Pictet",
     "date": "2026-04-13",
     "market_wrap": "YES",
@@ -3479,9 +3448,7 @@
       "Fixed Income",
       "Rates Strategy",
       "Macro",
-      "Developed Markets",
-      "FX",
-      "USD"
+      "Developed Markets"
     ],
     "companies_mentioned": [],
     "industry_subindustry": [],
@@ -3492,13 +3459,29 @@
     "folder_name": "Signature Digest",
     "bank": "Barclays",
     "date": null,
-    "market_wrap": "YES",
-    "primary_asset_tag": "Market Wrap",
+    "market_wrap": "NO",
+    "primary_asset_tag": "Macro",
     "asset_tags": [
-      "Market Wrap"
+      "Macro",
+      "Developed Markets",
+      "Emerging Markets",
+      "Fixed Income",
+      "Credit Strategy",
+      "Rates Strategy",
+      "Equity",
+      "Company Research",
+      "Portfolio Strategy",
+      "FX",
+      "USD"
     ],
-    "companies_mentioned": [],
-    "industry_subindustry": [],
+    "companies_mentioned": [
+      "IMI",
+      "BOY",
+      "ROR"
+    ],
+    "industry_subindustry": [
+      "INDUSTRIALS > Capital Goods"
+    ],
     "pdf_attachment": null,
     "source_file": "035431"
   },
@@ -3510,12 +3493,8 @@
     "primary_asset_tag": "Equity",
     "asset_tags": [
       "Equity",
-      "Macro",
-      "Developed Markets",
-      "Company Research",
       "Portfolio Strategy",
-      "FX",
-      "USD"
+      "Company Research"
     ],
     "companies_mentioned": [
       "Zurich Insurance"
@@ -3532,26 +3511,13 @@
     "folder_name": "GS flow and positioning observations:",
     "bank": "Goldman Sachs",
     "date": "2026-04-13",
-    "market_wrap": "NO",
-    "primary_asset_tag": "Equity",
+    "market_wrap": "YES",
+    "primary_asset_tag": "Market Wrap",
     "asset_tags": [
-      "Equity",
-      "Macro",
-      "Fixed Income",
-      "Commodities",
-      "Developed Markets",
-      "Credit Strategy",
-      "Rates Strategy",
-      "Company Research",
-      "Portfolio Strategy",
-      "Energy",
-      "FX",
-      "USD"
+      "Market Wrap"
     ],
     "companies_mentioned": [],
-    "industry_subindustry": [
-      "Unknown"
-    ],
+    "industry_subindustry": [],
     "pdf_attachment": null,
     "source_file": "035433"
   },

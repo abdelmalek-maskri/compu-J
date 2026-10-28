@@ -17,11 +17,13 @@ its answers, under a strip of live market headlines.
 * **The dashboard**: search and filter the 200 emails, read each one safely, open its PDFs, and
   see which emails are worth a second look and why.
 
-**Result:** all 200 emails classified, none failed. 11 emails are marked "worth checking",
-each with the reason in plain words, and one answer was corrected by a person. On 20
-independently labelled emails, the bank is 20 of 20 right, the date 18 of 20 (both misses are
-deliberate choices about uncertain dates), and market wrap and main asset class 19 of 20
-(details below).
+**Result:** all 200 emails classified, none failed. 14 emails are marked "worth checking",
+each with the reason in plain words, and 4 more flagged answers were settled by a person. On
+20 independently labelled emails, the bank, the market wrap decision and the main asset class
+are 20 of 20 right, and the date 18 of 20 (both misses are deliberate choices about uncertain
+dates). How I checked and improved the results
+is described step by step in
+[evaluation/how-the-results-were-checked.md](evaluation/how-the-results-were-checked.md).
 
 ## What it looks like
 
@@ -42,11 +44,19 @@ Every email is read twice, by two readers that work in different ways:
   understand meaning, but they never invent anything.
 
 The model's answer is used when the email confirms it: the bank it names must appear in the
-email, and the date it gives must be quoted from the email. Otherwise the rules' bank is used;
-the date works differently (see the next section). When something is uncertain, nothing is
+email, the date it gives must be quoted from the email, and its title is copied from the
+email's own line. Otherwise the rules' bank is used; the date works differently (see
+[How dates are decided](#how-dates-are-decided)). When something is uncertain, nothing is
 decided silently: the email is marked "worth checking", with the reason in plain words, for
 example *"The email mentions 15 April 2026, after the day it arrived, so it is probably an
 event or a deadline, not the day it was published."*
+
+A third reader is a person, who only looks at flagged answers that code cannot settle. Each
+decision is one line in `evaluation/reviewed.csv`, with the reason, and every run applies
+them, so a decision is never lost. The dashboard shows them under "Reviewed", next to what the
+AI had said. Four answers were settled this way; mistakes that nothing flags are listed, not
+corrected by hand (see
+[evaluation/how-the-results-were-checked.md](evaluation/how-the-results-were-checked.md)).
 
 ## What the rules fix on their own
 
@@ -57,10 +67,10 @@ checking": the brief decides them, so there is nothing for a person to judge.
 
 | Rule from the brief | Changes on the 200 emails |
 | --- | --- |
-| A sub-tag brings its main class: "Emerging Markets" means "Macro" too | 63: Macro 30, FX 17, Fixed Income 9, Commodities 7 |
-| Companies and industries are listed only for Equity (research on shares) | 1: `035328`, research on a company's bonds |
-| A market wrap has the main class "Market Wrap", that tag only, and no companies | applied to all 30 market wraps, without a note, so not in the 64 |
-| An email that is not a market wrap cannot carry the "Market Wrap" tag | 0 after review |
+| A sub-tag brings its asset class: "Emerging Markets" means "Macro" too | 21: Macro 9, FX 5, Commodities 4, Fixed Income 2, Equity 1 |
+| Companies and industries are listed only for Equity (research on shares) | 2, for example `035328`, research on a company's bonds |
+| A market wrap has the main asset class "Market Wrap", that tag only, and no companies | applied to all 22 market wraps, without a note |
+| An email that is not a market wrap cannot carry the "Market Wrap" tag | 1, on an email a person settled as not a market wrap |
 
 To list them all:
 
@@ -76,11 +86,12 @@ than guessed:
 
 | What the email shows | What is used | What the reader sees | Example |
 | --- | --- | --- | --- |
-| A date the model quotes from the email, within a month before the email arrived and a day after | that date | the date | 182 of 200 emails |
+| A date the model quotes from the email, within a month before the email arrived and a day after | that date, read from the quote by Python, so "02.04.2026" is always 2 April | the date | 180 of 200 emails |
 | A weekday with no year, such as "Monday, 13 April" | that date: the weekday fits only one year | the date | `035427` |
 | The model's date is confirmed, but the rules found another one higher up | the model's date | the date, no note: the email states it, so there is nothing to check | `035334`: "Published 10 Apr, 2026" |
-| A date after the email arrived | nothing | "probably an event or a deadline" | `035341`, `035375` |
-| A date only the rules found, which the model rejected | nothing | the date it mentions, and why it is not used | `035274`: "report as of 31.03.2026" |
+| A date after the email arrived | nothing | "probably an event or a deadline" | `035341` |
+| A date only the rules found, which the model rejected | nothing | the date it mentions, and why it is not used | `035255`: an article in a "you might have missed" box |
+| A date that follows "as of" or "as at" | nothing: it is the day figures refer to | why it is not used | `035274`: "report as of 31.03.2026" |
 | A date the model quoted that is not in the email as written | nothing | why it is not used | `035356`: "as at9 April 2026" |
 | No date in the text, but one in a link address (a campaign code like `_20260413`) | the link's date | the date, marked **not confirmed** | `035330`, `035429`, `035437` |
 | No date at all | nothing | "No publication date found", and the day it arrived when known | `035243` |
@@ -90,24 +101,25 @@ comes from the times on attached files), and where both are known it matches the
 day in only 33 of 56. It is shown beside an empty date as a clue, never as the date.
 
 The rules' date is never used on its own: every time the rules found a date the model
-rejected, it was another kind of date (an article listed inside the email, a "data as of"
-day). The rules still check the model, and when both find the same date it is used even if
+rejected, it was another kind of date (an article listed inside the email, a date in the
+attachments' names). The rules still check the model, and when both find the same date it is used even if
 the model's quote is incomplete.
 
 What this gives on the 200 emails:
 
 | Outcome | Emails | Which |
 | --- | --- | --- |
-| Date confirmed by the email | 182 | |
+| Date confirmed by the email | 180 | |
 | Date confirmed by its weekday | 3 | `035335`, `035427`, `035428` |
 | Date from a link, marked not confirmed | 3 | `035330`, `035429`, `035437` |
-| Empty: a date only the rules found | 4 | `035255` (an article in a "you might have missed" box), `035274` ("report as of"), `035348` (attachment names), `035431` (each note in a digest has its own date) |
-| Empty: a date after the email arrived | 2 | `035341`, `035375` |
+| Empty: a date only the rules found | 3 | `035255` (an article in a "you might have missed" box), `035348` (attachment names), `035431` (each note in a digest has its own date) |
+| Empty: an "as of" date | 3 | `035258`, `035278` ("Levels as of"), `035274` ("report as of") |
+| Empty: a date after the email arrived | 1 | `035341` |
 | Empty: a date not in the email as written | 1 | `035356` |
-| Empty: no date at all | 5 | `035243`, `035279`, `035327`, `035358`, `035359` |
+| Empty: no date at all | 6 | `035243`, `035279`, `035327`, `035358`, `035359`, `035375` |
 
-Every email in the last four rows and the link row is marked "worth checking" with its
-reason, except the five with no date at all: there is nothing to check, so they only say "No
+Every email in the empty rows and the link row is marked "worth checking" with its reason,
+except the six with no date at all: there is nothing to check, so they only say "No
 publication date found".
 
 ## Run it
@@ -154,7 +166,7 @@ cd web && npm ci && npm run dev            # the dashboard: open http://localhos
 `make docker` and `make test`. `make` alone lists them all.
 
 Tests use made up emails and a fake model, so they need no key and no data:
-`uv run pytest` (201 tests) and `cd web && npm test` (11 tests). They run on every pull request.
+`uv run pytest` (231 tests) and `cd web && npm test` (12 tests). They run on every pull request.
 
 ## How it works
 
@@ -168,6 +180,7 @@ Data/<folder>/        the email (HTML), its PDFs, its images
    ▼  tag_rules.py          the brief's rules, for example: a market wrap gets no companies
    ▼  check_metadata.py     keep the model's bank, date and title only if the email confirms them
    ▼  flags.py              note every disagreement, in plain words
+   ▼  reviewed.csv          flagged answers a person settled, applied on every run
    │
 classified_emails.json + classified_emails_details.json
    │
@@ -191,8 +204,10 @@ up:
    attached files show when it arrived, so a date is only accepted if it falls between a month
    before and a day after that. Uncertain dates are left empty, with the reason (see
    [How dates are decided](#how-dates-are-decided)).
-4. **The AI first rejected good titles.** It retyped `’` as `'`, so its title did not match
-   the email letter for letter. Titles are now compared word by word, ignoring punctuation.
+4. **The AI retypes titles.** It turned `’` into `'`, dropped lost characters ("isnt") or
+   guessed them, so its title did not match the email letter for letter. Titles are now
+   compared word by word, and when the AI's title matches a line of the email, the email's
+   own line is used.
 5. **Local AI models were silently reading only part of each email.** Ollama reads 4,096
    tokens unless told otherwise; the longest email is about 24,700. I set it to 32,768 and
    wrote a test that proves the whole email is read.
@@ -220,14 +235,27 @@ up:
     the email is still marked "worth checking" so a person can see the AI disagreed with
     itself.
 12. **Some emails only link to the report.** `035437` (T. Rowe Price, "Weekly market recap")
-    is a short cover note with a button to the recap. The AI judged only the note, met 2 of the
-    brief's 7 market wrap checks and said it is not a market wrap, while also choosing Market
-    Wrap as its main asset class. I reviewed it and set it to a market wrap in
-    `evaluation/reviewed.csv`: one line with the email, the field, the new value and the
-    reason. Every run applies that file last, so the correction is never lost; the brief's
-    market wrap tags follow from it, the dashboard shows it under "Reviewed" with the reason,
-    and the AI's own answers stay in the details file. Changing the AI's instructions instead
-    would have meant asking it about all 200 emails again, for one email.
+    is a short cover note with a button to the recap. The AI judged only the note and said it
+    is not a market wrap, while choosing "Market Wrap" as its main asset class. That contradiction
+    is flagged, and a person settled it in `evaluation/reviewed.csv`, which every run
+    applies (see [How each email is read](#how-each-email-is-read)).
+13. **The AI used sub-tags as labels, not topics.** It tagged a note on Tencent "Emerging
+    Markets" because Tencent is Chinese, and the brief's rule then added "Macro", although
+    the note says nothing about any economy. I found 34 such cases by reading every email the
+    rule had changed, and rewrote the AI's instructions to say what each sub-tag means.
+14. **Asking the AI again changes some answers.** A second run moved 140 answers in 96
+    emails, including some the change was not about. So each change was judged on all 200
+    emails, and patterns were fixed with checks in Python, which answer the same way every
+    time, rather than with more instructions to the AI.
+15. **Lists of research notes looked like market wraps.** A daily list of company notes ticks
+    almost every box of the brief's market wrap checklist, yet it summarises research, not how
+    the markets moved. I added that distinction to the AI's instructions, which fixed most of
+    them, and a market wrap answer that names another main asset class is now flagged. The AI
+    still calls four such emails market wraps; nothing flags them, so they are listed as known
+    mistakes rather than corrected by hand.
+
+The whole process, with the numbers at each step, is in
+[evaluation/how-the-results-were-checked.md](evaluation/how-the-results-were-checked.md).
 
 ## Accuracy
 
@@ -239,16 +267,13 @@ independently and compared with the results (`evaluation/labels.csv`, scored by
 | --- | --- | --- | --- |
 | Bank | 20 of 20 | 20 of 20 | 20 of 20 |
 | Date | 18 of 20 | 19 of 20 | 20 of 20 |
-| Market wrap | 19 of 20 | | |
-| Main asset class | 19 of 20 | | |
+| Market wrap | 20 of 20 | | |
+| Main asset class | 20 of 20 | | |
 
-The model's mistakes are all in two emails the system had already marked "worth checking",
-so the marking pointed a person at exactly the errors. One is T. Rowe Price's "Weekly market
-recap", which the model wrongly called not a market wrap; a person reviewed it and corrected
-it (finding 12 above). That email is one of the 20 labelled ones, so the corrected figures
-flatter the system slightly: before the correction, both were 18 of 20. The other is
-a Barclays digest of research notes that the model called a market wrap (debatable: it
-recaps research, not the markets).
+"The model alone" and "the rules alone" score each reader's own answer before the two are
+combined; market wrap and main asset class come from the model only. One of the 20 labelled
+emails, T. Rowe Price's "Weekly market recap", is among the answers a person settled
+(finding 12), so without that correction market wrap and main asset class would be 19 of 20.
 
 The two date misses follow from choices described in
 [How dates are decided](#how-dates-are-decided). The Barclays digest lists notes with their
@@ -258,7 +283,8 @@ links, marked not confirmed; the label says none.
 
 The labels were made by Claude, a different AI model from the one being scored, reading each
 email; the judgement calls are explained in the file. 20 emails give a rough figure, not a
-precise one.
+precise one, which is why I also read all 200 results (see
+[evaluation/how-the-results-were-checked.md](evaluation/how-the-results-were-checked.md)).
 
 
 ## Where things are
@@ -271,7 +297,8 @@ news/                the headline sources, and keeping the last good headlines i
 api/                 the server for the dashboard, and the code that makes emails safe to show
 web/                 the dashboard
 scripts/             preview what the model reads, test a model, compare two models, accuracy
-evaluation/          the hand labels, the accuracy report, and answers a person corrected
+evaluation/          the hand labels, the accuracy report, flagged answers a person settled, and how
+                     the results were checked
 tests/               made up data only, never the licensed emails
 Dockerfile, docker-compose.yml   the one command setup
 ```

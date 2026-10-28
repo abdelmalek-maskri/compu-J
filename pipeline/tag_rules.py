@@ -60,7 +60,7 @@ def apply_tag_rules(output: LLMOutput) -> Tags:
     corrections = []
     primary, tags = output.primary_asset_tag, list(output.asset_tags)
     if MARKET_WRAP in [primary, *tags]:
-        corrections.append("removed Market Wrap tag: the model decided it is not a market wrap")
+        corrections.append("removed Market Wrap tag: the email is not a market wrap")
         tags = [t for t in tags if t != MARKET_WRAP]
         if primary == MARKET_WRAP:
             # promote the first other class the model named, parents of sub-tags included
