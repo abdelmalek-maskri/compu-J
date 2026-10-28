@@ -27,7 +27,10 @@ is described step by step in
 
 ## What it looks like
 
-![The dashboard: live headlines on top, the 200 emails on the left, the open email on the right](docs/screenshots/dashboard.png)
+[![The dashboard: live headlines on top, the 200 emails on the left, the open email on the right](docs/screenshots/dashboard-closeup.png)](docs/screenshots/dashboard.png)
+
+Click the picture for the whole page, including the panel that lists the companies and
+industries of company research.
 
 **Search and filters.** Market wraps or research first, then date, bank and asset class, each
 with a count of the emails it would show.
