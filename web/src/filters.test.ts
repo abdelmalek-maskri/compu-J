@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest'
 import type { Email } from './api'
-import { byDate, countValues, matches, NO_FILTERS, OTHER, toggle, valuesOf } from './filters'
+import {
+  byDate,
+  countValues,
+  KIND,
+  labelOf,
+  matches,
+  NO_DATE,
+  NO_FILTERS,
+  ONLY,
+  toggle,
+  valuesOf,
+} from './filters'
 
 const email = (over: Partial<Email>): Email => ({
   folder_name: 'FX Daily',
@@ -55,9 +66,20 @@ describe('matches', () => {
 })
 
 describe('valuesOf', () => {
-  it('derives the "other" facts from the record', () => {
-    expect(valuesOf(tech, 'other')).toEqual([OTHER.pdf, OTHER.review])
-    expect(valuesOf(wrap, 'other')).toEqual([OTHER.wrap, OTHER.nodate])
+  it('derives what to show, the switches and the day from the record', () => {
+    expect(valuesOf(wrap, 'kind')).toEqual([KIND.wrap])
+    expect(valuesOf(tech, 'kind')).toEqual([KIND.research])
+    expect(valuesOf(tech, 'only')).toEqual([ONLY.review, ONLY.pdf])
+    expect(valuesOf(fx, 'date')).toEqual(['2026-04-10'])
+    expect(valuesOf(wrap, 'date')).toEqual([NO_DATE])
+  })
+
+  it('gives each industry its sector', () => {
+    const two = email({
+      industry_subindustry: ['HEALTHCARE > Biotechnology', 'HEALTHCARE > Pharmaceuticals'],
+    })
+    expect(valuesOf(two, 'sector')).toEqual(['HEALTHCARE'])
+    expect(valuesOf(tech, 'industry')).toEqual(['ENERGY > Energy'])
   })
 
   it('leaves the Unknown industry out of the filter', () => {
@@ -78,7 +100,22 @@ describe('countValues', () => {
   })
 })
 
+describe('labelOf', () => {
+  it('reads dates as days and industries without their sector', () => {
+    expect(labelOf('date', '2026-04-13')).toBe('13 Apr 2026')
+    expect(labelOf('date', NO_DATE)).toBe(NO_DATE)
+    expect(labelOf('industry', 'HEALTHCARE > Biotechnology')).toBe('Biotechnology')
+    expect(labelOf('sector', 'CONSUMER CYCLICALS')).toBe('Consumer Cyclicals')
+  })
+})
+
 describe('toggle', () => {
+  it('keeps one choice for what to show: market wraps or research', () => {
+    const wraps = toggle(NO_FILTERS, 'kind', KIND.wrap)
+    expect(toggle(wraps, 'kind', KIND.research).kind).toEqual([KIND.research])
+    expect(toggle(wraps, 'kind', KIND.wrap).kind).toEqual([])
+  })
+
   it('adds and removes a value without changing the input', () => {
     const on = toggle(NO_FILTERS, 'bank', 'UBP')
     expect(on.bank).toEqual(['UBP'])
