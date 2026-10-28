@@ -9,6 +9,7 @@ from pipeline.clean_emails import (
     build_llm_input,
     clean_html,
     could_be_published,
+    date_spans,
     find_bank,
     find_date,
     find_date_hint,
@@ -146,6 +147,13 @@ def test_commas_and_ordinal_days_are_read():
     assert find_date("10th April 2026", []) == (date(2026, 4, 10), "text")
     assert find_date("Published on 1st April 2026", []) == (date(2026, 4, 1), "text")
     assert find_date("April 7th, 2026", []) == (date(2026, 4, 7), "text")
+
+
+def test_numeric_dates_read_day_first_with_dots_or_dashes():
+    assert date_spans("Research | 02.04.2026") == [(11, date(2026, 4, 2))]
+    assert date_spans("Research | 02-04-2026") == [(11, date(2026, 4, 2))]
+    # a dot and a dash mixed is not a date
+    assert date_spans("02.04-2026") == []
 
 
 def test_weekday_settles_a_missing_year():

@@ -26,7 +26,7 @@ independently it got the bank and the main asset class right in nearly every cas
 score on 20 emails cannot show a mistake that happens in other emails, so I also inspected
 the 64 changes the rules had made to the AI's answers on their own.
 
-63 of them were the same rule: the brief says a sub-tag brings its main class, so an email
+63 of them were the same rule: the brief says a sub-tag brings its asset class, so an email
 tagged "Emerging Markets" also gets "Macro". I read every one of those 63 emails to see if
 the added class was right. **34 were wrong.** The AI was using sub-tags as labels instead of
 topics:
@@ -44,7 +44,7 @@ economy.
 discusses those economies, not that a company is located there; "USD" means the email
 discusses the dollar's moves, not that prices are in dollars; and so on.
 
-**Result:** the wrong main classes went from 34 to 7, and 13 of the 16 that were right were
+**Result:** the wrongly added classes went from 34 to 7, and 13 of the 16 that were right were
 kept.
 
 ## 2. Asking the AI again also changed answers I had not touched
@@ -72,7 +72,7 @@ The bank was never wrong.
 | --- | --- | --- |
 | Market wrap | 7 | all said "yes" wrongly: a list of research notes, a report on one asset class only, or a shipping data tracker |
 | Title | 9 | a label above the headline was taken instead of the headline, such as "Kering (PRTP.PA)" or "Biopharma" |
-| Asset classes | 3 | a main class still added from a label |
+| Asset classes | 3 | a class still added from a sub-tag used as a label |
 | Date | 2 | "02.04.2026" read as 4 February instead of 2 April; one date missed |
 
 The market wrap mistakes were not flagged, because the AI's own checklist agreed with its
@@ -110,9 +110,9 @@ were settled this way, each one flagged first:
 
 | Email | Flag | Decision |
 | --- | --- | --- |
-| `035437` | the AI chose "Market Wrap" as the main class but said it is not a market wrap | a market wrap: a weekly market recap behind a link |
-| `035375` | the AI said market wrap but chose FX as the main class | not a market wrap: a currency preview of the week ahead |
-| `035410` | the AI said market wrap but chose Commodities as the main class | not a market wrap: a metals and mining weekly |
+| `035437` | the AI chose "Market Wrap" as the main asset class but said it is not a market wrap | a market wrap: a weekly market recap behind a link |
+| `035375` | the AI said market wrap but chose FX as the main asset class | not a market wrap: a currency preview of the week ahead |
+| `035410` | the AI said market wrap but chose Commodities as the main asset class | not a market wrap: a metals and mining weekly |
 | `035368` | the AI's title is not in the email | the title is inside an image, so a person typed it |
 
 Mistakes that nothing flags are not corrected by hand, even when I know of them from reading
@@ -123,7 +123,7 @@ work for thousands of emails. They are listed below instead.
 
 | | First run (v2) | Second run (v3) | Third run (v4) | Submitted |
 | --- | --- | --- | --- | --- |
-| Main classes added from a label (of the 34 found) | 34 | 7 | 7 | 7 |
+| Classes added from a sub-tag used as a label (of the 34 found) | 34 | 7 | 7 | 7 |
 | Emails wrongly called a market wrap | 12 | 8 | 6 | 4 |
 | Titles that are a label or empty | 8 | 10 | 10 | 9 |
 | Titles with a lost or garbled character | 4 | 3 | 5 | 0 |
@@ -140,21 +140,22 @@ section 3.
 
 ## Known mistakes in the submitted file
 
-19 mistakes in 18 emails, none of them flagged, so none corrected by hand. The bank, the
+20 mistakes in 18 emails, none of them flagged, so none corrected by hand. The bank, the
 date and the main asset class have none.
 
 | Field | Mistakes | Emails |
 | --- | --- | --- |
 | Market wrap | 4 | `035329` and `035435` (daily lists of company research notes), `035360` (Japanese equities only), `035261` (technical analysis with views) |
 | Title | 9 | a label taken instead of the headline: `035338`, `035347`, `035384`, `035394`, `035413`, `035421`, `035422`; a table's first line on two rates sheets: `035258`, `035278` |
-| Asset classes | 4 | a main class still added from a label: `035315`, `035367`, `035374`, `035438` |
+| Asset classes | 5 classes in 4 emails | a class added from a sub-tag used as a label: `035315` (two), `035367`, `035374`, `035438` |
 | Companies | 2 | `035314` leaves out the two companies in its title; `035394` lists peers mentioned only in passing |
 
 Another 20 or so answers are debatable, where a careful reader could go either way.
 
 ## What is still not perfect
 
-* **Seven main classes remain from the list of 34.** Five are clearly wrong, such as Macro
+* **Seven added classes remain from the list of 34.** Five are clearly wrong (the five in the
+  table above, in four emails), such as Macro
   on `035374` (a note on Chinese healthcare companies) and FX on `035367` (euro government
   bonds); two are debatable. They are not the same seven as in the second run: another sign
   that each run moves some answers.
@@ -165,17 +166,18 @@ Another 20 or so answers are debatable, where a careful reader could go either w
 * **Some market wrap decisions are a matter of definition.** For example, the Asia-Pacific
   weekly equity report (`035383`) is called a market wrap while similar reports for China,
   Japan and Europe are not.
-* **Wrong main classes added by the brief's sub-tag rule could only be reduced with a new
-  run.** Of the 21 main classes the rule added in the submitted run, 11 are right, 5
+* **Wrongly added classes could only be reduced with a new run.** An added class is one the
+  brief's sub-tag rule adds, such as Macro for "Emerging Markets". Of the 21 classes the rule
+  added in the submitted run, 11 are right, 5
   debatable and 5 wrong. Python cannot tell a sub-tag used as a topic from one used as a
   label, so any change in code treats all 21 alike:
 
   | Option | What happens | Result |
   | --- | --- | --- |
-  | Keep adding the main class (submitted) | the brief's rule, applied as written | 5 wrong, 11 right |
+  | Keep adding the class (submitted) | the brief's rule, applied as written | 5 wrong, 11 right |
   | Drop the stray sub-tag instead | no class added, the sub-tag removed | fixes the 5 but breaks the 11 right ones, such as `035313` (Japan's wages and central bank) losing Fixed Income and FX |
   | Flag every case for a person | 21 new flags | 16 are false alarms, and asset classes would be corrected by hand |
-  | Change the shape of the AI's answer | the AI picks each main class first and may only choose sub-tags under it, so a stray sub-tag cannot happen | removes the cause, but needs a new run of all 200 emails |
+  | Change the shape of the AI's answer | the AI picks each asset class first and may only choose sub-tags under it, so a stray sub-tag cannot happen | removes the cause, but needs a new run of all 200 emails |
 
   The submitted run keeps the first option, the best that code alone can do here. The last
   option is the proper fix for a future run.

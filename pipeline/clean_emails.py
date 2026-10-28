@@ -154,7 +154,8 @@ TEXT_DATES = [
     (re.compile(rf"\b(\d{{1,2}}){ORDINAL}[ -]({MONTH}),?[ -](\d{{4}}|\d{{2}})\b", re.I), (1, 2, 3)),
     # April 10, 2026 and April 7th, 2026
     (re.compile(rf"\b({MONTH}) (\d{{1,2}}){ORDINAL},? (\d{{4}})\b", re.I), (2, 1, 3)),
-    (re.compile(r"\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b"), (1, 2, 3)),
+    # 02.04.2026 and 02-04-2026, day first like the rest of the emails
+    (re.compile(r"\b(\d{1,2})([.-])(\d{1,2})\2(\d{4})\b"), (1, 3, 4)),
 ]
 # slash dates are left out on purpose: 04/10/2026 is ambiguous between US and European order
 COMPACT_DATE = (re.compile(r"(?<!\d)(20\d\d)(\d\d)(\d\d)(?!\d)"), (3, 2, 1))
@@ -194,6 +195,16 @@ def could_be_published(found: date, received: date | None) -> bool:
     if received is None:
         return True
     return received - RECEIVED_LOOKBACK <= found <= received + RECEIVED_MARGIN
+
+
+def date_spans(text: str) -> list[tuple[int, date]]:
+    """every full date in the text with where it starts, in the order written"""
+    found = [
+        (m.start(), _to_date(m[d], m[mo], m[y]))
+        for rx, (d, mo, y) in TEXT_DATES
+        for m in rx.finditer(text)
+    ]
+    return sorted((start, day) for start, day in found if day)
 
 
 def _earliest_date(text: str, patterns: list, received: date | None) -> date | None:

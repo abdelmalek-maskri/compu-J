@@ -136,6 +136,18 @@ def test_the_date_is_read_from_the_quote_not_from_the_model():
     )
 
 
+def test_a_quote_with_several_dates_keeps_the_ai_date_when_it_is_one_of_them():
+    body = "Report period: 31 March 2026; published 2 April 2026"
+    email = prepared_email(date=None, date_source=None, body=body, received=date(2026, 4, 2))
+    quote = "Report period: 31 March 2026; published 2 April 2026"
+    assert check_metadata(email, llm_output(date="2026-04-02", date_quote=quote)).date == date(
+        2026, 4, 2
+    )
+    # neither date is the AI's, so the quote is unclear and nothing is used
+    meta = check_metadata(email, llm_output(date="2026-04-01", date_quote=quote))
+    assert (meta.date, meta.date_problem) == (None, "unclear_quote")
+
+
 def test_link_date_is_used_only_when_no_date_is_confirmed():
     email = prepared_email(date=None, date_source=None, date_hint=date(2026, 4, 13))
     meta = check_metadata(email, llm_output(date=None, date_quote=None))

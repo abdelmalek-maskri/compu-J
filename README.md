@@ -67,9 +67,9 @@ checking": the brief decides them, so there is nothing for a person to judge.
 
 | Rule from the brief | Changes on the 200 emails |
 | --- | --- |
-| A sub-tag brings its main class: "Emerging Markets" means "Macro" too | 21: Macro 9, FX 5, Commodities 4, Fixed Income 2, Equity 1 |
+| A sub-tag brings its asset class: "Emerging Markets" means "Macro" too | 21: Macro 9, FX 5, Commodities 4, Fixed Income 2, Equity 1 |
 | Companies and industries are listed only for Equity (research on shares) | 2, for example `035328`, research on a company's bonds |
-| A market wrap has the main class "Market Wrap", that tag only, and no companies | applied to all 22 market wraps, without a note |
+| A market wrap has the main asset class "Market Wrap", that tag only, and no companies | applied to all 22 market wraps, without a note |
 | An email that is not a market wrap cannot carry the "Market Wrap" tag | 1, on an email a person settled as not a market wrap |
 
 To list them all:
@@ -166,7 +166,7 @@ cd web && npm ci && npm run dev            # the dashboard: open http://localhos
 `make docker` and `make test`. `make` alone lists them all.
 
 Tests use made up emails and a fake model, so they need no key and no data:
-`uv run pytest` (227 tests) and `cd web && npm test` (12 tests). They run on every pull request.
+`uv run pytest` (231 tests) and `cd web && npm test` (12 tests). They run on every pull request.
 
 ## How it works
 
@@ -236,7 +236,7 @@ up:
     itself.
 12. **Some emails only link to the report.** `035437` (T. Rowe Price, "Weekly market recap")
     is a short cover note with a button to the recap. The AI judged only the note and said it
-    is not a market wrap, while choosing "Market Wrap" as its main class. That contradiction
+    is not a market wrap, while choosing "Market Wrap" as its main asset class. That contradiction
     is flagged, and a person settled it in `evaluation/reviewed.csv`, which every run
     applies (see [How each email is read](#how-each-email-is-read)).
 13. **The AI used sub-tags as labels, not topics.** It tagged a note on Tencent "Emerging

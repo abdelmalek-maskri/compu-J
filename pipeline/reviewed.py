@@ -59,8 +59,10 @@ def load_reviewed(path: Path, known: set[str]) -> dict[str, list[Reviewed]]:
         for line, row in enumerate(rows, start=2):
             email, field = (row["email"] or "").strip(), (row["field"] or "").strip()
             value, reason = (row["value"] or "").strip(), (row["reason"] or "").strip()
-            if not email or not reason:
-                raise ValueError(f"{path} line {line}: every row needs an email and a reason")
+            if not email or not value or not reason:
+                raise ValueError(
+                    f"{path} line {line}: every row needs an email, a value and a reason"
+                )
             if email not in known:
                 raise ValueError(f"{path} line {line}: no email {email!r} in the data")
             if field not in REVIEWABLE:

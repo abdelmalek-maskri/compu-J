@@ -30,7 +30,8 @@ def test_reviewed_answers_are_read_by_email(tmp_path):
         (HEADER + "035437,market_wrap,yes,a recap\n", "'yes' is not a valid market_wrap"),
         (HEADER + "035437,bank,UBS,a recap\n", "'bank' cannot be reviewed here"),
         (HEADER + "035437,primary_asset_tag,Macro,a recap\n", "cannot be reviewed here"),
-        (HEADER + "035437,market_wrap,YES,\n", "needs an email and a reason"),
+        (HEADER + "035437,market_wrap,YES,\n", "needs an email, a value and a reason"),
+        (HEADER + "035437,folder_name,,the title is in an image\n", "a value and a reason"),
         (HEADER + "035999,market_wrap,YES,a recap\n", "no email '035999' in the data"),
         ("035437,market_wrap,YES,a recap\n", "the first line must be email,field,value,reason"),
         (

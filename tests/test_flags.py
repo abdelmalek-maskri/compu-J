@@ -70,6 +70,17 @@ def test_an_as_of_date_is_not_a_publication_date_even_when_both_readers_agree():
     assert meta.date == date(2026, 3, 31)
 
 
+def test_as_of_inside_the_quote_is_caught_and_the_note_names_the_date_read():
+    # the AI quoted "as of 31.03.2026" and also misread it as 3 December
+    email = prepared_email(
+        body="UBP EAM Analysis report as of 31.03.2026", date=None, date_source=None
+    )
+    meta = check_metadata(email, llm_output(date="2026-12-03", date_quote="as of 31.03.2026"))
+    assert (meta.date, meta.date_problem, meta.date_read) == (None, "as_of", date(2026, 3, 31))
+    [flag] = [f for f in metadata_flags(meta) if f.field == "date"]
+    assert flag.note.startswith("The email gives 31 March 2026 as an")
+
+
 def test_rejected_model_date_says_what_is_wrong_with_it():
     # 035341: an event two weeks after the email arrived
     email = prepared_email(date=None, date_source=None, received=date(2026, 4, 1))
