@@ -29,9 +29,16 @@ is described step by step in
 
 ![The dashboard: live headlines on top, the 200 emails on the left, the open email on the right](docs/screenshots/dashboard.png)
 
-| Search and filters | Why an email is worth checking |
-| --- | --- |
-| ![Market wraps or research first, then filters by date, bank and asset class, each with a count](docs/screenshots/filters.png) | ![The emails worth checking: a person's decision under Reviewed, and the reason a date is not confirmed](docs/screenshots/worth-checking.png) |
+**Search and filters.** Market wraps or research first, then date, bank and asset class, each
+with a count of the emails it would show.
+
+![Market wraps or research first, then filters by date, bank and asset class, each with a count](docs/screenshots/filters.png)
+
+**Why an email is worth checking.** The list filtered to the emails worth checking, and the
+side panel of one of them: a person's decision under "Reviewed", and why its date is not
+confirmed.
+
+![The emails worth checking on the left; on the right, a person's decision under Reviewed and the reason a date is not confirmed](docs/screenshots/worth-checking.png)
 
 ## How each email is read
 
