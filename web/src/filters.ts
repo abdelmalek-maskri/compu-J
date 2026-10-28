@@ -1,40 +1,70 @@
 import type { Email } from './api'
 
-export type Group = 'bank' | 'asset' | 'industry' | 'other'
+// in the order the panel shows them: the brief's main question first, then when, who and what
+export type Group = 'kind' | 'only' | 'date' | 'bank' | 'asset' | 'sector' | 'industry'
 export type Filters = Record<Group, string[]>
 
-export const NO_FILTERS: Filters = { bank: [], asset: [], industry: [], other: [] }
-
-export const GROUP_LABELS: Record<Group, string> = {
-  bank: 'Bank',
-  asset: 'Asset class',
-  industry: 'Industry',
-  other: 'Other',
+export const NO_FILTERS: Filters = {
+  kind: [],
+  only: [],
+  date: [],
+  bank: [],
+  asset: [],
+  sector: [],
+  industry: [],
 }
 
-export const OTHER = {
-  wrap: 'Market wrap',
-  pdf: 'Has a PDF',
-  review: 'Worth checking',
-  nodate: 'No date',
-} as const
+export const GROUP_LABELS: Record<Group, string> = {
+  kind: 'Show',
+  only: 'Only',
+  date: 'Date',
+  bank: 'Bank',
+  asset: 'Asset class',
+  sector: 'Sector',
+  industry: 'Industry',
+}
+
+export const KIND = { wrap: 'Market wraps', research: 'Research' } as const
+export const ONLY = { review: 'Worth checking', pdf: 'Has a PDF' } as const
+export const NO_DATE = 'No date'
+export const MARKET_WRAP = 'Market Wrap'
+
+// "kind" is one choice or none: an email is either a market wrap or not
+const SINGLE: Group[] = ['kind']
+
+const sectorOf = (industry: string) => industry.split(' > ')[0]
 
 export function valuesOf(email: Email, group: Group): string[] {
+  const industries = email.industry_subindustry.filter((i) => i !== 'Unknown')
   switch (group) {
+    case 'kind':
+      return [email.market_wrap === 'YES' ? KIND.wrap : KIND.research]
+    case 'only':
+      return [
+        [email.flag_count > 0, ONLY.review],
+        [Boolean(email.pdf_attachment?.length), ONLY.pdf],
+      ].flatMap(([on, label]) => (on ? [label as string] : []))
+    case 'date':
+      return [email.date ?? NO_DATE]
     case 'bank':
       return [email.bank]
     case 'asset':
       return email.asset_tags
+    case 'sector':
+      return [...new Set(industries.map(sectorOf))]
     case 'industry':
-      return email.industry_subindustry.filter((i) => i !== 'Unknown')
-    case 'other':
-      return [
-        [email.market_wrap === 'YES', OTHER.wrap],
-        [Boolean(email.pdf_attachment?.length), OTHER.pdf],
-        [email.flag_count > 0, OTHER.review],
-        [!email.date, OTHER.nodate],
-      ].flatMap(([on, label]) => (on ? [label as string] : []))
+      return industries
   }
+}
+
+/** how a value reads in the panel: dates as "13 Apr 2026", sectors in normal case, industries
+ * without their sector */
+export function labelOf(group: Group, value: string): string {
+  if (group === 'date' && value !== NO_DATE) return formatDate(value)
+  if (group === 'industry') return value.split(' > ')[1] ?? value
+  // the brief writes sectors in capitals; in a list of filters that reads as shouting
+  if (group === 'sector') return value.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())
+  return value
 }
 
 function searchText(email: Email): string {
@@ -80,9 +110,10 @@ export function countValues(
 
 export function toggle(filters: Filters, group: Group, value: string): Filters {
   const chosen = filters[group]
+  if (chosen.includes(value)) return { ...filters, [group]: chosen.filter((v) => v !== value) }
   return {
     ...filters,
-    [group]: chosen.includes(value) ? chosen.filter((v) => v !== value) : [...chosen, value],
+    [group]: SINGLE.includes(group) ? [value] : [...chosen, value],
   }
 }
 
@@ -104,3 +135,12 @@ const DAY = new Intl.DateTimeFormat('en-GB', {
 })
 
 export const formatDate = (iso: string) => DAY.format(new Date(`${iso}T00:00:00Z`))
+
+const DAY_MONTH = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+})
+
+/** "13 Apr", for lists where every date is in the same year */
+export const formatDay = (iso: string) => DAY_MONTH.format(new Date(`${iso}T00:00:00Z`))

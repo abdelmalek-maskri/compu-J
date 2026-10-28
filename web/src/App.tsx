@@ -4,7 +4,7 @@ import { EmailList } from './components/EmailList'
 import { FilterPanel } from './components/FilterPanel'
 import { Reader } from './components/Reader'
 import { Ticker } from './components/Ticker'
-import { byDate, matches, NO_FILTERS, OTHER, type Filters } from './filters'
+import { byDate, matches, NO_FILTERS, ONLY, type Filters } from './filters'
 
 /** the open email lives in the address (#035300), so a link or a reload keeps it */
 function useHashId(): [string | null, (id: string | null) => void] {
@@ -76,7 +76,7 @@ export default function App() {
                 {' \u00B7 '}
                 <button
                   type="button"
-                  onClick={() => setFilters({ ...NO_FILTERS, other: [OTHER.review] })}
+                  onClick={() => setFilters({ ...NO_FILTERS, only: [ONLY.review] })}
                   className="underline underline-offset-2 hover:text-accent"
                 >
                   {toReview} to check
