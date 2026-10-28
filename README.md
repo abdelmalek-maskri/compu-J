@@ -37,7 +37,7 @@ with a count of the emails it would show.
 **Why an email is worth checking.** The list filtered to the emails worth checking, with one
 of them open: a person's decision under "Reviewed", and why its date is not confirmed.
 
-![The emails worth checking on the left, one of them open, and on the right a person's decision under Reviewed and the reason its date is not confirmed](docs/screenshots/worth-checking.png)
+![The emails worth checking on the left, one of them open, and on the right a person's decision under Reviewed and the reason its date is not confirmed](docs/screenshots/worth-checking-open.png)
 
 ## How each email is read
 
