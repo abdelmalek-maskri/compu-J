@@ -26,7 +26,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035240": {
     "bank_source": "llm+python",
@@ -55,7 +55,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035241": {
     "bank_source": "llm+python",
@@ -84,7 +84,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035242": {
     "bank_source": "llm+python",
@@ -113,7 +113,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035243": {
     "bank_source": "llm+python",
@@ -142,7 +142,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035244": {
     "bank_source": "llm+python",
@@ -156,8 +156,7 @@
     "date_python": null,
     "flags": [],
     "corrections": [
-      "added parent Macro for Emerging Markets",
-      "added parent FX for USD"
+      "added parent Macro for Emerging Markets"
     ],
     "reviewed": [],
     "content_type": "research",
@@ -174,7 +173,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035245": {
     "bank_source": "llm+python",
@@ -203,7 +202,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035246": {
     "bank_source": "llm+python",
@@ -216,9 +215,7 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -234,7 +231,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035247": {
     "bank_source": "llm+python",
@@ -263,7 +260,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035248": {
     "bank_source": "llm+python",
@@ -292,7 +289,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035249": {
     "bank_source": "llm+python",
@@ -305,10 +302,7 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets",
-      "added parent FX for EUR"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -324,7 +318,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035250": {
     "bank_source": "llm+python",
@@ -353,7 +347,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035251": {
     "bank_source": "llm+python",
@@ -367,7 +361,6 @@
     "date_python": "2026-04-09",
     "flags": [],
     "corrections": [
-      "added parent Macro for Developed Markets",
       "added parent FX for CHF"
     ],
     "reviewed": [],
@@ -385,7 +378,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035252": {
     "bank_source": "llm+python",
@@ -414,7 +407,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035253": {
     "bank_source": "llm+python",
@@ -427,9 +420,7 @@
     "date_llm": "2026-04-02",
     "date_python": "2026-04-02",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -445,7 +436,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035254": {
     "bank_source": "llm+python",
@@ -458,9 +449,7 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -476,7 +465,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035255": {
     "bank_source": "llm+python",
@@ -514,7 +503,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035256": {
     "bank_source": "llm+python",
@@ -531,19 +520,19 @@
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": false,
-      "asset_coverage": false,
+      "structure": true,
+      "asset_coverage": true,
       "timeframe": false,
-      "purpose": false,
+      "purpose": true,
       "title": false,
-      "language": false,
-      "depth": false
+      "language": true,
+      "depth": true
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035257": {
     "bank_source": "llm+python",
@@ -572,19 +561,28 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035258": {
     "bank_source": "llm+python",
-    "date_source": "llm+python",
-    "date_quote": "Levels as of 07-Apr-26 09:32 GMT",
+    "date_source": null,
+    "date_quote": "07-Apr-26",
     "received": "2026-04-09",
     "title_verified": true,
     "bank_llm": "Deutsche Bank",
     "bank_python": "Deutsche Bank",
     "date_llm": "2026-04-07",
     "date_python": "2026-04-07",
-    "flags": [],
+    "flags": [
+      {
+        "kind": "model_vs_python",
+        "field": "date",
+        "value_a": "2026-04-07",
+        "value_b": "2026-04-07",
+        "note": "The email gives 7 April 2026 as an \"as of\" date, the day its figures refer to, not the day it was published, so it is not used.",
+        "detail": "The AI said 2026-04-07, quoting '07-Apr-26' (as_of). The rules found 2026-04-07 in the email's text."
+      }
+    ],
     "corrections": [],
     "reviewed": [],
     "content_type": "marketing",
@@ -601,7 +599,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035259": {
     "bank_source": "llm+python",
@@ -630,7 +628,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035260": {
     "bank_source": "llm+python",
@@ -643,9 +641,7 @@
     "date_llm": "2026-04-01",
     "date_python": "2026-04-01",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Emerging Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -661,7 +657,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035261": {
     "bank_source": "llm+python",
@@ -690,7 +686,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035262": {
     "bank_source": "llm+python",
@@ -719,7 +715,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035263": {
     "bank_source": "llm+python",
@@ -748,7 +744,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035264": {
     "bank_source": "llm+python",
@@ -777,7 +773,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035265": {
     "bank_source": "llm+python",
@@ -806,7 +802,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035266": {
     "bank_source": "llm+python",
@@ -835,7 +831,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035267": {
     "bank_source": "llm+python",
@@ -864,7 +860,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035268": {
     "bank_source": "llm+python",
@@ -893,7 +889,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035269": {
     "bank_source": "llm+python",
@@ -922,7 +918,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035270": {
     "bank_source": "llm+python",
@@ -951,7 +947,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035271": {
     "bank_source": "llm+python",
@@ -980,7 +976,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035272": {
     "bank_source": "llm+python",
@@ -1009,7 +1005,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035273": {
     "bank_source": "llm+python",
@@ -1022,9 +1018,7 @@
     "date_llm": "2026-04-01",
     "date_python": "2026-04-01",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -1040,26 +1034,26 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035274": {
     "bank_source": "llm+python",
     "date_source": null,
-    "date_quote": null,
+    "date_quote": "31.03.2026",
     "received": "2026-04-09",
     "title_verified": true,
     "bank_llm": "UBP",
     "bank_python": "UBP",
-    "date_llm": null,
+    "date_llm": "2026-03-31",
     "date_python": "2026-03-31",
     "flags": [
       {
         "kind": "model_vs_python",
         "field": "date",
-        "value_a": null,
+        "value_a": "2026-03-31",
         "value_b": "2026-03-31",
-        "note": "The email mentions 31 March 2026, but nothing shows it is the day the email was published: it may be the date of an item inside it, or the day its figures refer to. So it is not used.",
-        "detail": "The AI found no publication date. The rules found 2026-03-31 in the email's text, which is never used on its own."
+        "note": "The email gives 31 March 2026 as an \"as of\" date, the day its figures refer to, not the day it was published, so it is not used.",
+        "detail": "The AI said 2026-03-31, quoting '31.03.2026' (as_of). The rules found 2026-03-31 in the email's text."
       }
     ],
     "corrections": [],
@@ -1078,7 +1072,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035275": {
     "bank_source": "llm+python",
@@ -1091,9 +1085,7 @@
     "date_llm": "2026-03-31",
     "date_python": "2026-03-31",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -1109,7 +1101,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035276": {
     "bank_source": "llm+python",
@@ -1128,7 +1120,7 @@
     "market_wrap_checklist": {
       "structure": true,
       "asset_coverage": true,
-      "timeframe": true,
+      "timeframe": false,
       "purpose": true,
       "title": false,
       "language": true,
@@ -1138,7 +1130,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035277": {
     "bank_source": "llm+python",
@@ -1167,11 +1159,11 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035278": {
     "bank_source": "llm+python",
-    "date_source": "llm+python",
+    "date_source": null,
     "date_quote": "30-Mar-26",
     "received": "2026-04-09",
     "title_verified": true,
@@ -1179,10 +1171,17 @@
     "bank_python": "Deutsche Bank",
     "date_llm": "2026-03-30",
     "date_python": "2026-03-30",
-    "flags": [],
-    "corrections": [
-      "added parent FX for USD"
+    "flags": [
+      {
+        "kind": "model_vs_python",
+        "field": "date",
+        "value_a": "2026-03-30",
+        "value_b": "2026-03-30",
+        "note": "The email gives 30 March 2026 as an \"as of\" date, the day its figures refer to, not the day it was published, so it is not used.",
+        "detail": "The AI said 2026-03-30, quoting '30-Mar-26' (as_of). The rules found 2026-03-30 in the email's text."
+      }
     ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "marketing",
     "market_wrap_checklist": {
@@ -1198,7 +1197,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035279": {
     "bank_source": "llm+python",
@@ -1227,7 +1226,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035280": {
     "bank_source": "llm+python",
@@ -1237,37 +1236,6 @@
     "title_verified": true,
     "bank_llm": "Barclays",
     "bank_python": "Barclays",
-    "date_llm": "2026-04-09",
-    "date_python": "2026-04-09",
-    "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
-    "reviewed": [],
-    "content_type": "research",
-    "market_wrap_checklist": {
-      "structure": false,
-      "asset_coverage": false,
-      "timeframe": false,
-      "purpose": false,
-      "title": false,
-      "language": false,
-      "depth": false
-    },
-    "duplicate_of": null,
-    "warnings": [],
-    "error": null,
-    "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
-  },
-  "035281": {
-    "bank_source": "llm+python",
-    "date_source": "llm+python",
-    "date_quote": "09 April 2026",
-    "received": null,
-    "title_verified": true,
-    "bank_llm": "EFG",
-    "bank_python": "EFG",
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
@@ -1287,7 +1255,38 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
+  },
+  "035281": {
+    "bank_source": "llm+python",
+    "date_source": "llm+python",
+    "date_quote": "09 April 2026",
+    "received": null,
+    "title_verified": true,
+    "bank_llm": "EFG",
+    "bank_python": "EFG",
+    "date_llm": "2026-04-09",
+    "date_python": "2026-04-09",
+    "flags": [],
+    "corrections": [
+      "added parent Commodities for Energy"
+    ],
+    "reviewed": [],
+    "content_type": "research",
+    "market_wrap_checklist": {
+      "structure": false,
+      "asset_coverage": false,
+      "timeframe": false,
+      "purpose": false,
+      "title": false,
+      "language": false,
+      "depth": false
+    },
+    "duplicate_of": null,
+    "warnings": [],
+    "error": null,
+    "model": "gemini/gemini-3.5-flash-lite",
+    "prompt_version": "v4"
   },
   "035282": {
     "bank_source": "llm+python",
@@ -1316,7 +1315,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035283": {
     "bank_source": "llm+python",
@@ -1345,7 +1344,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035284": {
     "bank_source": "llm+python",
@@ -1374,7 +1373,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035285": {
     "bank_source": "llm+python",
@@ -1403,7 +1402,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035286": {
     "bank_source": "llm+python",
@@ -1416,7 +1415,9 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [],
+    "corrections": [
+      "added parent Equity for Company Research"
+    ],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -1432,7 +1433,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035287": {
     "bank_source": "llm+python",
@@ -1461,7 +1462,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035288": {
     "bank_source": "llm+python",
@@ -1490,7 +1491,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035289": {
     "bank_source": "llm+python",
@@ -1503,9 +1504,7 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -1521,7 +1520,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035290": {
     "bank_source": "llm+python",
@@ -1550,7 +1549,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035291": {
     "bank_source": "llm+python",
@@ -1579,7 +1578,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035292": {
     "bank_source": "llm+python",
@@ -1608,7 +1607,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035293": {
     "bank_source": "llm+python",
@@ -1637,7 +1636,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035294": {
     "bank_source": "llm+python",
@@ -1666,7 +1665,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035295": {
     "bank_source": "llm+python",
@@ -1695,7 +1694,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035296": {
     "bank_source": "llm+python",
@@ -1708,9 +1707,7 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [
-      "added parent Commodities for Metals"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -1726,7 +1723,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035297": {
     "bank_source": "llm+python",
@@ -1755,7 +1752,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035298": {
     "bank_source": "llm+python",
@@ -1784,7 +1781,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035299": {
     "bank_source": "llm+python",
@@ -1813,7 +1810,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035300": {
     "bank_source": "llm+python",
@@ -1842,7 +1839,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035301": {
     "bank_source": "llm+python",
@@ -1855,9 +1852,7 @@
     "date_llm": "2026-04-09",
     "date_python": "2026-04-09",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Emerging Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -1873,9 +1868,38 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035302": {
+    "bank_source": "llm+python",
+    "date_source": "llm+python",
+    "date_quote": "9 April 2026",
+    "received": null,
+    "title_verified": true,
+    "bank_llm": "Barclays",
+    "bank_python": "Barclays",
+    "date_llm": "2026-04-09",
+    "date_python": "2026-04-09",
+    "flags": [],
+    "corrections": [],
+    "reviewed": [],
+    "content_type": "research",
+    "market_wrap_checklist": {
+      "structure": false,
+      "asset_coverage": false,
+      "timeframe": false,
+      "purpose": false,
+      "title": false,
+      "language": false,
+      "depth": false
+    },
+    "duplicate_of": null,
+    "warnings": [],
+    "error": null,
+    "model": "gemini/gemini-3.5-flash-lite",
+    "prompt_version": "v4"
+  },
+  "035303": {
     "bank_source": "llm+python",
     "date_source": "llm+python",
     "date_quote": "9 April 2026",
@@ -1892,48 +1916,19 @@
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": true,
+      "structure": false,
       "asset_coverage": false,
       "timeframe": false,
       "purpose": false,
       "title": false,
       "language": false,
-      "depth": true
+      "depth": false
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
-  },
-  "035303": {
-    "bank_source": "llm+python",
-    "date_source": "llm+python",
-    "date_quote": "9 April 2026",
-    "received": null,
-    "title_verified": true,
-    "bank_llm": "Barclays",
-    "bank_python": "Barclays",
-    "date_llm": "2026-04-09",
-    "date_python": "2026-04-09",
-    "flags": [],
-    "corrections": [],
-    "reviewed": [],
-    "content_type": "research",
-    "market_wrap_checklist": {
-      "structure": true,
-      "asset_coverage": true,
-      "timeframe": true,
-      "purpose": true,
-      "title": false,
-      "language": true,
-      "depth": true
-    },
-    "duplicate_of": null,
-    "warnings": [],
-    "error": null,
-    "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035304": {
     "bank_source": "llm+python",
@@ -1962,7 +1957,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035305": {
     "bank_source": "llm+python",
@@ -1991,7 +1986,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035306": {
     "bank_source": "llm+python",
@@ -2020,7 +2015,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035307": {
     "bank_source": "llm+python",
@@ -2041,7 +2036,7 @@
       "asset_coverage": false,
       "timeframe": false,
       "purpose": false,
-      "title": false,
+      "title": true,
       "language": false,
       "depth": false
     },
@@ -2049,7 +2044,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035308": {
     "bank_source": "llm+python",
@@ -2078,7 +2073,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035309": {
     "bank_source": "llm+python",
@@ -2107,7 +2102,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035310": {
     "bank_source": "llm+python",
@@ -2120,25 +2115,23 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Fixed Income for Credit Strategy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
       "asset_coverage": true,
-      "timeframe": true,
+      "timeframe": false,
       "purpose": false,
       "title": false,
       "language": false,
-      "depth": true
+      "depth": false
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035311": {
     "bank_source": "llm+python",
@@ -2167,7 +2160,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035312": {
     "bank_source": "llm+python",
@@ -2196,7 +2189,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035313": {
     "bank_source": "llm+python",
@@ -2228,7 +2221,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035314": {
     "bank_source": "llm+python",
@@ -2241,9 +2234,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -2259,7 +2250,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035315": {
     "bank_source": "llm+python",
@@ -2291,7 +2282,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035316": {
     "bank_source": "llm+python",
@@ -2320,7 +2311,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035317": {
     "bank_source": "llm+python",
@@ -2349,7 +2340,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035318": {
     "bank_source": "llm+python",
@@ -2362,9 +2353,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Commodities for Energy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -2380,7 +2369,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035319": {
     "bank_source": "llm+python",
@@ -2409,7 +2398,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035320": {
     "bank_source": "llm+python",
@@ -2438,7 +2427,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035321": {
     "bank_source": "llm+python",
@@ -2451,9 +2440,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -2469,7 +2456,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035322": {
     "bank_source": "llm+python",
@@ -2498,7 +2485,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035323": {
     "bank_source": "llm+python",
@@ -2527,7 +2514,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035324": {
     "bank_source": "llm+python",
@@ -2556,7 +2543,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035325": {
     "bank_source": "llm+python",
@@ -2585,7 +2572,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035326": {
     "bank_source": "llm+python",
@@ -2614,7 +2601,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035327": {
     "bank_source": "llm+python",
@@ -2635,7 +2622,7 @@
       "asset_coverage": true,
       "timeframe": true,
       "purpose": true,
-      "title": true,
+      "title": false,
       "language": true,
       "depth": true
     },
@@ -2643,7 +2630,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035328": {
     "bank_source": "llm+python",
@@ -2683,7 +2670,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035329": {
     "bank_source": "llm+python",
@@ -2712,7 +2699,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035330": {
     "bank_source": "llm+python",
@@ -2750,7 +2737,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035331": {
     "bank_source": "llm+python",
@@ -2779,7 +2766,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035332": {
     "bank_source": "llm+python",
@@ -2791,16 +2778,25 @@
     "bank_python": "Barclays",
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
-    "flags": [],
+    "flags": [
+      {
+        "kind": "model_logic",
+        "field": "market_wrap",
+        "value_a": "NO",
+        "value_b": "6/7 checks",
+        "note": "The AI decided this is not a market wrap, although 6 of the brief's 7 market wrap checks were met.",
+        "detail": null
+      }
+    ],
     "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
-      "asset_coverage": true,
+      "asset_coverage": false,
       "timeframe": true,
       "purpose": true,
-      "title": false,
+      "title": true,
       "language": true,
       "depth": true
     },
@@ -2808,7 +2804,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035333": {
     "bank_source": "llm+python",
@@ -2837,7 +2833,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035334": {
     "bank_source": "llm+python",
@@ -2866,7 +2862,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035335": {
     "bank_source": "llm+python",
@@ -2895,7 +2891,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035336": {
     "bank_source": "llm+python",
@@ -2924,7 +2920,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035337": {
     "bank_source": "llm+python",
@@ -2937,9 +2933,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -2955,7 +2949,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035338": {
     "bank_source": "llm+python",
@@ -2984,9 +2978,38 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035339": {
+    "bank_source": "llm+python",
+    "date_source": "llm+python",
+    "date_quote": "April 10, 2026",
+    "received": "2026-04-10",
+    "title_verified": true,
+    "bank_llm": "Morgan Stanley",
+    "bank_python": "Morgan Stanley",
+    "date_llm": "2026-04-10",
+    "date_python": "2026-04-10",
+    "flags": [],
+    "corrections": [],
+    "reviewed": [],
+    "content_type": "research",
+    "market_wrap_checklist": {
+      "structure": true,
+      "asset_coverage": false,
+      "timeframe": false,
+      "purpose": false,
+      "title": false,
+      "language": false,
+      "depth": false
+    },
+    "duplicate_of": null,
+    "warnings": [],
+    "error": null,
+    "model": "gemini/gemini-3.5-flash-lite",
+    "prompt_version": "v4"
+  },
+  "035340": {
     "bank_source": "llm+python",
     "date_source": "llm+python",
     "date_quote": "April 10, 2026",
@@ -3013,38 +3036,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
-  },
-  "035340": {
-    "bank_source": "llm+python",
-    "date_source": "llm+python",
-    "date_quote": "April 10, 2026",
-    "received": "2026-04-10",
-    "title_verified": true,
-    "bank_llm": "Morgan Stanley",
-    "bank_python": "Morgan Stanley",
-    "date_llm": "2026-04-10",
-    "date_python": "2026-04-10",
-    "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
-    "reviewed": [],
-    "content_type": "research",
-    "market_wrap_checklist": {
-      "structure": false,
-      "asset_coverage": false,
-      "timeframe": false,
-      "purpose": false,
-      "title": false,
-      "language": false,
-      "depth": false
-    },
-    "duplicate_of": null,
-    "warnings": [],
-    "error": null,
-    "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035341": {
     "bank_source": "llm+python",
@@ -3082,7 +3074,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035342": {
     "bank_source": "llm+python",
@@ -3095,9 +3087,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Fixed Income for Rates Strategy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -3113,7 +3103,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035343": {
     "bank_source": "llm+python",
@@ -3142,7 +3132,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035344": {
     "bank_source": "llm+python",
@@ -3155,9 +3145,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -3173,7 +3161,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035345": {
     "bank_source": "llm+python",
@@ -3202,7 +3190,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035346": {
     "bank_source": "llm+python",
@@ -3231,7 +3219,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035347": {
     "bank_source": "llm+python",
@@ -3260,7 +3248,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035348": {
     "bank_source": "llm+python",
@@ -3298,7 +3286,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035349": {
     "bank_source": "llm+python",
@@ -3311,12 +3299,15 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [],
+    "corrections": [
+      "added parent Commodities for Energy",
+      "added parent FX for USD"
+    ],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
-      "asset_coverage": false,
+      "asset_coverage": true,
       "timeframe": false,
       "purpose": false,
       "title": false,
@@ -3327,7 +3318,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035350": {
     "bank_source": "llm+python",
@@ -3356,7 +3347,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035351": {
     "bank_source": "llm+python",
@@ -3385,7 +3376,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035352": {
     "bank_source": "llm+python",
@@ -3414,7 +3405,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035353": {
     "bank_source": "llm+python",
@@ -3443,7 +3434,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035354": {
     "bank_source": "llm+python",
@@ -3456,9 +3447,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -3474,7 +3463,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035355": {
     "bank_source": "llm+python",
@@ -3503,7 +3492,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035356": {
     "bank_source": "llm+python",
@@ -3541,7 +3530,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035357": {
     "bank_source": "llm+python",
@@ -3572,7 +3561,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035358": {
     "bank_source": "llm+python",
@@ -3601,54 +3590,20 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035359": {
-    "bank_source": "llm+python",
+    "bank_source": "python:signature",
     "date_source": null,
     "date_quote": null,
     "received": null,
     "title_verified": true,
-    "bank_llm": "EFG",
+    "bank_llm": "Other",
     "bank_python": "EFG",
     "date_llm": null,
     "date_python": null,
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
-    "reviewed": [],
-    "content_type": "marketing",
-    "market_wrap_checklist": {
-      "structure": false,
-      "asset_coverage": false,
-      "timeframe": false,
-      "purpose": false,
-      "title": false,
-      "language": false,
-      "depth": false
-    },
-    "duplicate_of": null,
-    "warnings": [],
-    "error": null,
-    "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
-  },
-  "035360": {
-    "bank_source": "llm+python",
-    "date_source": "llm+python",
-    "date_quote": "10 April 2026",
-    "received": "2026-04-10",
-    "title_verified": true,
-    "bank_llm": "Goldman Sachs",
-    "bank_python": "Goldman Sachs",
-    "date_llm": "2026-04-10",
-    "date_python": "2026-04-10",
-    "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets",
-      "added parent Commodities for Energy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -3664,7 +3619,36 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
+  },
+  "035360": {
+    "bank_source": "llm+python",
+    "date_source": "llm+python",
+    "date_quote": "10 April 2026",
+    "received": "2026-04-10",
+    "title_verified": true,
+    "bank_llm": "Goldman Sachs",
+    "bank_python": "Goldman Sachs",
+    "date_llm": "2026-04-10",
+    "date_python": "2026-04-10",
+    "flags": [],
+    "corrections": [],
+    "reviewed": [],
+    "content_type": "research",
+    "market_wrap_checklist": {
+      "structure": true,
+      "asset_coverage": false,
+      "timeframe": true,
+      "purpose": true,
+      "title": true,
+      "language": true,
+      "depth": true
+    },
+    "duplicate_of": null,
+    "warnings": [],
+    "error": null,
+    "model": "gemini/gemini-3.5-flash-lite",
+    "prompt_version": "v4"
   },
   "035361": {
     "bank_source": "llm+python",
@@ -3682,10 +3666,10 @@
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
-      "asset_coverage": true,
+      "asset_coverage": false,
       "timeframe": true,
       "purpose": true,
-      "title": true,
+      "title": false,
       "language": true,
       "depth": true
     },
@@ -3693,7 +3677,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035362": {
     "bank_source": "llm+python",
@@ -3706,9 +3690,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -3724,7 +3706,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035363": {
     "bank_source": "llm+python",
@@ -3753,7 +3735,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035364": {
     "bank_source": "llm+python",
@@ -3782,7 +3764,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035365": {
     "bank_source": "llm+python",
@@ -3811,7 +3793,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035366": {
     "bank_source": "llm+python",
@@ -3840,7 +3822,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035367": {
     "bank_source": "llm+python",
@@ -3871,21 +3853,23 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035368": {
     "bank_source": "llm+python",
     "date_source": "llm+python",
     "date_quote": "10 Apr, 2026",
     "received": "2026-04-10",
-    "title_verified": true,
+    "title_verified": false,
     "bank_llm": "Goldman Sachs",
     "bank_python": "Goldman Sachs",
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
     "corrections": [],
-    "reviewed": [],
+    "reviewed": [
+      "Title set to JOINING BASKETS LUNCH IN ZURICH 15 APRIL by a reviewer (the AI said ): the headline is inside an image, so the model, which reads text only, could not see it"
+    ],
     "content_type": "marketing",
     "market_wrap_checklist": {
       "structure": false,
@@ -3900,7 +3884,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035369": {
     "bank_source": "llm+python",
@@ -3913,9 +3897,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Fixed Income for Rates Strategy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -3931,7 +3913,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035370": {
     "bank_source": "llm+python",
@@ -3960,7 +3942,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035371": {
     "bank_source": "llm+python",
@@ -3989,7 +3971,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035372": {
     "bank_source": "llm+python",
@@ -4006,19 +3988,19 @@
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": true,
-      "asset_coverage": true,
-      "timeframe": true,
-      "purpose": true,
+      "structure": false,
+      "asset_coverage": false,
+      "timeframe": false,
+      "purpose": false,
       "title": false,
-      "language": true,
+      "language": false,
       "depth": true
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035373": {
     "bank_source": "llm+python",
@@ -4047,7 +4029,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035374": {
     "bank_source": "llm+python",
@@ -4078,30 +4060,23 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035375": {
     "bank_source": "llm+python",
     "date_source": null,
-    "date_quote": "April 13",
+    "date_quote": null,
     "received": "2026-04-10",
     "title_verified": true,
     "bank_llm": "UBP",
     "bank_python": "UBP",
-    "date_llm": "2026-04-13",
+    "date_llm": null,
     "date_python": null,
-    "flags": [
-      {
-        "kind": "model_vs_python",
-        "field": "date",
-        "value_a": "2026-04-13",
-        "value_b": null,
-        "note": "The email mentions 13 April 2026, after the day it arrived, so it is probably an event or a deadline, not the day it was published.",
-        "detail": "The AI said 2026-04-13, quoting 'April 13' (after_arrival). The rules found none."
-      }
-    ],
+    "flags": [],
     "corrections": [],
-    "reviewed": [],
+    "reviewed": [
+      "Market wrap set to NO by a reviewer (the AI said YES): the email is not a recap of how prices moved across several asset classes: a preview of the week ahead for currencies only"
+    ],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -4116,7 +4091,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035376": {
     "bank_source": "llm+python",
@@ -4145,7 +4120,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035377": {
     "bank_source": "llm+python",
@@ -4165,18 +4140,18 @@
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
-      "asset_coverage": true,
+      "asset_coverage": false,
       "timeframe": true,
       "purpose": false,
       "title": false,
-      "language": false,
-      "depth": false
+      "language": true,
+      "depth": true
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035378": {
     "bank_source": "llm+python",
@@ -4189,9 +4164,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Emerging Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
@@ -4207,7 +4180,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035379": {
     "bank_source": "llm+python",
@@ -4236,7 +4209,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035380": {
     "bank_source": "llm+python",
@@ -4265,7 +4238,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035381": {
     "bank_source": "llm+python",
@@ -4294,7 +4267,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035382": {
     "bank_source": "llm+python",
@@ -4323,7 +4296,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035383": {
     "bank_source": "llm+python",
@@ -4352,7 +4325,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035384": {
     "bank_source": "llm+python",
@@ -4381,7 +4354,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035385": {
     "bank_source": "llm+python",
@@ -4394,9 +4367,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Emerging Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -4412,7 +4383,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035386": {
     "bank_source": "llm+python",
@@ -4425,18 +4396,13 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets",
-      "added parent Fixed Income for Credit Strategy",
-      "added parent Commodities for Energy",
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": true,
-      "asset_coverage": true,
-      "timeframe": true,
+      "structure": false,
+      "asset_coverage": false,
+      "timeframe": false,
       "purpose": false,
       "title": false,
       "language": false,
@@ -4446,7 +4412,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035387": {
     "bank_source": "llm+python",
@@ -4475,7 +4441,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035388": {
     "bank_source": "llm+python",
@@ -4504,7 +4470,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035389": {
     "bank_source": "llm+python",
@@ -4516,13 +4482,24 @@
     "bank_python": "Goldman Sachs",
     "date_llm": "2026-04-11",
     "date_python": "2026-04-11",
-    "flags": [],
-    "corrections": [],
+    "flags": [
+      {
+        "kind": "model_logic",
+        "field": "market_wrap",
+        "value_a": "NO",
+        "value_b": "6/7 checks",
+        "note": "The AI decided this is not a market wrap, although 6 of the brief's 7 market wrap checks were met.",
+        "detail": null
+      }
+    ],
+    "corrections": [
+      "added parent Macro for Emerging Markets"
+    ],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
-      "asset_coverage": true,
+      "asset_coverage": false,
       "timeframe": true,
       "purpose": true,
       "title": true,
@@ -4533,7 +4510,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035390": {
     "bank_source": "llm+python",
@@ -4546,9 +4523,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Fixed Income for Rates Strategy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -4564,7 +4539,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035391": {
     "bank_source": "llm+python",
@@ -4593,7 +4568,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035392": {
     "bank_source": "llm+python",
@@ -4622,7 +4597,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035393": {
     "bank_source": "llm+python",
@@ -4651,7 +4626,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035394": {
     "bank_source": "llm+python",
@@ -4680,7 +4655,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035395": {
     "bank_source": "llm+python",
@@ -4709,7 +4684,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035396": {
     "bank_source": "llm+python",
@@ -4738,7 +4713,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035397": {
     "bank_source": "llm+python",
@@ -4767,7 +4742,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035398": {
     "bank_source": "llm+python",
@@ -4780,9 +4755,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -4798,7 +4771,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035399": {
     "bank_source": "llm+python",
@@ -4816,18 +4789,18 @@
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
-      "asset_coverage": true,
+      "asset_coverage": false,
       "timeframe": false,
-      "purpose": false,
+      "purpose": true,
       "title": false,
       "language": false,
-      "depth": false
+      "depth": true
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035400": {
     "bank_source": "llm+python",
@@ -4840,10 +4813,7 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [
-      "added parent Fixed Income for Rates Strategy",
-      "added parent FX for GBP"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -4859,7 +4829,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035401": {
     "bank_source": "llm+python",
@@ -4888,7 +4858,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035402": {
     "bank_source": "llm+python",
@@ -4901,7 +4871,9 @@
     "date_llm": "2026-04-10",
     "date_python": "2026-04-10",
     "flags": [],
-    "corrections": [],
+    "corrections": [
+      "added parent FX for EUR"
+    ],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -4917,7 +4889,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035403": {
     "bank_source": "llm+python",
@@ -4946,7 +4918,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035404": {
     "bank_source": "llm+python",
@@ -4975,7 +4947,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035405": {
     "bank_source": "llm+python",
@@ -5006,7 +4978,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035406": {
     "bank_source": "llm+python",
@@ -5025,19 +4997,19 @@
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": true,
-      "asset_coverage": true,
+      "structure": false,
+      "asset_coverage": false,
       "timeframe": false,
       "purpose": false,
       "title": false,
       "language": false,
-      "depth": true
+      "depth": false
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035407": {
     "bank_source": "llm+python",
@@ -5050,9 +5022,7 @@
     "date_llm": "2026-04-12",
     "date_python": "2026-04-12",
     "flags": [],
-    "corrections": [
-      "added parent Fixed Income for Rates Strategy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -5068,7 +5038,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035408": {
     "bank_source": "llm+python",
@@ -5085,19 +5055,19 @@
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": true,
-      "asset_coverage": true,
-      "timeframe": true,
-      "purpose": true,
+      "structure": false,
+      "asset_coverage": false,
+      "timeframe": false,
+      "purpose": false,
       "title": false,
-      "language": true,
-      "depth": true
+      "language": false,
+      "depth": false
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035409": {
     "bank_source": "llm+python",
@@ -5126,7 +5096,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035410": {
     "bank_source": "llm+python",
@@ -5139,8 +5109,13 @@
     "date_llm": "2026-04-12",
     "date_python": "2026-04-12",
     "flags": [],
-    "corrections": [],
-    "reviewed": [],
+    "corrections": [
+      "removed Market Wrap tag: the email is not a market wrap",
+      "dropped companies and industries without an Equity tag"
+    ],
+    "reviewed": [
+      "Market wrap set to NO by a reviewer (the AI said YES): the email is not a recap of how prices moved across several asset classes: a weekly on the metals and mining sector only"
+    ],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
@@ -5155,7 +5130,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035411": {
     "bank_source": "llm+python",
@@ -5184,7 +5159,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035412": {
     "bank_source": "llm+python",
@@ -5213,7 +5188,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035413": {
     "bank_source": "llm+python",
@@ -5242,7 +5217,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035414": {
     "bank_source": "llm+python",
@@ -5271,7 +5246,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035415": {
     "bank_source": "llm+python",
@@ -5300,7 +5275,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035416": {
     "bank_source": "llm+python",
@@ -5329,7 +5304,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035417": {
     "bank_source": "llm+python",
@@ -5358,7 +5333,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035418": {
     "bank_source": "llm+python",
@@ -5371,9 +5346,7 @@
     "date_llm": "2026-04-13",
     "date_python": "2026-04-13",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Emerging Markets"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -5389,7 +5362,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035419": {
     "bank_source": "llm+python",
@@ -5402,9 +5375,7 @@
     "date_llm": "2026-04-13",
     "date_python": "2026-04-13",
     "flags": [],
-    "corrections": [
-      "added parent Commodities for Energy"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -5420,7 +5391,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035420": {
     "bank_source": "llm+python",
@@ -5451,7 +5422,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035421": {
     "bank_source": "llm+python",
@@ -5480,7 +5451,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035422": {
     "bank_source": "llm+python",
@@ -5509,7 +5480,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035423": {
     "bank_source": "llm+python",
@@ -5522,10 +5493,7 @@
     "date_llm": "2026-04-13",
     "date_python": "2026-04-13",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets",
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
@@ -5541,7 +5509,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035424": {
     "bank_source": "llm+python",
@@ -5570,7 +5538,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035425": {
     "bank_source": "llm+python",
@@ -5599,7 +5567,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035426": {
     "bank_source": "llm+python",
@@ -5628,7 +5596,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035427": {
     "bank_source": "llm+python",
@@ -5657,7 +5625,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035428": {
     "bank_source": "llm+python",
@@ -5686,7 +5654,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035429": {
     "bank_source": "llm+python",
@@ -5724,7 +5692,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035430": {
     "bank_source": "llm+python",
@@ -5737,16 +5705,13 @@
     "date_llm": "2026-04-13",
     "date_python": "2026-04-13",
     "flags": [],
-    "corrections": [
-      "added parent Macro for Developed Markets",
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": false,
       "asset_coverage": false,
-      "timeframe": false,
+      "timeframe": true,
       "purpose": false,
       "title": false,
       "language": false,
@@ -5756,7 +5721,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035431": {
     "bank_source": "llm+python",
@@ -5776,33 +5741,25 @@
         "value_b": "2026-04-13",
         "note": "The email mentions 13 April 2026, but nothing shows it is the day the email was published: it may be the date of an item inside it, or the day its figures refer to. So it is not used.",
         "detail": "The AI found no publication date. The rules found 2026-04-13 in the email's text, which is never used on its own."
-      },
-      {
-        "kind": "model_logic",
-        "field": "market_wrap",
-        "value_a": "YES",
-        "value_b": "purpose: no",
-        "note": "The AI called this a market wrap, but its own checklist says the email does more than recap what happened. A market wrap only recaps.",
-        "detail": null
       }
     ],
     "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
-      "structure": true,
-      "asset_coverage": true,
-      "timeframe": true,
+      "structure": false,
+      "asset_coverage": false,
+      "timeframe": false,
       "purpose": false,
       "title": false,
-      "language": true,
-      "depth": true
+      "language": false,
+      "depth": false
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035432": {
     "bank_source": "llm+python",
@@ -5815,9 +5772,7 @@
     "date_llm": "2026-04-13",
     "date_python": "2026-04-13",
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "event",
     "market_wrap_checklist": {
@@ -5833,7 +5788,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035433": {
     "bank_source": "llm+python",
@@ -5846,25 +5801,23 @@
     "date_llm": "2026-04-13",
     "date_python": null,
     "flags": [],
-    "corrections": [
-      "added parent FX for USD"
-    ],
+    "corrections": [],
     "reviewed": [],
     "content_type": "research",
     "market_wrap_checklist": {
       "structure": true,
       "asset_coverage": true,
       "timeframe": true,
-      "purpose": false,
+      "purpose": true,
       "title": false,
-      "language": false,
-      "depth": false
+      "language": true,
+      "depth": true
     },
     "duplicate_of": null,
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035434": {
     "bank_source": "llm+python",
@@ -5893,7 +5846,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035435": {
     "bank_source": "llm+python",
@@ -5922,7 +5875,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035436": {
     "bank_source": "llm+python",
@@ -5951,7 +5904,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035437": {
     "bank_source": "llm+python",
@@ -5991,7 +5944,7 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   },
   "035438": {
     "bank_source": "llm+python",
@@ -6022,6 +5975,6 @@
     "warnings": [],
     "error": null,
     "model": "gemini/gemini-3.5-flash-lite",
-    "prompt_version": "v2"
+    "prompt_version": "v4"
   }
 }
