@@ -18,7 +18,8 @@ BLOCK_TAGS = [
 ]  # fmt: skip
 CELL_TAGS = ["td", "th"]
 
-# preheaders pad with these so mail clients show a clean preview line
+# zero-width characters: Barclays' templates put them around hyphens in names ("Al-Wakeel"),
+# and some preheaders pad with them; invisible to a reader, they would stop text matching
 INVISIBLE_CHARS = re.compile(r"[\u200b-\u200d\u034f\u00ad\ufeff]")
 HIDDEN_STYLE = re.compile(r"display\s*:\s*none", re.I)
 
@@ -43,7 +44,7 @@ def clean_html(html: str) -> str:
     for s in soup.find_all(string=True):
         s.replace_with(re.sub(r"\s+", " ", s))
 
-    # Outlook wraps every cell in <p>; flatten cells of data rows so each row stays one line.
+    # Outlook wraps every cell in <p>; flatten cells of data rows so each row stays one line
     # rows holding a nested table are layout, not data, and keep their structure
     for row in soup.find_all("tr"):
         cells = row.find_all(CELL_TAGS, recursive=False)
