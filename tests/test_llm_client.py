@@ -162,6 +162,12 @@ def test_input_near_the_context_limit_is_flagged():
     assert result.warnings == ["input used 31500 of 32768 tokens, it may have been cut off"]
 
 
+def test_the_default_model_is_the_one_used_for_the_results(monkeypatch):
+    monkeypatch.delenv("LLM_MODEL", raising=False)
+    settings = Settings.from_env()
+    assert (settings.preset, settings.api_key_env) == ("gemini-flash-lite", "GEMINI_API_KEY")
+
+
 def test_settings_come_from_the_environment(monkeypatch):
     monkeypatch.setenv("LLM_MODEL", "ollama_chat/gpt-oss:20b")
     monkeypatch.setenv("OLLAMA_API_BASE", "http://localhost:11434")

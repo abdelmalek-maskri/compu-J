@@ -92,7 +92,8 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> "Settings":
-        return cls.from_name(os.getenv("LLM_MODEL", "gemma"))
+        # the model that produced the submitted results; local models are a choice, not the default
+        return cls.from_name(os.getenv("LLM_MODEL", "gemini-flash-lite"))
 
 
 @dataclass

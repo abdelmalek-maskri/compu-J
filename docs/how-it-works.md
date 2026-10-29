@@ -155,4 +155,4 @@ cd web && npm ci && npm run dev            # the dashboard: open http://localhos
 `make docker` and `make test`. `make` alone lists them all.
 
 Tests use made up emails and a fake model, so they need no key and no data:
-`uv run pytest` (231 tests) and `cd web && npm test` (17 tests). They run on every pull request.
+`uv run pytest` (232 tests) and `cd web && npm test` (17 tests). They run on every pull request.

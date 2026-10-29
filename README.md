@@ -87,7 +87,7 @@ Copy `.env.example` to `.env`. Only classifying needs a key; the dashboard does 
 
 | Setting | What it is for |
 | --- | --- |
-| `LLM_MODEL` | which AI model classifies: `gemini-flash-lite` (the one used for the submitted results), `gemini-flash`, or a local one through Ollama, `gemma` or `gpt-oss-20b` |
+| `LLM_MODEL` | which AI model classifies: `gemini-flash-lite` (the default, and the one used for the submitted results), `gemini-flash`, or a local one through Ollama, `gemma` or `gpt-oss-20b` |
 | `GEMINI_API_KEY` | a free key from [Google AI Studio](https://aistudio.google.com), for the Gemini models |
 | `FINNHUB_API_KEY` | a free key from [Finnhub](https://finnhub.io) for the headlines; without it, CNBC's public feed is used |
 | `OLLAMA_API_BASE`, `OLLAMA_NUM_CTX` | local models only: where Ollama runs, and how much text it reads at once |
@@ -98,7 +98,7 @@ are saved, so classifying again only asks about emails that changed.
 ## Testing
 
 ```bash
-make test                                   # 231 Python tests and 17 dashboard tests
+make test                                   # 232 Python tests and 17 dashboard tests
 uv run python -m scripts.accuracy --score   # score the results against the hand labels
 ```
 
