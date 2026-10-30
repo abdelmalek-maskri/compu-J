@@ -17,6 +17,7 @@ from pipeline.schema import LLMOutput
 RETRYABLE = (
     litellm.exceptions.APIConnectionError,
     litellm.exceptions.Timeout,
+    litellm.exceptions.RateLimitError,
     litellm.exceptions.ServiceUnavailableError,
     litellm.exceptions.InternalServerError,
 )
@@ -46,6 +47,8 @@ class StopRun(Exception):
 class Settings:
     model: str
     api_base: str | None
+    # only sent to Ollama, but set for every model: it is part of the saved answers' key,
+    # so making it None for cloud models would make every saved answer miss
     num_ctx: int
     reasoning_effort: str | None
     timeout: int = 300
@@ -155,6 +158,7 @@ def _complete_with_retries(complete_fn, settings, messages, sleep):
 def classify_email(
     llm_input: str,
     settings: Settings,
+    # passed in so tests can use a fake model and skip the waits
     complete_fn: Callable = complete,
     sleep: Callable[[float], None] = time.sleep,
 ) -> CallResult:

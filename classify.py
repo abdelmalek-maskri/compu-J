@@ -152,9 +152,10 @@ def summary(outcomes: list[Outcome], settings: Settings) -> str:
             f"at {slowest.seconds:.0f}s"
         )
     if biggest and biggest.prompt_tokens:
+        # the limit only applies to Ollama; cloud models read far more
+        limit = f" of {settings.num_ctx}" if settings.is_ollama else ""
         lines.append(
-            f"largest input: {biggest.record.source_file} at {biggest.prompt_tokens} "
-            f"of {settings.num_ctx} tokens"
+            f"largest input: {biggest.record.source_file} at {biggest.prompt_tokens}{limit} tokens"
         )
     return "\n".join(lines)
 

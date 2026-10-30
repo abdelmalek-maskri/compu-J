@@ -1,9 +1,7 @@
 """find what a person should look at, and write it to a review file
 
-each email is read twice: by the AI model, and by fixed rules written in Python (the bank from
-the logo or signature, the date from the top of the email or a PDF's name). notes are shown in
-the dashboard to someone reading the email, who knows neither; date notes say what is wrong
-with the date itself, and their detail keeps the AI against the rules for review.csv
+each email is read twice: by the AI model, and by fixed rules written in Python (the bank from the logo or signature, the date from the top of the email or a PDF's name). notes are shown in
+the dashboard to someone reading the email, who knows neither; date notes say what is wrong with the date itself, and their detail keeps the AI against the rules for review.csv
 
 model_vs_python: the model and the rules gave different answers
 model_logic:     the model's answer contradicts itself

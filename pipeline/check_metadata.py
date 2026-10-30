@@ -1,7 +1,7 @@
-"""title, bank and date: the model's answer wins when the email confirms it.
+"""title, bank and date, checked against the email.
 
-Python backs up the bank. For the date it only checks: a date the rules find but the model
-rejects is another kind of date ("as of", an article's, a deadline), so it is never used alone"""
+the title is the model's, replaced by the email's own line when they match word for word. the bank is the model's when the email names it, else the rules'. the date is the model's when the email confirms it, else a date from a link address marked "link", else empty: a date only the rules find is another kind of date ("as of", an article's, a deadline), so it is never used alone"""
+
 
 import re
 from dataclasses import dataclass
@@ -41,8 +41,7 @@ class Metadata:
     date_python_source: str | None
 
 
-# removed inside words: the export replaced lost apostrophes with \ufffd, and models retype
-# them as plain ones or drop them, so "Europe\ufffds", "Europe's" and "Europes" must all match
+# removed inside words: the export replaced lost apostrophes with \ufffd, and models retype them as plain ones or drop them, so "Europe\ufffds", "Europe's" and "Europes" must all match
 INSIDE_WORD = re.compile(r"['\u2018\u2019\ufffd]")
 
 
@@ -58,8 +57,7 @@ def appears_in(snippet: str | None, text: str) -> bool:
 
 
 def _as_written(title: str, text: str) -> str:
-    """the email's own line when the title matches one word for word: the model retypes
-    punctuation, drops lost characters ("isnt") or guesses them ("\x96"), the line does not"""
+    """the email's own line when the title matches one word for word: the model retypes punctuation, drops lost characters ("isnt") or guesses them ("\x96"), the line does not"""
     words = _words(title)
     return next(
         (line.strip() for line in text.splitlines() if words and _words(line) == words), title
@@ -67,8 +65,7 @@ def _as_written(title: str, text: str) -> str:
 
 
 def _as_of(said: date, quote: str, text: str) -> bool:
-    """every place the date is written follows "as of" or "as at", inside the quote or just
-    before it: the day figures refer to"""
+    """every place the date is written follows "as of" or "as at", inside the quote or just before it: the day figures refer to"""
     starts = [
         q.start() + at
         for q in re.finditer(re.escape(quote), text)
@@ -91,8 +88,8 @@ def _choose_bank(email: PreparedEmail, said: str) -> tuple[str | None, str | Non
 
 
 def _date_problem(email: PreparedEmail, said: date, quote: str | None) -> str | None:
-    """why the model's date cannot be confirmed as the publication date; None when it can.
-    the quote is checked first, so a note never says the email mentions an invented date"""
+    """why the model's date cannot be confirmed as the publication date; None when it can, the quote is checked first, so a note never says the email mentions an invented date"""
+
     if not appears_in(quote, email.llm_input):
         return "not_in_email"
     if _as_of(said, quote, email.llm_input):
@@ -113,8 +110,7 @@ def _quoted_dates(email: PreparedEmail, said: date, quote: str) -> list[date]:
 
 
 def _read_quote(email: PreparedEmail, said: date, quote: str | None) -> date:
-    """the date the quote states, read by Python: the model can misread its own quote, such as
-    02.04.2026 (day first) as 4 February. the model's date stands when it is one of the quote's
+    """the date the quote states, read by Python: the model can misread its own quote, such as 02.04.2026 (day first) as 4 February. the model's date stands when it is one of the quote's
     dates, or when the quote gives none or several"""
     if not appears_in(quote, email.llm_input):
         return said
