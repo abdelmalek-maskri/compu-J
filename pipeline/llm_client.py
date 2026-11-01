@@ -17,7 +17,6 @@ from pipeline.schema import LLMOutput
 RETRYABLE = (
     litellm.exceptions.APIConnectionError,
     litellm.exceptions.Timeout,
-    litellm.exceptions.RateLimitError,
     litellm.exceptions.ServiceUnavailableError,
     litellm.exceptions.InternalServerError,
 )
