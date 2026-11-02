@@ -125,8 +125,6 @@ Everything I found in the data, and what I did about each, is in
 
 * **20 known mistakes remain in 18 emails**, mostly in titles and asset tags. None is flagged,
   so none was corrected by hand. They are [listed with their causes](evaluation/how-the-results-were-checked.md#known-mistakes-in-the-submitted-file).
-* **The figures are optimistic.** The same 200 emails were used to improve the system and to
-  measure it.
 * **Asking the AI again moves a few answers.** Saved answers keep each run repeatable.
 * **Not built for production:** no login, files instead of a database, one computer, and the
   free tier of the AI model limits how many emails it reads a day.
