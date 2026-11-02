@@ -70,10 +70,10 @@ The AI model is only used by the classifier; browsing the results never calls it
 
 ## How it works
 
-1. **Clean.** Each email's HTML becomes plain text, with the first pages of its PDFs.
-2. **Read twice.** An AI model answers every field; ordinary Python rules look for the bank
+1. **Clean:** Each email's HTML becomes plain text, with the first pages of its PDFs.
+2. **Read twice:** An AI model answers every field; ordinary Python rules look for the bank
    and the date on their own.
-3. **Check.** An answer from the AI is kept only when the email confirms it. Every
+3. **Check:** An answer from the AI is kept only when the email confirms it. Every
    disagreement is written down as a flag, in plain words.
 4. **Apply the brief's rules**, for example: a market wrap lists no companies.
 5. **Apply a person's decisions** on flagged answers, then write the results.
