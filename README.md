@@ -1,63 +1,138 @@
 # Research email classifier
 
-Investment banks send their clients research by email: daily market recaps, notes on a
-company, views on currencies or interest rates. This project reads 200 of those emails and,
-for each one, works out who sent it, when, what it is about, and whether it is a "market wrap"
-(a recap of what the markets did). The answers go to `classified_emails.json`, and a small
-website lets you search them and read each email next to its answers.
+Banks send their clients research by email: morning recaps, notes on a company, views on
+currencies or rates. This project reads 200 of those emails and works out, for each one, which
+bank sent it, when, what it covers, and whether it is a market wrap (a recap of what the markets
+did). The results are in `classified_emails.json`, and a small website lets you search them and
+read each email next to its answers.
 
-**Result:** all 200 emails classified. On 20 independently labelled emails, the bank, the
-market wrap decision and the main asset class are 20 of 20 right, and the date 18 of 20 (both
-misses are deliberate choices about uncertain dates).
-
-## What it looks like
+All 200 emails are classified. I labelled 20 of them by hand: bank, market wrap and main asset
+class match on all 20, and the date on 18 (the two misses are emails where I chose to leave an
+uncertain date empty).
 
 ![The dashboard: live headlines on top, the 200 emails on the left, the open email on the right](docs/screenshots/dashboard.png)
 
-**Filters:** market wraps or research first, then date, bank and asset class, each with a
-count.
+## Running it
 
-![Market wraps or research first, then filters by date, bank and asset class, each with a count](docs/screenshots/filters.png)
+You need [Git](https://git-scm.com) and the email archive that came with the brief
+(`Data.zip`). The emails are licensed, so they are not in this repository.
 
-**Worth checking:** the emails marked for a person, one of them open, with a decision under
-"Reviewed" and the reason its date is not confirmed.
+The classified results are already committed, so you can open the dashboard without an AI
+model or any key. You only need a key to classify the emails again or to use the Ask tab.
 
-![The emails worth checking on the left, one of them open, and on the right a person's decision under Reviewed and the reason its date is not confirmed](docs/screenshots/worth-checking-open.png)
+### With Docker
 
-## Features
+You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) running.
 
-* **Classifies every email** into the brief's ten fields: title, bank, date, market wrap,
-  main asset class, all asset classes, companies, industries, PDFs and folder number.
-* **Checks the AI's answers in code.** The bank must be named in the email, the date must be
-  quoted from it, and the title is copied from it. Anything doubtful is marked "worth
-  checking", with the reason in plain words.
-* **A review step.** A person settles the answers code cannot, in a file every run applies.
-* **A dashboard** to search and filter the emails (market wraps, date, bank, asset class),
-  read each one safely, and open its PDFs.
-* **A strip of live market headlines**, refreshed every 10 minutes.
+1. Clone the repository:
 
-## Quick start
+   ```bash
+   git clone https://github.com/abdelmalek-maskri/compu-J.git
+   cd compu-J
+   ```
 
-With [Docker](https://www.docker.com/products/docker-desktop/): copy the email folders into
-`Data/`, then run the line below and open <http://localhost:8000>. It shows the results already
-in this repository, so no AI model or key is needed.
+2. Put `Data.zip` in that folder and unzip it. You should end up with `Data/035239/emailbody.html`
+   and 199 more folders like it.
+
+   ```bash
+   unzip Data.zip
+   ```
+
+3. Optional: copy `.env.example` to `.env` and add a free [Finnhub](https://finnhub.io) key for
+   the headlines. Without one, CNBC's public feed is used.
+
+4. Build and start:
+
+   ```bash
+   docker compose up --build
+   ```
+
+5. Open <http://localhost:8000>.
+
+`Ctrl+C` stops it, `docker compose down` removes the containers. The Docker setup only serves
+the dashboard and the headlines; to classify again or use the Ask tab, run it without Docker.
+
+### Without Docker
+
+You need [uv](https://docs.astral.sh/uv/getting-started/installation/) (it installs Python 3.11
+and the Python packages for you) and [Node 22](https://nodejs.org).
+
+1. Clone the repository and unzip the emails, as in steps 1 and 2 above.
+
+2. Install the dependencies and create `.env`:
+
+   ```bash
+   uv sync                  # Python packages, into .venv
+   cd web && npm ci && cd ..  # dashboard packages
+   cp .env.example .env
+   ```
+
+3. Start the server, the headline fetcher and the dashboard, each in its own terminal:
+
+   ```bash
+   uv run uvicorn api.main:app --reload       # the API, on port 8000
+   uv run python fetch_news.py --every 10     # headlines now, then every 10 minutes
+   cd web && npm run dev                      # the dashboard
+   ```
+
+4. Open <http://localhost:5173>.
+
+If you have `make`, `make setup` does step 2 and `make dev` runs the three commands of step 3 in
+one terminal (`Ctrl+C` stops all of them). `make` on its own lists every command.
+
+### Classifying the emails again
+
+Add a free [Gemini key](https://aistudio.google.com) to `.env` as `GEMINI_API_KEY`, then:
 
 ```bash
-docker compose up --build
+uv run python classify.py
 ```
 
-Without Docker, you need [uv](https://docs.astral.sh/uv/) and [Node 22](https://nodejs.org):
+AI answers are saved, so a second run only asks about emails that changed. To run a model on
+your own machine instead, install [Ollama](https://ollama.com) and set `LLM_MODEL=gemma` in
+`.env` (it needs about 15 GB of memory).
+
+### The Ask tab
+
+The Ask tab answers questions from the emails and their PDFs. It needs a search index, built
+once. The default embeds the passages with OpenAI (add `OPENAI_API_KEY` to `.env`, about a
+cent per passage):
 
 ```bash
-make setup        # install everything
-make dev          # the server, the headlines and the dashboard: open http://localhost:5173
-make classify     # classify the emails again (needs a key, see Configuration)
+uv run python -m rag.ingest                     # OpenAI embeddings
+uv run python -m rag.ingest --embedder ollama   # local and free: ollama pull embeddinggemma first
+uv run python -m rag.ingest --no-embed          # keyword search only, no model at all
 ```
 
-`make` alone lists every command, and [the step by step version](docs/how-it-works.md#run-it-step-by-step)
-shows what each one runs.
+Answering a question uses the model set in `LLM_MODEL`.
 
-## Architecture
+## Settings
+
+All settings live in `.env`. None is needed to browse the results.
+
+| Setting | What it does |
+| --- | --- |
+| `LLM_MODEL` | the model that classifies: `gemini-flash-lite` (default, used for the submitted results), `gemini-flash`, or a local `gemma` or `gpt-oss-20b` through Ollama |
+| `GEMINI_API_KEY` | key for the Gemini models, free from [Google AI Studio](https://aistudio.google.com) |
+| `OPENAI_API_KEY` | key for the default embeddings behind the Ask tab |
+| `FINNHUB_API_KEY` | key for the headlines, free from [Finnhub](https://finnhub.io); without it, CNBC's public feed is used |
+| `OLLAMA_API_BASE`, `OLLAMA_NUM_CTX` | local models only: where Ollama runs and how much text it reads at once |
+
+## Tests
+
+```bash
+uv run pytest            # 232 Python tests
+cd web && npm test       # 17 dashboard tests
+```
+
+They use made up emails and a fake model, so they need neither a key nor the data, and they run
+on every pull request. To score the results against the hand labels:
+
+```bash
+uv run python -m scripts.accuracy --score
+```
+
+## How it works
 
 ```text
 Data/ (emails) ──► classify.py ──► classified_emails.json ──► api/ (server) ──► web/ (dashboard)
@@ -65,101 +140,50 @@ Data/ (emails) ──► classify.py ──► classified_emails.json ──► 
                    AI model                       fetch_news.py ─┘ (headlines)
 ```
 
-The AI model is only used by the classifier; browsing the results never calls it. More in
-[docs/architecture.md](docs/architecture.md), including the server's API.
+Each email goes through five steps:
 
-## How it works
+1. Its HTML is turned into plain text, along with the first pages of its PDFs.
+2. An AI model answers every field. Separately, plain Python rules look for the bank and the
+   date.
+3. The AI's answer is kept only when the email backs it up: the bank has to be named in it, the
+   date quoted from it, the title copied from it. Where the two disagree, the email gets a flag
+   with the reason, and the dashboard lists it under "worth checking".
+4. The brief's rules are applied, for example a market wrap lists no companies.
+5. Corrections a person made to flagged answers (`evaluation/reviewed.csv`) are applied.
 
-1. **Clean:** Each email's HTML becomes plain text, with the first pages of its PDFs.
-2. **Read twice:** An AI model answers every field; ordinary Python rules look for the bank
-   and the date on their own.
-3. **Check:** An answer from the AI is kept only when the email confirms it. Every
-   disagreement is written down as a flag, in plain words.
-4. **Apply the brief's rules**, for example: a market wrap lists no companies.
-5. **Apply a person's decisions** on flagged answers, then write the results.
+The dashboard never calls the AI model. It reads `classified_emails.json`, shows each email
+with its scripts removed and its tracking images blocked, and lets you filter by market wrap,
+date, bank and asset class.
 
-The details, including how dates are decided, are in
-[docs/how-it-works.md](docs/how-it-works.md).
+![The emails worth checking, one of them open, with a person's decision and the reason its date is not confirmed](docs/screenshots/worth-checking-open.png)
 
-## Configuration
+A few choices worth knowing about:
 
-Copy `.env.example` to `.env`. Only classifying needs a key; the dashboard does not.
+* When the date is uncertain, it is left empty rather than guessed.
+* When the AI made the same mistake repeatedly, I fixed it in code rather than adding to the
+  prompt, because changing the prompt also moved answers it already had right.
+* A person only corrects what the system flagged, so the results stay the system's own work.
 
-| Setting | What it is for |
-| --- | --- |
-| `LLM_MODEL` | which AI model classifies: `gemini-flash-lite` (the default, and the one used for the submitted results), `gemini-flash`, or a local one through Ollama, `gemma` or `gpt-oss-20b` |
-| `GEMINI_API_KEY` | a free key from [Google AI Studio](https://aistudio.google.com), for the Gemini models |
-| `FINNHUB_API_KEY` | a free key from [Finnhub](https://finnhub.io) for the headlines; without it, CNBC's public feed is used |
-| `OLLAMA_API_BASE`, `OLLAMA_NUM_CTX` | local models only: where Ollama runs, and how much text it reads at once |
-
-The emails (`Data/`) are licensed research, so they are not in this repository. AI answers
-are saved, so classifying again only asks about emails that changed.
-
-## Testing
-
-```bash
-make test                                   # 232 Python tests and 17 dashboard tests
-uv run python -m scripts.accuracy --score   # score the results against the hand labels
-```
-
-The tests use made up emails and a fake AI model, so they need no key and no data. They run on
-every pull request. How the results were checked, by hand and against labels, is in
-[evaluation/how-the-results-were-checked.md](evaluation/how-the-results-were-checked.md).
-
-## Asking questions (RAG prototype)
-
-A prototype that answers questions from the emails and their PDFs, citing the passage behind
-every point. In the dashboard it is the **Ask** tab (`POST /api/ask`), where the search mode can
-be switched to compare keyword and meaning search; it also runs from the command line.
-
-```bash
-uv run python -m rag.ingest                    # split into passages and embed them (once)
-uv run python -m rag.ask "What is the view on oil?" --bank Barclays
-uv run python -m rag.ask "EUR/USD outlook" --mode keyword --sources-only   # no model calls
-uv run python -m rag.evaluate                  # retrieval on 24 questions with known sources
-```
-
-* **Passages, not whole documents.** About 400 tokens each, never across a PDF page, each
-  starting with its bank, date, title and page from the classification.
-* **Filters first.** The classification's bank, date, tags and companies narrow the search
-  before any similarity is computed.
-* **Two searches, merged.** Keyword search (BM25) finds names and tickers; embeddings find the
-  same meaning in other words. The two rankings are merged by rank.
-* **Every claim is checked.** The model must quote its source; Python confirms the quote is in
-  that passage word for word and marks any claim it cannot confirm.
-* **Not built:** a reranker, image descriptions for charts, and a database (pgvector) instead
-  of files. At 1,210 passages a scan is instant.
-
-## Design decisions
-
-* **The AI decides meaning; Python checks facts.** Both answers are kept, and every
-  disagreement becomes a flag. ([How each email is read](docs/how-it-works.md#how-each-email-is-read))
-* **An uncertain date is left empty, never guessed.** ([How dates are decided](docs/how-it-works.md#how-dates-are-decided))
-* **Repeated mistakes are fixed in code, not with more instructions to the AI**, because
-  asking the AI again also moves answers it got right. ([How the results were checked](evaluation/how-the-results-were-checked.md))
-* **A person settles only what the system flags**, so the results stay the system's own work.
-  ([Known mistakes](evaluation/how-the-results-were-checked.md#known-mistakes-in-the-submitted-file))
-* **Emails are shown safely**: scripts removed, and the banks' tracking images blocked unless
-  asked for. ([Safety](docs/architecture.md#safety))
-
-Everything I found in the data, and what I did about each, is in
-[docs/findings.md](docs/findings.md).
+The Ask tab splits the emails and PDFs into passages of about 400 tokens, narrows them by the
+classification's bank, date and tags, and then combines keyword search with embedding search.
+The model has to quote its source for each point, and Python checks that the quote really is in
+that passage.
 
 ## Limitations
 
-* **20 known mistakes remain in 18 emails**, mostly in titles and asset tags. None is flagged,
-  so none was corrected by hand. They are [listed with their causes](evaluation/how-the-results-were-checked.md#known-mistakes-in-the-submitted-file).
-* **Asking the AI again moves a few answers.** Saved answers keep each run repeatable.
-* **Not built for production:** no login, files instead of a database, one computer, and the
-  free tier of the AI model limits how many emails it reads a day.
-* **The AI reads text only**, so a title shown only in an image is missed.
+* 20 known mistakes remain in 18 emails, mostly titles and asset tags. None of them was
+  flagged, so none was corrected by hand. They are
+  [listed with their causes](evaluation/how-the-results-were-checked.md#known-mistakes-in-the-submitted-file).
+* Asking the AI again can change a few answers; saved answers keep each run repeatable.
+* The AI reads text only, so a title that appears only in an image is missed.
+* This is not built for production: there is no login, results are files rather than a
+  database, and the Gemini free tier limits how many emails can be classified a day.
 
-## Documentation
+## More detail
 
-| Page | What it covers |
-| --- | --- |
-| [How it works](docs/how-it-works.md) | the steps, how each email is read, the brief's rules, how dates are decided |
-| [Architecture](docs/architecture.md) | the parts, where data lives, the server's API, safety, where things are |
-| [Findings and decisions](docs/findings.md) | what I found in the data, and what I did about each |
-| [How the results were checked](evaluation/how-the-results-were-checked.md) | the full review of the results, accuracy, and the known mistakes |
-| [Accuracy report](evaluation/accuracy.md) | the latest score against the hand labels |
+* [How it works](docs/how-it-works.md): each step, the brief's rules, how dates are decided
+* [Architecture](docs/architecture.md): the parts, where data lives, the API, safety
+* [Findings](docs/findings.md): what I found in the data and what I did about it
+* [How the results were checked](evaluation/how-the-results-were-checked.md): the review,
+  accuracy and known mistakes
+* [Accuracy report](evaluation/accuracy.md): the latest score against the hand labels
