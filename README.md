@@ -108,8 +108,9 @@ every pull request. How the results were checked, by hand and against labels, is
 
 ## Asking questions (RAG prototype)
 
-A command line prototype that answers questions from the emails and their PDFs, citing the
-passage behind every point. It is separate from the dashboard.
+A prototype that answers questions from the emails and their PDFs, citing the passage behind
+every point. In the dashboard it is the **Ask** tab (`POST /api/ask`), where the search mode can
+be switched to compare keyword and meaning search; it also runs from the command line.
 
 ```bash
 uv run python -m rag.ingest                    # split into passages and embed them (once)
