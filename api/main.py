@@ -10,18 +10,33 @@ so one address gives both
 import json
 import os
 import re
+import threading
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
+from typing import Literal
 
+import litellm
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
 
 from api.safe_html import content_security_policy, make_safe, remote_images
 from pipeline.allowed_tags import ASSET_TAXONOMY, BANK_NAMES, INDUSTRY_TAXONOMY
 from pipeline.clean_emails import read_html
-from pipeline.paths import DELIVERABLE, DETAILS, HEADLINES
+from pipeline.llm_client import RETRYABLE, LLMError, Settings, StopRun, complete
+from pipeline.paths import DELIVERABLE, DETAILS, HEADLINES, RAG
+from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, call_embedding
+from rag.ingest import CHUNKS
+from rag.qa import Index, NotReady, answer
+from rag.search import Filters
+
+# the questions page calls the embedding and answer models, whose keys live in .env
+load_dotenv()
 
 EMAIL_ID = re.compile(r"\d{6}")
 # only these can be downloaded; emailbody.html is only served cleaned, through /html
@@ -45,6 +60,25 @@ class Config:
     dashboard_origin: str = field(
         default_factory=lambda: os.getenv("DASHBOARD_ORIGIN", "http://localhost:5173")
     )
+    # the question answering index (built by rag/ingest.py) and its models; tests pass fakes
+    rag_chunks: Path = CHUNKS
+    rag_root: Path = RAG
+    embedder: Embedder = EMBEDDERS[DEFAULT_EMBEDDER]
+    embed_call: Callable = call_embedding
+    # None: LLM_MODEL from .env, read when a question comes in
+    answer_settings: Settings | None = None
+    answer_complete: Callable = complete
+
+
+class Question(BaseModel):
+    question: str = Field(min_length=1, max_length=500)
+    mode: Literal["hybrid", "keyword", "vector"] = "hybrid"
+    bank: str | None = None
+    since: date | None = None
+    until: date | None = None
+    tag: str | None = None
+    k: int = Field(8, ge=1, le=12, description="passages given to the model")
+    sources_only: bool = Field(False, description="the passages found, without an answer")
 
 
 def _read_json(path: Path, default):
@@ -61,7 +95,7 @@ def create_app(config: Config | None = None) -> FastAPI:
     config = config or Config()
     app = FastAPI(title="Research email dashboard API")
     app.add_middleware(
-        CORSMiddleware, allow_origins=[config.dashboard_origin], allow_methods=["GET"]
+        CORSMiddleware, allow_origins=[config.dashboard_origin], allow_methods=["GET", "POST"]
     )
 
     def records() -> dict[str, dict]:
@@ -161,6 +195,47 @@ def create_app(config: Config | None = None) -> FastAPI:
     @app.get("/api/headlines")
     def headlines():
         return _read_json(config.headlines, NO_HEADLINES)
+
+    loaded: dict = {}
+    loading = threading.Lock()
+
+    def rag_index() -> Index:
+        """loaded on the first question and kept; loaded again when an ingest rewrites it"""
+        with loading:
+            if not config.rag_chunks.exists():
+                raise NotReady("no search index yet: run `uv run python -m rag.ingest`")
+            stamp = config.rag_chunks.stat().st_mtime
+            if loaded.get("stamp") != stamp:
+                loaded["index"] = Index(
+                    config.rag_chunks, config.rag_root, config.embedder, config.embed_call
+                )
+                loaded["stamp"] = stamp
+            return loaded["index"]
+
+    @app.post("/api/ask")
+    def ask(q: Question):
+        """a plain def: the model calls block, so FastAPI runs this in a worker thread"""
+        question = q.question.strip()
+        if not question:
+            raise HTTPException(422, "the question is empty")
+        filters = Filters(
+            bank=q.bank or None,
+            since=q.since.isoformat() if q.since else None,
+            until=q.until.isoformat() if q.until else None,
+            tag=q.tag or None,
+        )
+        try:
+            reply = answer(
+                rag_index(), question, filters, q.mode, q.k, config.answer_settings,
+                config.answer_complete, q.sources_only,
+            )  # fmt: skip
+        except NotReady as e:
+            raise HTTPException(503, str(e)) from e
+        except StopRun as e:
+            raise HTTPException(429, f"the model is refusing for now, try again later: {e}") from e
+        except (LLMError, *RETRYABLE, litellm.exceptions.BadRequestError) as e:
+            raise HTTPException(502, f"the model call failed: {e}") from e
+        return {"question": question, "mode": q.mode, **reply.to_json()}
 
     # last, so the /api routes above are matched first
     if (config.web_dir / "index.html").exists():

@@ -60,6 +60,73 @@ export const emailHtmlUrl = (id: string, images: boolean) =>
 export const emailFileUrl = (id: string, name: string) =>
   `/api/emails/${id}/files/${encodeURIComponent(name)}`
 
+export type SearchMode = 'hybrid' | 'keyword' | 'vector'
+
+// POST /api/ask: a question, the filters applied before searching, and the kind of search
+export type AskRequest = {
+  question: string
+  mode: SearchMode
+  bank?: string
+  since?: string
+  until?: string
+  tag?: string
+  sources_only?: boolean
+}
+
+// one claim of the answer; verified: its quote is in the cited passage, word for word
+export type AnswerPoint = {
+  claim: string
+  source: number
+  quote: string
+  verified: boolean
+  problem: string | null
+}
+
+export type AnswerSource = {
+  n: number
+  email_id: string
+  title: string
+  bank: string | null
+  date: string | null
+  pdf: string | null
+  page: number | null
+  where: string
+  text: string
+  // each search's own rank for this passage; null when that search did not find it
+  keyword_rank: number | null
+  vector_rank: number | null
+}
+
+export type AskReply = {
+  question: string
+  mode: SearchMode
+  // null when only the sources were asked for
+  answered: boolean | null
+  missing: string
+  points: AnswerPoint[]
+  sources: AnswerSource[]
+}
+
+/** the API explains its refusals in `detail`: a sentence, or FastAPI's list of field errors */
+function problemOf(body: unknown, response: Response): string {
+  const detail = (body as { detail?: unknown } | null)?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail)) return detail.map((d: { msg?: string }) => d.msg).join('; ')
+  return `${response.status} ${response.statusText}`
+}
+
+export async function askQuestion(request: AskRequest, signal?: AbortSignal): Promise<AskReply> {
+  const response = await fetch('/api/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+    signal,
+  })
+  const body = await response.json().catch(() => null)
+  if (!response.ok) throw new Error(problemOf(body, response))
+  return body as AskReply
+}
+
 type State<T> = { data: T | null; error: string | null }
 
 /** GET a JSON endpoint; `refreshMs` re-fetches on a timer and keeps the last good data */

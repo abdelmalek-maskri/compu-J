@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useJson, type Email, type Tags } from './api'
+import { AskPanel } from './components/AskPanel'
 import { EmailList } from './components/EmailList'
 import { FilterPanel } from './components/FilterPanel'
 import { Reader } from './components/Reader'
@@ -31,6 +32,13 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState<Filters>(NO_FILTERS)
   const [selectedId, setSelectedId] = useHashId()
+  const [view, setView] = useState<'emails' | 'ask'>('emails')
+  // the questions panel starts when first opened, from the email filters picked by then
+  const [askOpened, setAskOpened] = useState(false)
+  const show = (next: 'emails' | 'ask') => {
+    setView(next)
+    if (next === 'ask') setAskOpened(true)
+  }
   const searchRef = useRef<HTMLInputElement>(null)
 
   const all = useMemo(() => emails.data ?? [], [emails.data])
@@ -45,7 +53,7 @@ export default function App() {
   // "/" jumps to search; j/k or the arrow keys move through the list
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey || isTyping(e.target)) return
+      if (view === 'ask' || e.metaKey || e.ctrlKey || e.altKey || isTyping(e.target)) return
       if (e.key === '/') {
         e.preventDefault()
         searchRef.current?.focus()
@@ -69,7 +77,7 @@ export default function App() {
       <header className="flex items-baseline gap-4 px-4 md:px-5 py-3 border-b-2 border-ink">
         <h1 className="font-serif font-semibold text-[22px] tracking-tight whitespace-nowrap">Research Desk</h1>
         {all.length > 0 && (
-          <p className="text-[13px] text-muted">
+          <p className="hidden sm:block text-[13px] text-muted">
             {all.length} emails from {banks} banks
             {toReview > 0 && (
               <>
@@ -85,6 +93,26 @@ export default function App() {
             )}
           </p>
         )}
+        <nav className="ml-auto flex text-[13px]" aria-label="View">
+          {(
+            [
+              ['emails', 'Emails'],
+              ['ask', 'Ask'],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={view === value}
+              onClick={() => show(value)}
+              className={`px-3 py-0.5 border -ml-px ${
+                view === value ? 'bg-ink border-ink text-paper' : 'border-rule hover:border-ink'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
       </header>
 
       {emails.error ? (
@@ -97,10 +125,28 @@ export default function App() {
           </p>
         </div>
       ) : (
-        <main className="flex-1 min-h-0 grid lg:grid-cols-[minmax(20rem,26rem)_1fr]">
+        <main
+          className={`flex-1 min-h-0 grid ${
+            // answers and their sources need more width than the list of emails
+            view === 'ask' ? 'lg:grid-cols-[minmax(24rem,36rem)_1fr]' : 'lg:grid-cols-[minmax(20rem,26rem)_1fr]'
+          }`}
+        >
           <div
             className={`min-h-0 overflow-y-auto border-r border-rule ${selected ? 'hidden lg:block' : ''}`}
           >
+            {/* kept mounted while hidden, so switching views keeps the question and its answer */}
+            {askOpened && (
+              <div hidden={view !== 'ask'}>
+                <AskPanel
+                  emails={all}
+                  tags={tags}
+                  initialBank={filters.bank.length === 1 ? filters.bank[0] : ''}
+                  initialTag={filters.asset.length === 1 ? filters.asset[0] : ''}
+                  onOpen={setSelectedId}
+                />
+              </div>
+            )}
+            <div hidden={view !== 'emails'}>
             <FilterPanel
               emails={all}
               tags={tags}
@@ -120,11 +166,17 @@ export default function App() {
             ) : (
               <p className="px-4 py-6 text-muted text-[14px]">Loading emails</p>
             )}
+            </div>
           </div>
 
           <div className={`min-h-0 overflow-y-auto ${selected ? '' : 'hidden lg:block'}`}>
             {selected ? (
               <Reader key={selected.source_file} email={selected} onBack={() => setSelectedId(null)} />
+            ) : view === 'ask' ? (
+              <div className="p-10 max-w-md text-muted">
+                <p className="font-serif text-xl text-ink mb-2">Sources open here.</p>
+                <p className="text-[14px]">Click a source, or a [number] in the answer, to read its email.</p>
+              </div>
             ) : (
               <div className="p-10 max-w-md text-muted">
                 <p className="font-serif text-xl text-ink mb-2">Pick an email to read it.</p>
