@@ -106,6 +106,29 @@ The tests use made up emails and a fake AI model, so they need no key and no dat
 every pull request. How the results were checked, by hand and against labels, is in
 [evaluation/how-the-results-were-checked.md](evaluation/how-the-results-were-checked.md).
 
+## Asking questions (RAG prototype)
+
+A command line prototype that answers questions from the emails and their PDFs, citing the
+passage behind every point. It is separate from the dashboard.
+
+```bash
+uv run python -m rag.ingest                    # split into passages and embed them (once)
+uv run python -m rag.ask "What is the view on oil?" --bank Barclays
+uv run python -m rag.ask "EUR/USD outlook" --mode keyword --sources-only   # no model calls
+uv run python -m rag.evaluate                  # retrieval on 24 questions with known sources
+```
+
+* **Passages, not whole documents.** About 400 tokens each, never across a PDF page, each
+  starting with its bank, date, title and page from the classification.
+* **Filters first.** The classification's bank, date, tags and companies narrow the search
+  before any similarity is computed.
+* **Two searches, merged.** Keyword search (BM25) finds names and tickers; embeddings find the
+  same meaning in other words. The two rankings are merged by rank.
+* **Every claim is checked.** The model must quote its source; Python confirms the quote is in
+  that passage word for word and marks any claim it cannot confirm.
+* **Not built:** a reranker, image descriptions for charts, and a database (pgvector) instead
+  of files. At 1,210 passages a scan is instant.
+
 ## Design decisions
 
 * **The AI decides meaning; Python checks facts.** Both answers are kept, and every

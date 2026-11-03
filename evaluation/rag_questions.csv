@@ -1,0 +1,25 @@
+question,expected,bank,date,wording
+How many tankers crossed the Strait of Hormuz?,035353 035276,,,same
+What is Deutsche Bank's year end target for gold?,035337 035435,Deutsche Bank,,same
+Can the energy price shock push the UK into recession?,035272,,,same
+Is the US central bank's policy too tight?,035283,,,different
+How did US consumer prices come in for March?,035379 035388 035366 035411,,,different
+How are prescriptions for weight loss drugs trending?,035346 035363,,,different
+Are private credit funds limiting investor withdrawals?,035424,,,different
+Is inflation in Brazil rising because of oil?,035382,,,same
+What do markets need to know about the Hungarian election?,035269 035352,,,same
+How is Nike doing in Europe?,035257,,,different
+Is spending on artificial intelligence data centres justified?,035286,,,different
+Has China's factory gate price deflation ended?,035324,,,different
+What is UBP's view on the Turkish lira?,035356 035375,UBP,,different
+Is the UK property market heading for a fall?,035369,,,different
+Why are Swiss stocks holding up during the war?,035275 035251,,,different
+Which Japanese companies fit a quality strategy?,035253,,,same
+What did UBP's daily market insights say on 10 April?,035350,UBP,,hard_negative
+What did Goldman see in flows and positioning on 13 April?,035433,Goldman Sachs,,hard_negative
+What did Jim Reid's morning note cover on 10 April?,035323,Deutsche Bank,,hard_negative
+What did Barclays' inflation-linked daily say on 13 April?,035430,Barclays,,hard_negative
+What did UBP's daily market insights say on 10 April?,035350,UBP,2026-04-10,hard_negative_filtered
+What did Goldman see in flows and positioning on 13 April?,035433,Goldman Sachs,2026-04-13,hard_negative_filtered
+What did Jim Reid's morning note cover on 10 April?,035323,Deutsche Bank,2026-04-10,hard_negative_filtered
+What did Barclays' inflation-linked daily say on 13 April?,035430,Barclays,2026-04-13,hard_negative_filtered
