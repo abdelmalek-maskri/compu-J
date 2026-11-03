@@ -16,6 +16,7 @@ LLM_ANSWERS = OUTPUT / "llm_answers"  # cached answers, one folder per model
 RUNS = OUTPUT / "runs"  # one folder per classify.py run
 COMPARISONS = OUTPUT / "comparisons"  # one folder per compare_models.py run
 HEADLINES = OUTPUT / "headlines.json"  # the ticker's headlines, refreshed by fetch_news.py
+RAG = OUTPUT / "rag"  # chunks and their vectors, built by rag/ingest.py
 
 
 def model_slug(model: str) -> str:
