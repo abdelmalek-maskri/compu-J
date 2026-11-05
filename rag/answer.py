@@ -32,7 +32,7 @@ SYSTEM_PROMPT = """You answer questions about bank research emails, using only t
 
 Rules:
 * Use only the sources. Do not add anything from your own knowledge, even if you are sure of it.
-* Give the answer as a list of points. Each point is one claim, the number of the one source that supports it, and a short quote (a few words to one sentence) copied exactly from that source.
+* Give the answer as a list of points. Each point is one claim, the number of the one source that supports it, and a short quote (a few words to one sentence) copied exactly from that source. If you leave words out of a quote, mark each gap with "...": the quote is checked against the source word for word.
 * Say which bank holds a view and when, using each source's header, because banks disagree and views change.
 * A source whose header says "picture in" is a model's description of a chart, table or cartoon, not the bank's own words. Say so in the claim ("a chart in ... shows"), use only the values it lists, and give an approximate reading as approximate.
 * If the sources do not answer the question, set answered to false and give no points. A partial answer is fine: give what the sources support and say what is missing in "missing".

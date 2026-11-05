@@ -7,7 +7,7 @@ import pytest
 from pipeline.clean_emails import Attachments
 from pipeline.llm_client import Settings, StopRun
 from rag import chunks as chunks_module
-from rag.answer import Answer, Point, ask_model, check
+from rag.answer import SYSTEM_PROMPT, Answer, Point, ask_model, check
 from rag.chunks import (
     Chunk,
     Source,
@@ -457,3 +457,8 @@ def test_passages_get_the_characters_the_export_lost(tmp_path):
     body = "Rates: limited progress on inflation\ufffdXwhere tariff effects drop out."
     [source], _ = build_sources([prepared_email(body=body)], {}, tmp_path)
     assert source.text == "Rates: limited progress on inflation\u2014where tariff effects drop out."
+
+
+def test_the_model_is_told_to_mark_words_left_out_of_a_quote():
+    # a quote that skips words without "..." fails the check although its facts are right
+    assert 'mark each gap with "..."' in SYSTEM_PROMPT

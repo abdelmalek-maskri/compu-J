@@ -141,7 +141,7 @@ All settings live in `.env`. None is needed to browse the results.
 ## Tests
 
 ```bash
-uv run pytest            # 367 Python tests
+uv run pytest            # 368 Python tests
 cd web && npm test       # 31 dashboard tests
 ```
 
