@@ -127,14 +127,14 @@ describe('AskPanel', () => {
     expect(onOpen.mock.calls).toEqual([['035432'], ['035241']])
   })
 
-  it('asks again when the search mode changes after an answer', async () => {
+  it('waits for Ask after the search mode changes', async () => {
     const fetchMock = answering(reply)
     render(<AskPanel emails={[email]} tags={null} onOpen={() => {}} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Keywords' }))
-    expect(fetchMock).not.toHaveBeenCalled()
     await userEvent.type(screen.getByRole('textbox', { name: 'Question' }), 'oil{Enter}')
     await screen.findByText('Brent near 85')
     await userEvent.click(screen.getByRole('button', { name: 'Meaning' }))
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    await userEvent.click(screen.getByRole('button', { name: 'Ask' }))
     expect(sent(fetchMock, 1).mode).toBe('vector')
   })
 

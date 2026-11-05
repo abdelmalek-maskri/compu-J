@@ -149,12 +149,6 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
     if (question.trim()) run(request())
   }
 
-  // after a first answer, switching the search mode asks again, to compare what each finds
-  const pickMode = (next: SearchMode) => {
-    setMode(next)
-    if (reply && question.trim()) run(request({ mode: next }))
-  }
-
   const tryExample = (example: (typeof EXAMPLES)[number]) => {
     setQuestion(example.question)
     setBank(example.bank ?? '')
@@ -206,7 +200,7 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
                 type="button"
                 aria-pressed={mode === m.value}
                 title={m.hint}
-                onClick={() => pickMode(m.value)}
+                onClick={() => setMode(m.value)}
                 className={`flex-1 text-[13px] px-2 py-1 border -ml-px first:ml-0 ${
                   mode === m.value ? 'bg-ink border-ink text-paper' : 'border-rule hover:border-ink'
                 }`}
@@ -256,7 +250,7 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
               ))}
             </ul>
             <p className="text-[12px] text-muted mt-3">
-              Switch between Meaning and Keywords after an answer to see what each search finds.
+              Ask again with Meaning, then Keywords, to see what each search finds.
             </p>
           </Section>
         )}
