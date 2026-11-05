@@ -117,6 +117,14 @@ uv run python -m rag.ingest --no-embed          # keyword search only, no model 
 Answering a question and describing pictures use the model set in `RAG_MODEL` (default
 `gpt-6-luna`), separate from the classifier's `LLM_MODEL`.
 
+To measure it on 29 questions whose sources are known:
+
+```bash
+uv run python -m rag.evaluate                   # does the search find the right email or page?
+uv run python -m rag.evaluate_answers           # answer them, then label each point by hand
+uv run python -m rag.evaluate_answers --score   # how many points their quotes really support
+```
+
 ## Settings
 
 All settings live in `.env`. None is needed to browse the results.
@@ -133,8 +141,8 @@ All settings live in `.env`. None is needed to browse the results.
 ## Tests
 
 ```bash
-uv run pytest            # 232 Python tests
-cd web && npm test       # 17 dashboard tests
+uv run pytest            # 338 Python tests
+cd web && npm test       # 27 dashboard tests
 ```
 
 They use made up emails and a fake model, so they need neither a key nor the data, and they run
