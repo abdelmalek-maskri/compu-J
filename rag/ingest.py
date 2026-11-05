@@ -5,13 +5,15 @@ uv run python -m rag.ingest --no-embed       passages only: keyword search works
 uv run python -m rag.ingest --embedder ollama
 
 reads Data/ and classified_emails.json (bank, date, title and tags for each passage's header and
-the filters) and writes output/rag/chunks.jsonl and output/rag/<model>/vectors.jsonl
+the filters), and the picture descriptions saved by rag.captions, which it never calls itself.
+writes output/rag/chunks.jsonl and output/rag/<model>/vectors.jsonl
 """
 
 import argparse
 import json
 import os
 import sys
+from collections import Counter
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -20,8 +22,17 @@ from pypdf.errors import PdfReadError
 from pipeline.clean_emails import PreparedEmail, prepare_all, read_pdf_pages
 from pipeline.llm_client import StopRun
 from pipeline.paths import DELIVERABLE, RAG
+from rag.answer import rag_settings
 from rag.chunks import Chunk, Source, boilerplate, make_chunks, strip_lines
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore
+from rag.images import (
+    NOT_INDEXED,
+    CaptionStore,
+    Picture,
+    check_values,
+    find_pictures,
+    passage_text,
+)
 
 CHUNKS = RAG / "chunks.jsonl"
 DOCUMENT, QUERY = "RETRIEVAL_DOCUMENT", "RETRIEVAL_QUERY"
@@ -78,6 +89,49 @@ def build_sources(
     return sources, problems
 
 
+def picture_sources(
+    pictures: list[Picture],
+    store: CaptionStore,
+    emails: list[PreparedEmail],
+    records: dict[str, dict],
+    data_dir: Path,
+) -> tuple[list[Source], Counter]:
+    """a passage for each described picture worth finding, with only the figures Python could
+    confirm; returns the passages and how many pictures were left out, by reason"""
+    by_id = {e.id: e for e in emails if not e.duplicate_of}
+    pages: dict[tuple[str, str], list[str]] = {}
+    sources, left_out = [], Counter()
+    for picture in pictures:
+        email = by_id.get(picture.email_id)
+        first = store.get(picture, 1)
+        if email is None:
+            left_out["in a duplicate email"] += 1
+            continue
+        if first is None:
+            left_out["not described yet"] += 1
+            continue
+        if first.kind in NOT_INDEXED:
+            left_out[first.kind] += 1
+            continue
+        # the words around the picture: its PDF page, or the email it is in
+        context = email.body
+        where = {"image": picture.file}
+        if picture.page:
+            name = (email.id, picture.file)
+            if name not in pages:
+                try:
+                    pages[name] = read_pdf_pages(data_dir / email.id / picture.file)
+                except PdfReadError:
+                    pages[name] = []
+            page_texts = pages[name]
+            context = page_texts[picture.page - 1] if picture.page <= len(page_texts) else ""
+            where = {"pdf": picture.file, "page": picture.page}
+        confirmed, unconfirmed = check_values(first, store.get(picture, 2), context)
+        text = passage_text(first, confirmed, unconfirmed)
+        sources.append(_source(email, records.get(email.id), text, picture=first.kind, **where))
+    return sources, left_out
+
+
 def load_chunks(path: Path = CHUNKS) -> list[Chunk]:
     if not path.exists():
         raise FileNotFoundError(f"no index at {path}: run `uv run python -m rag.ingest` first")
@@ -98,6 +152,9 @@ def main() -> int:
     parser.add_argument("--data", type=Path, default=Path("Data"))
     parser.add_argument("--embedder", choices=EMBEDDERS, default=DEFAULT_EMBEDDER)
     parser.add_argument("--no-embed", action="store_true", help="write the passages only")
+    parser.add_argument(
+        "--caption-model", help="whose picture descriptions to index (default RAG_MODEL)"
+    )
     args = parser.parse_args()
     load_dotenv()
 
@@ -113,18 +170,30 @@ def main() -> int:
     for folder, reason in failures.items():
         print(f"could not prepare {folder}: {reason}")
     sources, problems = build_sources(emails, records, args.data)
-    for problem in problems:
+    pictures, picture_problems = find_pictures(args.data)
+    for problem in problems + picture_problems:
         print(problem)
-    chunks = make_chunks(sources)
+    caption_settings = rag_settings(args.caption_model)
+    store = CaptionStore(caption_settings)
+    described, left_out = picture_sources(pictures, store, emails, records, args.data)
+    print(
+        f"{len(described)} of {len(pictures)} pictures indexed, described by "
+        f"{caption_settings.name}; left out: "
+        + (", ".join(f"{n} {why}" for why, n in left_out.most_common()) or "none")
+    )
+    if left_out["not described yet"]:
+        print("run `uv run python -m rag.captions` to describe the rest")
+    chunks = make_chunks(sources + described)
 
     CHUNKS.parent.mkdir(parents=True, exist_ok=True)
     tmp = CHUNKS.with_suffix(".tmp")
     tmp.write_text("".join(json.dumps(c.to_json()) + "\n" for c in chunks), encoding="utf-8")
     tmp.replace(CHUNKS)
-    pdf_chunks = sum(1 for c in chunks if c.pdf)
+    pdf_chunks = sum(1 for c in chunks if c.pdf and not c.picture)
+    picture_chunks = sum(1 for c in chunks if c.picture)
     print(
         f"{len(chunks)} passages from {len({c.email_id for c in chunks})} emails "
-        f"({pdf_chunks} from PDF pages), written to {CHUNKS}"
+        f"({pdf_chunks} from PDF pages, {picture_chunks} describing pictures), written to {CHUNKS}"
     )
     if args.no_embed:
         return 0

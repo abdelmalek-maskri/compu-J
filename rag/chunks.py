@@ -16,11 +16,15 @@ MAX_CHARS = 1600
 OVERLAP_CHARS = 200
 # a line found in this many emails is a disclaimer, footer or "Read more" button, not research
 BOILERPLATE_EMAILS = 5
+# shorter repeated lines are often headings, dates, names or ratings ("Europe", "12 April 2026",
+# "Stock rating Overweight"); disclaimers are long, so this keeps nearly all of the cleanup
+BOILERPLATE_MIN_WORDS = 4
 
 
 @dataclass
 class Source:
-    """one email or one PDF page, with what the classification found about its email"""
+    """one email, one PDF page, or the description of a picture in either, with what the
+    classification found about its email"""
 
     email_id: str
     text: str
@@ -32,6 +36,11 @@ class Source:
     companies: list[str]
     pdf: str | None = None
     page: int | None = None
+    # set when the text is a model's description of a picture (see rag/images.py), not the
+    # email's own words: the picture's kind, such as "chart" or "cartoon"
+    picture: str | None = None
+    # an email's own image, relative to its folder: "inline/image001.png"
+    image: str | None = None
 
 
 @dataclass
@@ -47,10 +56,14 @@ class Chunk:
     companies: list[str]
     pdf: str | None
     page: int | None
+    # defaults, so an index written before pictures were described still loads
+    picture: str | None = None
+    image: str | None = None
 
     @property
     def where(self) -> str:
-        return f"{self.pdf}, page {self.page}" if self.pdf else "email body"
+        place = f"{self.pdf}, page {self.page}" if self.pdf else "email body"
+        return f"picture in {place}" if self.picture else place
 
     @property
     def header(self) -> str:
@@ -73,9 +86,13 @@ def _normal(line: str) -> str:
 
 
 def boilerplate(bodies: list[str]) -> set[str]:
-    """lines repeated across many emails, normalised; each email counts a line once"""
+    """long lines repeated across many emails, normalised; each email counts a line once"""
     seen = Counter(line for body in bodies for line in {_normal(x) for x in body.splitlines()})
-    return {line for line, count in seen.items() if line and count >= BOILERPLATE_EMAILS}
+    return {
+        line
+        for line, count in seen.items()
+        if count >= BOILERPLATE_EMAILS and len(line.split()) >= BOILERPLATE_MIN_WORDS
+    }
 
 
 def strip_lines(text: str, remove: set[str]) -> str:
@@ -121,11 +138,14 @@ def split_text(text: str) -> list[str]:
 
 
 def make_chunks(sources: list[Source]) -> list[Chunk]:
-    """passages never cross a PDF page, so every answer can cite the page it came from"""
+    """passages never cross a PDF page, so every answer can cite the page it came from; a
+    picture's description stays one passage, since its lines only make sense together"""
     chunks = []
     for src in sources:
-        for i, text in enumerate(split_text(src.text)):
+        for i, text in enumerate([src.text] if src.picture else split_text(src.text)):
             where = f"{src.email_id}|{src.pdf}|{src.page}|{i}"
+            if src.picture:
+                where += f"|picture|{src.image}"
             chunk_id = hashlib.sha256(where.encode()).hexdigest()[:12]
             fields = {k: v for k, v in asdict(src).items() if k != "text"}
             chunks.append(Chunk(id=chunk_id, text=text, **fields))

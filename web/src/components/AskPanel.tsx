@@ -25,11 +25,28 @@ const MODES: { value: SearchMode; label: string; hint: string }[] = [
   { value: 'keyword', label: 'Keywords', hint: 'BM25: finds exact names, tickers and figures' },
 ]
 
-const EXAMPLES: { question: string; bank?: string }[] = [
+const EXAMPLES: { question: string; bank?: string; picture?: string }[] = [
   { question: "Is the US central bank's policy too tight?" },
   { question: 'What is the view on oil?', bank: 'Barclays' },
-  { question: 'How are prescriptions for weight loss drugs trending?' },
+  // the interviewer's own question: "cartoons" narrows the search to cartoons, no filter needed
+  { question: 'Can you show me any funny cartoons with Khamenei?' },
 ]
+
+// the kinds of picture the API indexes; descriptions come from a vision model
+const PICTURES = [
+  { value: 'any', label: 'Pictures only' },
+  { value: 'chart', label: 'Charts' },
+  { value: 'table', label: 'Tables' },
+  { value: 'cartoon', label: 'Cartoons' },
+  { value: 'photo', label: 'Photos' },
+  { value: 'diagram', label: 'Diagrams' },
+  { value: 'infographic', label: 'Infographics' },
+  { value: 'map', label: 'Maps' },
+]
+
+// "cartoon" -> "cartoons"; "any" -> "pictures"
+const pictureLabel = (kind: string) =>
+  kind === 'any' ? 'pictures' : (PICTURES.find((p) => p.value === kind)?.label.toLowerCase() ?? 'pictures')
 
 function Section({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -70,7 +87,7 @@ function Select({
   )
 }
 
-const rank = (n: number | null) => (n ? `#${n}` : '—')
+const rank = (n: number | null) => (n ? `#${n}` : '\u2014')
 
 export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOpen }: Props) {
   const [question, setQuestion] = useState('')
@@ -78,6 +95,7 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
   const [since, setSince] = useState('')
   const [until, setUntil] = useState('')
   const [tag, setTag] = useState(initialTag)
+  const [picture, setPicture] = useState('')
   const [mode, setMode] = useState<SearchMode>('hybrid')
   const [withAnswer, setWithAnswer] = useState(true)
   const [reply, setReply] = useState<AskReply | null>(null)
@@ -121,6 +139,7 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
     since: since || undefined,
     until: until || undefined,
     tag: tag || undefined,
+    picture: picture || undefined,
     sources_only: !withAnswer,
     ...overrides,
   })
@@ -139,7 +158,8 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
   const tryExample = (example: (typeof EXAMPLES)[number]) => {
     setQuestion(example.question)
     setBank(example.bank ?? '')
-    run(request({ question: example.question, bank: example.bank }))
+    setPicture(example.picture ?? '')
+    run(request({ question: example.question, bank: example.bank, picture: example.picture }))
   }
 
   const sourceOf = (n: number) => reply?.sources.find((s) => s.n === n)
@@ -169,11 +189,12 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
           />
         </label>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           <Select label="Bank" value={bank} onChange={setBank} options={banks.map((b) => ({ value: b, label: b }))} />
           <Select label="Asset" value={tag} onChange={setTag} options={assets.map((a) => ({ value: a, label: a }))} />
           <Select label="From" value={since} onChange={setSince} options={days.map((d) => ({ value: d, label: formatDay(d) }))} />
           <Select label="To" value={until} onChange={setUntil} options={days.map((d) => ({ value: d, label: formatDay(d) }))} />
+          <Select label="Pictures" value={picture} onChange={setPicture} options={PICTURES} />
         </div>
 
         <fieldset>
@@ -207,13 +228,13 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
             disabled={loading || !question.trim()}
             className="bg-accent text-paper px-4 py-1.5 font-semibold disabled:opacity-50"
           >
-            {loading ? 'Asking…' : 'Ask'}
+            {loading ? 'Asking\u2026' : 'Ask'}
           </button>
         </div>
       </form>
 
       <div aria-live="polite">
-        {loading && <p className="px-4 pb-3 text-muted">Searching the emails and reading the passages found{'…'}</p>}
+        {loading && <p className="px-4 pb-3 text-muted">Searching the emails and reading the passages found{'\u2026'}</p>}
 
         {error && (
           <div role="alert" className="mx-4 mb-4 bg-flag text-flag-ink px-3 py-2">
@@ -240,6 +261,19 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
           </Section>
         )}
 
+        {reply?.picture_from_question && (
+          <p className="mx-4 mb-3 text-[13px] text-muted">
+            Searched {pictureLabel(reply.picture_from_question)} only, because the question asks for them.{' '}
+            <button
+              type="button"
+              onClick={() => run(request({ read_question: false }))}
+              className="underline underline-offset-2 hover:text-accent"
+            >
+              Search everything instead
+            </button>
+          </p>
+        )}
+
         {reply && reply.answered !== null && (
           <Section label="Answer">
             {!reply.answered || reply.points.length === 0 ? (
@@ -262,8 +296,13 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
                           [{p.source}]
                         </button>
                       </p>
-                      <p className="text-[13px] text-muted italic">{`“${p.quote}”`}</p>
+                      <p className="text-[13px] text-muted italic">{`\u201C${p.quote}\u201D`}</p>
                       {!p.verified && <p className="text-[12px] font-semibold mt-1">Not verified: {p.problem}</p>}
+                      {p.from_picture && (
+                        <p className="text-[12px] text-muted mt-1">
+                          From a picture description written by AI: check the picture in source [{p.source}].
+                        </p>
+                      )}
                     </li>
                   )
                 })}
@@ -274,7 +313,7 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
         )}
 
         {reply && (
-          <Section label={`Sources · ${MODES.find((m) => m.value === reply.mode)?.label} search`}>
+          <Section label={`Sources \u00B7 ${MODES.find((m) => m.value === reply.mode)?.label} search`}>
             {reply.sources.length === 0 ? (
               <p className="text-muted">No passage matches the question and filters.</p>
             ) : (
@@ -283,22 +322,36 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
                   <li key={s.n} className="flex gap-2">
                     <span className="text-[12px] tabular-nums text-muted pt-0.5">[{s.n}]</span>
                     <div className="min-w-0">
+                      {s.picture && (
+                        <span className="inline-block text-[11px] uppercase tracking-widest text-paper bg-ink px-1.5 mr-2">
+                          {s.picture}
+                        </span>
+                      )}
                       <button type="button" onClick={() => onOpen(s.email_id)} className="text-left font-semibold hover:text-accent hover:underline">
                         {s.title}
                       </button>
                       <p className="text-[12px] text-muted">
-                        {s.bank ?? 'Unknown bank'} {'·'} {s.date ? formatDate(s.date) : 'no date'} {'·'}{' '}
+                        {s.bank ?? 'Unknown bank'} {'\u00B7'} {s.date ? formatDate(s.date) : 'no date'} {'\u00B7'}{' '}
                         {s.pdf && s.page ? (
                           <a href={`${emailFileUrl(s.email_id, s.pdf)}#page=${s.page}`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-accent">
-                            {s.where} {'↗'}
+                            {s.where} {'\u2197'}
                           </a>
                         ) : (
                           s.where
                         )}
                       </p>
                       <p className="text-[12px] text-muted tabular-nums">
-                        Keywords {rank(s.keyword_rank)} {'·'} Meaning {rank(s.vector_rank)}
+                        Keywords {rank(s.keyword_rank)} {'\u00B7'} Meaning {rank(s.vector_rank)}
                       </p>
+                      {s.image && (
+                        <a href={emailFileUrl(s.email_id, s.image)} target="_blank" rel="noopener noreferrer" className="block mt-1">
+                          <img
+                            src={emailFileUrl(s.email_id, s.image)}
+                            alt={`The ${s.picture ?? 'picture'} this description is about`}
+                            className="max-h-40 border border-rule"
+                          />
+                        </a>
+                      )}
                       <p className="text-[13px] mt-1 line-clamp-3">{s.text}</p>
                     </div>
                   </li>

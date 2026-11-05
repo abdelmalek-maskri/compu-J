@@ -70,7 +70,11 @@ export type AskRequest = {
   since?: string
   until?: string
   tag?: string
+  // only passages describing a picture: 'any', or one kind such as 'cartoon'
+  picture?: string
   sources_only?: boolean
+  // false: search everything even when the question names a kind of picture ("cartoons")
+  read_question?: boolean
 }
 
 // one claim of the answer; verified: its quote is in the cited passage, word for word
@@ -80,6 +84,8 @@ export type AnswerPoint = {
   quote: string
   verified: boolean
   problem: string | null
+  // the cited passage is a model's description of a picture, so the picture is worth a look
+  from_picture: boolean
 }
 
 export type AnswerSource = {
@@ -92,6 +98,10 @@ export type AnswerSource = {
   page: number | null
   where: string
   text: string
+  // the kind of picture the passage describes ('chart', 'cartoon'...), null for the email's text
+  picture: string | null
+  // an email's own image, relative to its folder, shown beside the description
+  image: string | null
   // each search's own rank for this passage; null when that search did not find it
   keyword_rank: number | null
   vector_rank: number | null
@@ -103,6 +113,8 @@ export type AskReply = {
   // null when only the sources were asked for
   answered: boolean | null
   missing: string
+  // the kind of picture the question asked for, when the search was narrowed to it
+  picture_from_question: string | null
   points: AnswerPoint[]
   sources: AnswerSource[]
 }

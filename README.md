@@ -105,15 +105,17 @@ your own machine instead, install [Ollama](https://ollama.com) and set `LLM_MODE
 
 The Ask tab answers questions from the emails and their PDFs. It needs a search index, built
 once. The default embeds the passages with OpenAI (add `OPENAI_API_KEY` to `.env`, about a
-cent per passage):
+cent for all of them):
 
 ```bash
+uv run python -m rag.captions                   # optional: describe the charts, tables and cartoons
 uv run python -m rag.ingest                     # OpenAI embeddings
 uv run python -m rag.ingest --embedder ollama   # local and free: ollama pull embeddinggemma first
 uv run python -m rag.ingest --no-embed          # keyword search only, no model at all
 ```
 
-Answering a question uses the model set in `LLM_MODEL`.
+Answering a question and describing pictures use the model set in `RAG_MODEL` (default
+`gpt-6-luna`), separate from the classifier's `LLM_MODEL`.
 
 ## Settings
 
@@ -123,7 +125,8 @@ All settings live in `.env`. None is needed to browse the results.
 | --- | --- |
 | `LLM_MODEL` | the model that classifies: `gemini-flash-lite` (default, used for the submitted results), `gemini-flash`, or a local `gemma` or `gpt-oss-20b` through Ollama |
 | `GEMINI_API_KEY` | key for the Gemini models, free from [Google AI Studio](https://aistudio.google.com) |
-| `OPENAI_API_KEY` | key for the default embeddings behind the Ask tab |
+| `OPENAI_API_KEY` | key for the Ask tab's default embeddings and answers |
+| `RAG_MODEL` | the model that answers in the Ask tab and describes pictures: `gpt-6-luna` (default) or any preset above |
 | `FINNHUB_API_KEY` | key for the headlines, free from [Finnhub](https://finnhub.io); without it, CNBC's public feed is used |
 | `OLLAMA_API_BASE`, `OLLAMA_NUM_CTX` | local models only: where Ollama runs and how much text it reads at once |
 
@@ -176,7 +179,10 @@ A few choices worth knowing about:
 The Ask tab splits the emails and PDFs into passages of about 400 tokens, narrows them by the
 classification's bank, date and tags, and then combines keyword search with embedding search.
 The model has to quote its source for each point, and Python checks that the quote really is in
-that passage.
+that passage. Pictures (charts, tables, cartoons) are described once by a vision model and
+searched like text; a chart's figures are read twice, and only those both reads agree on, or
+that the text around the picture states, are kept. A question that names a kind of picture ("any funny
+cartoons?") searches those pictures first, and says so.
 
 ## Limitations
 
@@ -184,7 +190,9 @@ that passage.
   flagged, so none was corrected by hand. They are
   [listed with their causes](evaluation/how-the-results-were-checked.md#known-mistakes-in-the-submitted-file).
 * Asking the AI again can change a few answers; saved answers keep each run repeatable.
-* The AI reads text only, so a title that appears only in an image is missed.
+* The classifier reads text only, so a title that appears only in an image is missed.
+* The Ask tab describes pictures stored as images; a chart drawn as vector graphics in a PDF is
+  found only through its text labels.
 * This is not built for production: there is no login, results are files rather than a
   database, and the Gemini free tier limits how many emails can be classified a day.
 

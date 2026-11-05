@@ -11,9 +11,10 @@ from pathlib import Path
 
 from pipeline.llm_client import Settings, complete
 from pipeline.paths import RAG
-from rag.answer import CheckedPoint, ask_model, check
+from rag.answer import CheckedPoint, ask_model, check, rag_settings
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore, call_embedding
 from rag.ingest import CHUNKS, DOCUMENT, QUERY, load_chunks, ready
+from rag.question import read_question
 from rag.search import Filters, Hit, Keyword, search
 
 
@@ -28,11 +29,14 @@ class Reply:
     answered: bool | None = None
     points: list[CheckedPoint] = field(default_factory=list)
     missing: str = ""
+    # the kind of picture the question asked for, when that narrowed the search (rag/question.py)
+    picture_from_question: str | None = None
 
     def to_json(self) -> dict:
         return {
             "answered": self.answered,
             "missing": self.missing,
+            "picture_from_question": self.picture_from_question,
             "points": [p.__dict__ for p in self.points],
             "sources": [
                 {
@@ -45,6 +49,9 @@ class Reply:
                     "page": h.chunk.page,
                     "where": h.chunk.where,
                     "text": h.chunk.text,
+                    # the kind of picture the passage describes, and an email image's file
+                    "picture": h.chunk.picture,
+                    "image": h.chunk.image,
                     "keyword_rank": h.keyword_rank,
                     "vector_rank": h.vector_rank,
                 }
@@ -109,13 +116,22 @@ def answer(
     settings: Settings | None = None,
     complete_fn: Callable = complete,
     sources_only: bool = False,
+    read: bool = True,
 ) -> Reply:
-    """the passages found, and unless sources_only, the model's answer with each quote checked"""
-    hits = index.search(question, filters, mode, k)
+    """the passages found, and unless sources_only, the model's answer with each quote checked.
+    read: a question naming a kind of picture ("cartoons") searches those pictures first, and
+    everything when none matches"""
+    hits, picture = None, None
+    if read:
+        narrowed, kind = read_question(question, filters)
+        if kind and (found := index.search(question, narrowed, mode, k)):
+            hits, picture = found, kind
+    if hits is None:
+        hits = index.search(question, filters, mode, k)
     if sources_only or not hits:
-        return Reply(hits)
-    settings = settings or Settings.from_env()
+        return Reply(hits, picture_from_question=picture)
+    settings = settings or rag_settings()
     if missing := settings.missing_key():
         raise NotReady(f"{settings.name} needs {missing} in .env")
     result = ask_model(question, hits, settings, complete_fn)
-    return Reply(hits, result.answered, check(result, hits), result.missing)
+    return Reply(hits, result.answered, check(result, hits), result.missing, picture)

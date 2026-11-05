@@ -15,7 +15,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Literal
+from typing import Literal, get_args
 
 import litellm
 from dotenv import load_dotenv
@@ -31,12 +31,15 @@ from pipeline.clean_emails import read_html
 from pipeline.llm_client import RETRYABLE, LLMError, Settings, StopRun, complete
 from pipeline.paths import DELIVERABLE, DETAILS, HEADLINES, RAG
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, call_embedding
+from rag.images import NOT_INDEXED, Kind
 from rag.ingest import CHUNKS
 from rag.qa import Index, NotReady, answer
 from rag.search import Filters
 
 # the questions page calls the embedding and answer models, whose keys live in .env
 load_dotenv()
+# the kinds of picture a question can be limited to: those that are indexed
+PICTURE_KINDS = tuple(k for k in get_args(Kind) if k not in NOT_INDEXED)
 
 EMAIL_ID = re.compile(r"\d{6}")
 # only these can be downloaded; emailbody.html is only served cleaned, through /html
@@ -65,7 +68,7 @@ class Config:
     rag_root: Path = RAG
     embedder: Embedder = EMBEDDERS[DEFAULT_EMBEDDER]
     embed_call: Callable = call_embedding
-    # None: LLM_MODEL from .env, read when a question comes in
+    # None: RAG_MODEL from .env, else gpt-6-luna, read when a question comes in
     answer_settings: Settings | None = None
     answer_complete: Callable = complete
 
@@ -77,8 +80,14 @@ class Question(BaseModel):
     since: date | None = None
     until: date | None = None
     tag: str | None = None
+    picture: Literal["any", *PICTURE_KINDS] | None = Field(
+        None, description='only picture descriptions: "any", or one kind of picture'
+    )
     k: int = Field(8, ge=1, le=12, description="passages given to the model")
     sources_only: bool = Field(False, description="the passages found, without an answer")
+    read_question: bool = Field(
+        True, description='a question naming a kind of picture ("cartoons") searches those first'
+    )
 
 
 def _read_json(path: Path, default):
@@ -223,11 +232,12 @@ def create_app(config: Config | None = None) -> FastAPI:
             since=q.since.isoformat() if q.since else None,
             until=q.until.isoformat() if q.until else None,
             tag=q.tag or None,
+            picture=q.picture,
         )
         try:
             reply = answer(
                 rag_index(), question, filters, q.mode, q.k, config.answer_settings,
-                config.answer_complete, q.sources_only,
+                config.answer_complete, q.sources_only, q.read_question,
             )  # fmt: skip
         except NotReady as e:
             raise HTTPException(503, str(e)) from e

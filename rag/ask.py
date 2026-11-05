@@ -43,13 +43,18 @@ def main() -> int:
     parser.add_argument("--tag", help="an asset tag, such as FX or Oil")
     parser.add_argument("--company")
     parser.add_argument("--market-wrap", choices=["YES", "NO"])
+    parser.add_argument(
+        "--picture", help='only picture descriptions: "any" or a kind, such as cartoon or chart'
+    )
     parser.add_argument("--embedder", choices=EMBEDDERS, default=DEFAULT_EMBEDDER)
-    parser.add_argument("--model", help="answer model preset (default LLM_MODEL from .env)")
+    parser.add_argument("--model", help="answer model preset (default RAG_MODEL, else gpt-6-luna)")
     parser.add_argument("--sources-only", action="store_true", help="no answer, no model call")
     args = parser.parse_args()
     load_dotenv()
 
-    filters = Filters(args.bank, args.since, args.until, args.tag, args.company, args.market_wrap)
+    filters = Filters(
+        args.bank, args.since, args.until, args.tag, args.company, args.market_wrap, args.picture
+    )
     settings = Settings.from_name(args.model) if args.model else None
     try:
         index = Index(embedder=EMBEDDERS[args.embedder])
@@ -73,6 +78,8 @@ def main() -> int:
             print("The sources found do not answer this question.")
         for p in reply.points:
             mark = "" if p.verified else f"  [NOT VERIFIED: {p.problem}]"
+            if p.from_picture:
+                mark += "  [from a picture description: check the picture]"
             print(f"* {p.claim} [{p.source}]{mark}")
             print(f'    "{p.quote}"')
         if reply.missing:
