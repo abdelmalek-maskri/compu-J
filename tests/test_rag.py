@@ -8,7 +8,15 @@ from pipeline.clean_emails import Attachments
 from pipeline.llm_client import Settings, StopRun
 from rag import chunks as chunks_module
 from rag.answer import Answer, Point, ask_model, check
-from rag.chunks import Chunk, Source, boilerplate, make_chunks, split_text, strip_lines
+from rag.chunks import (
+    Chunk,
+    Source,
+    bank_boilerplate,
+    boilerplate,
+    make_chunks,
+    split_text,
+    strip_lines,
+)
 from rag.embed import Embedder, VectorStore
 from rag.evaluate import Question, load_questions, ranked, score, summary
 from rag.ingest import build_sources, load_chunks
@@ -421,3 +429,25 @@ def test_a_quote_shortened_with_an_ellipsis_is_checked_piece_by_piece(quote, ver
     )
     answer = Answer(answered=True, missing="", points=[Point(claim="c", source=1, quote=quote)])
     assert check(answer, [Hit(chunk(text=text), 1, 1)])[0].verified is verified
+
+
+def test_a_banks_repeated_legal_text_goes_but_its_repeated_research_stays():
+    legal = "Goldman Sachs does not warrant the accuracy of any interest rates shown."
+    research = "We moderate our year-end gold target to USD 5,800/oz."
+    remove = bank_boilerplate([
+        ("Goldman Sachs", f"Flows on 10 April\n{legal}"),
+        ("Goldman Sachs", f"Flows on 13 April\n{legal}"),
+        ("Deutsche Bank", research),
+        ("Deutsche Bank", f"Daily focus\n{research}"),
+        ("UBS", "Past performance is not a guide to future returns."),
+    ])  # fmt: skip
+    assert remove == {legal.casefold()}
+
+
+def test_risk_disclosures_and_professional_only_notices_count_as_legal_text():
+    lines = [
+        "Options Risk Disclosures: Options may trade at a value other than expected.",
+        "This communication is intended for professional or institutional clients only.",
+    ]
+    remove = bank_boilerplate([("Goldman Sachs", "\n".join(lines))] * 2)
+    assert remove == {line.casefold() for line in lines}

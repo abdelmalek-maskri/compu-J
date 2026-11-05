@@ -6,7 +6,8 @@ header from the classification (bank, date, title, page), so it still makes sens
 """
 
 import hashlib
-from collections import Counter
+import re
+from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
 
 # about 400 tokens: long enough to hold a whole argument, short enough to be about one thing
@@ -16,6 +17,19 @@ MAX_CHARS = 1600
 OVERLAP_CHARS = 200
 # a line found in this many emails is a disclaimer, footer or "Read more" button, not research
 BOILERPLATE_EMAILS = 5
+# a bank repeats its own legal text in every issue of a series, even a series of two, which the
+# rule above misses: a line in this many of one bank's documents is removed when it reads like
+# legal text. the wording test matters: banks also repeat their own research (a daily digest
+# quotes a report's key sentence), which must stay
+SAME_BANK_DOCUMENTS = 2
+LEGAL_WORDING = re.compile(
+    r"\b(?:warrant|disclaim|liabilit|solicitation|past performance|regulated by|"
+    r"authori[sz]ed by|creditworthiness|counterparty|conflicts? of interest|investment advice|"
+    r"construed|not intended|marketing communication|for information(?:al)? purposes|"
+    r"confidential|copyright|all rights reserved|redistribut|reproduc|disclosures?|"
+    r"intended (?:only )?for (?:institutional|professional))",
+    re.IGNORECASE,
+)
 # shorter repeated lines are often headings, dates, names or ratings ("Europe", "12 April 2026",
 # "Stock rating Overweight"); disclaimers are long, so this keeps nearly all of the cleanup
 BOILERPLATE_MIN_WORDS = 4
@@ -92,6 +106,21 @@ def boilerplate(bodies: list[str]) -> set[str]:
         line
         for line, count in seen.items()
         if count >= BOILERPLATE_EMAILS and len(line.split()) >= BOILERPLATE_MIN_WORDS
+    }
+
+
+def bank_boilerplate(documents: list[tuple[str | None, str]]) -> set[str]:
+    """legal lines a bank repeats across its own documents, normalised; documents are (bank,
+    text), and each document counts a line once"""
+    seen: dict[str, Counter] = defaultdict(Counter)
+    for bank, text in documents:
+        if bank:
+            seen[bank].update({_normal(x) for x in text.splitlines()})
+    return {
+        line
+        for counts in seen.values()
+        for line, n in counts.items()
+        if line and n >= SAME_BANK_DOCUMENTS and LEGAL_WORDING.search(line)
     }
 
 

@@ -23,7 +23,7 @@ from pipeline.clean_emails import PreparedEmail, prepare_all, read_pdf_pages
 from pipeline.llm_client import StopRun
 from pipeline.paths import DELIVERABLE, RAG
 from rag.answer import rag_settings
-from rag.chunks import Chunk, Source, boilerplate, make_chunks, strip_lines
+from rag.chunks import Chunk, Source, bank_boilerplate, boilerplate, make_chunks, strip_lines
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore
 from rag.images import (
     NOT_INDEXED,
@@ -70,8 +70,14 @@ def build_sources(
             except PdfReadError as e:
                 problems.append(f"{email.id}/{name}: could not read ({e})")
 
-    documents = [e.body for e in emails] + ["\n".join(p) for p in pdf_pages.values()]
-    remove = boilerplate(documents)
+    def bank_of(email: PreparedEmail) -> str | None:
+        return (records.get(email.id) or {}).get("bank") or email.bank
+
+    by_id = {e.id: e for e in emails}
+    documents = [(bank_of(e), e.body) for e in emails] + [
+        (bank_of(by_id[email_id]), "\n".join(pages)) for (email_id, _), pages in pdf_pages.items()
+    ]
+    remove = boilerplate([text for _, text in documents]) | bank_boilerplate(documents)
 
     sources = []
     for email in emails:
