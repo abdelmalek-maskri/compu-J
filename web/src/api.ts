@@ -115,6 +115,9 @@ export type AskReply = {
   missing: string
   // the kind of picture the question asked for, when the search was narrowed to it
   picture_from_question: string | null
+  // a comparison: each of these banks was searched on its own, and these had no passage
+  banks_from_question: string[]
+  banks_without_passages: string[]
   points: AnswerPoint[]
   sources: AnswerSource[]
 }

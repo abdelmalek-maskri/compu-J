@@ -86,6 +86,12 @@ def main() -> int:
             print(f"\nNot covered by the sources: {reply.missing}")
         if unverified := sum(not p.verified for p in reply.points):
             print(f"\n{unverified} of {len(reply.points)} points could not be checked.")
+    if reply.reading.picture:
+        print(f"\n(searched {reply.reading.picture} pictures only, as the question asks for them)")
+    if reply.reading.banks:
+        print(f"\n(searched each bank on its own: {', '.join(reply.reading.banks)})")
+        if reply.reading.banks_without:
+            print(f"(no passage found for {', '.join(reply.reading.banks_without)})")
     print_sources(reply.hits)
     return 0
 

@@ -27,6 +27,8 @@ const reply: AskReply = {
   answered: true,
   missing: '',
   picture_from_question: null,
+  banks_from_question: [],
+  banks_without_passages: [],
   points: [
     {
       claim: 'Brent near 85',
@@ -194,6 +196,14 @@ describe('AskPanel', () => {
     expect(await screen.findByText(/Searched cartoons only/)).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Search everything instead' }))
     expect(sent(fetchMock, 1).read_question).toBe(false)
+  })
+
+  it('says when a comparison searched each bank on its own', async () => {
+    answering({ ...reply, banks_from_question: ['Barclays', 'Goldman Sachs'], banks_without_passages: ['UBS'] })
+    render(<AskPanel emails={[email]} tags={null} onOpen={() => {}} />)
+    await userEvent.type(screen.getByRole('textbox', { name: 'Question' }), 'compare{Enter}')
+    expect(await screen.findByText(/Searched each bank on its own: Barclays, Goldman Sachs/)).toBeInTheDocument()
+    expect(screen.getByText(/No passage found for UBS/)).toBeInTheDocument()
   })
 
   it('starts from the bank picked in the email filters', () => {

@@ -404,3 +404,20 @@ def test_no_limit_means_no_waiting(tmp_path):
                         log=lambda _: None)  # fmt: skip
     store.embed(["a", "b", "c"], "RETRIEVAL_DOCUMENT")
     assert clock.waits == [] and store.minutes_needed(["a"]) == 0
+
+
+@pytest.mark.parametrize(
+    ("quote", "verified"),
+    [
+        ("kept the Fed firmly in wait-and-see mode ... two cuts in September", True),
+        ("kept the Fed firmly in wait-and-see mode \u2026 two cuts in September", True),
+        ("kept the Fed firmly in wait-and-see mode ... three cuts in July", False),
+        ("...", False),
+    ],
+)
+def test_a_quote_shortened_with_an_ellipsis_is_checked_piece_by_piece(quote, verified):
+    text = (
+        "Oil has kept the Fed firmly in wait-and-see mode for now. We expect two cuts in September."
+    )
+    answer = Answer(answered=True, missing="", points=[Point(claim="c", source=1, quote=quote)])
+    assert check(answer, [Hit(chunk(text=text), 1, 1)])[0].verified is verified

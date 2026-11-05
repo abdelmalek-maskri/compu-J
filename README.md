@@ -190,7 +190,8 @@ The model has to quote its source for each point, and Python checks that the quo
 that passage. Pictures (charts, tables, cartoons) are described once by a vision model and
 searched like text; a chart's figures are read twice, and only those both reads agree on, or
 that the text around the picture states, are kept. A question that names a kind of picture ("any funny
-cartoons?") searches those pictures first, and says so.
+cartoons?") searches those pictures first, and says so; one that compares banks ("Barclays
+and Goldman Sachs", or "all the banks") searches each bank on its own.
 
 ## Limitations
 

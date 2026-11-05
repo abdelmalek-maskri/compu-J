@@ -255,9 +255,19 @@ export function AskPanel({ emails, tags, initialBank = '', initialTag = '', onOp
           </Section>
         )}
 
-        {reply?.picture_from_question && (
+        {(reply?.picture_from_question || (reply?.banks_from_question.length ?? 0) > 0) && (
           <p className="mx-4 mb-3 text-[13px] text-muted">
-            Searched {pictureLabel(reply.picture_from_question)} only, because the question asks for them.{' '}
+            {reply?.picture_from_question && (
+              <>Searched {pictureLabel(reply.picture_from_question)} only, because the question asks for them. </>
+            )}
+            {reply && reply.banks_from_question.length > 0 && (
+              <>
+                Searched each bank on its own: {reply.banks_from_question.join(', ')}.{' '}
+                {reply.banks_without_passages.length > 0 && (
+                  <>No passage found for {reply.banks_without_passages.join(', ')}. </>
+                )}
+              </>
+            )}
             <button
               type="button"
               onClick={() => run(request({ read_question: false }))}

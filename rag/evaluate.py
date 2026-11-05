@@ -16,7 +16,8 @@ MRR:      the average of 1 / the rank of the first expected source (1 if first, 
 the "wording" column groups the questions: "same" uses its source's words, "different" other
 words (where keyword search fails), "hard_negative" asks for one day of a daily series whose
 other days look almost identical, asked again as "hard_negative_filtered" with the date filter
-the classification makes possible, and "picture" is answered by a chart, table or cartoon
+the classification makes possible, "picture" is answered by a chart, table or cartoon, and
+"comparison" asks what several banks think, so each bank's own notes must be found
 
 the answers themselves are checked by rag/evaluate_answers.py
 """
@@ -34,12 +35,12 @@ from pipeline.llm_client import StopRun
 from rag.chunks import Chunk
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, VectorStore
 from rag.ingest import DOCUMENT, QUERY, load_chunks, ready
-from rag.question import read_question
+from rag.question import search_as_read
 from rag.search import Filters, Hit, Keyword, search
 
 QUESTIONS = Path("evaluation/rag_questions.csv")
 COLUMNS = ["question", "expected", "bank", "date", "wording", "pages"]
-GROUPS = ["same", "different", "hard_negative", "hard_negative_filtered", "picture"]
+GROUPS = ["same", "different", "hard_negative", "hard_negative_filtered", "picture", "comparison"]
 PAGE = re.compile(r"\d{6}:(\d+|email)")
 
 
@@ -169,20 +170,19 @@ def main() -> int:
             return 1
 
     keyword = Keyword(chunks)
+    banks = sorted({c.bank for c in chunks if c.bank})
     for mode in args.modes:
         print(f"\n{mode} search, top {args.k}")
         results = []
         for q in questions:
-            # as the Ask tab does: a question naming a kind of picture searches those first
-            narrowed, kind = read_question(q.text, q.filters)
-            hits = []
-            for filters in [narrowed, q.filters] if kind else [q.filters]:
-                hits = search(
-                    q.text, chunks, keyword, filters, args.k, mode,
+            # read as the Ask tab reads it: a kind of picture, or one search per compared bank
+            def run(filters: Filters, n: int, q=q, mode=mode) -> list[Hit]:
+                return search(
+                    q.text, chunks, keyword, filters, n, mode,
                     query_vectors.get(q.text), vectors,
                 )  # fmt: skip
-                if hits:
-                    break
+
+            hits, _ = search_as_read(q.text, q.filters, args.k, banks, run)
             result = score(q, ranked(q, hits))
             results.append(result)
             mark = "ok  " if result.found else "MISS"

@@ -14,7 +14,7 @@ from pipeline.paths import RAG
 from rag.answer import CheckedPoint, ask_model, check, rag_settings
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore, call_embedding
 from rag.ingest import CHUNKS, DOCUMENT, QUERY, load_chunks, ready
-from rag.question import read_question
+from rag.question import Reading, search_as_read
 from rag.search import Filters, Hit, Keyword, search
 
 
@@ -29,14 +29,17 @@ class Reply:
     answered: bool | None = None
     points: list[CheckedPoint] = field(default_factory=list)
     missing: str = ""
-    # the kind of picture the question asked for, when that narrowed the search (rag/question.py)
-    picture_from_question: str | None = None
+    # what the question changed about the search (rag/question.py): a kind of picture, or one
+    # search per compared bank
+    reading: Reading = field(default_factory=Reading)
 
     def to_json(self) -> dict:
         return {
             "answered": self.answered,
             "missing": self.missing,
-            "picture_from_question": self.picture_from_question,
+            "picture_from_question": self.reading.picture,
+            "banks_from_question": self.reading.banks,
+            "banks_without_passages": self.reading.banks_without,
             "points": [p.__dict__ for p in self.points],
             "sources": [
                 {
@@ -73,6 +76,7 @@ class Index:
         except FileNotFoundError as e:
             raise NotReady(str(e)) from e
         self.keyword = Keyword(self.chunks)
+        self.banks = sorted({c.bank for c in self.chunks if c.bank})
         self.root, self.embedder, self.embed_call = root, embedder, embed_call
         self.store = self._store()
         self._vectors: list[list[float]] | None = None
@@ -119,19 +123,25 @@ def answer(
     read: bool = True,
 ) -> Reply:
     """the passages found, and unless sources_only, the model's answer with each quote checked.
-    read: a question naming a kind of picture ("cartoons") searches those pictures first, and
-    everything when none matches"""
-    hits, picture = None, None
+    read: the question may narrow the search to a kind of picture ("cartoons") or split it into
+    one search per bank it compares (see rag/question.py)"""
+
+    def run(f: Filters, n: int) -> list[Hit]:
+        return index.search(question, f, mode, n)
+
     if read:
-        narrowed, kind = read_question(question, filters)
-        if kind and (found := index.search(question, narrowed, mode, k)):
-            hits, picture = found, kind
-    if hits is None:
-        hits = index.search(question, filters, mode, k)
+        hits, reading = search_as_read(question, filters, k, index.banks, run)
+    else:
+        hits, reading = run(filters, k), Reading()
     if sources_only or not hits:
-        return Reply(hits, picture_from_question=picture)
+        return Reply(hits, reading=reading)
     settings = settings or rag_settings()
     if missing := settings.missing_key():
         raise NotReady(f"{settings.name} needs {missing} in .env")
-    result = ask_model(question, hits, settings, complete_fn)
-    return Reply(hits, result.answered, check(result, hits), result.missing, picture)
+    note = ""
+    if reading.banks:
+        note = f"This compares {', '.join(reading.banks)}; the sources are grouped by bank."
+        if reading.banks_without:
+            note += f" No passage was found for {', '.join(reading.banks_without)}."
+    result = ask_model(question, hits, settings, complete_fn, note=note)
+    return Reply(hits, result.answered, check(result, hits), result.missing, reading)
