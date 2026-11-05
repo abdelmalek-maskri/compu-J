@@ -37,6 +37,8 @@ class Filters:
     tag: str | None = None
     company: str | None = None
     market_wrap: str | None = None
+    # "any": only passages describing a picture; a kind, such as "cartoon": only those pictures
+    picture: str | None = None
 
     def allows(self, chunk: Chunk) -> bool:
         folded = str.casefold
@@ -51,7 +53,11 @@ class Filters:
             return False
         if self.company and not any(folded(self.company) in folded(c) for c in chunk.companies):
             return False
-        return not (self.market_wrap and chunk.market_wrap != self.market_wrap.upper())
+        if self.market_wrap and chunk.market_wrap != self.market_wrap.upper():
+            return False
+        if self.picture == "any":
+            return chunk.picture is not None
+        return not (self.picture and chunk.picture != self.picture.casefold())
 
 
 class Keyword:
@@ -99,15 +105,18 @@ def fuse(*rankings: list[int]) -> list[int]:
 
 
 def diverse(order: list[int], chunks: list[Chunk], k: int) -> list[int]:
-    """the first k passages, at most MAX_PER_EMAIL from any one email"""
-    kept, per_email = [], Counter()
+    """the first k passages, at most MAX_PER_EMAIL from any one email; when the filters leave too
+    few emails to fill k that way, the passages the cap skipped fill the rest, best first"""
+    kept, skipped, per_email = [], [], Counter()
     for i in order:
         if per_email[chunks[i].email_id] < MAX_PER_EMAIL:
             kept.append(i)
             per_email[chunks[i].email_id] += 1
+        else:
+            skipped.append(i)
         if len(kept) == k:
-            break
-    return kept
+            return kept
+    return kept + skipped[: k - len(kept)]
 
 
 @dataclass

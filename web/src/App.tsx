@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useJson, type Email, type Tags } from './api'
 import { AskPanel } from './components/AskPanel'
 import { EmailList } from './components/EmailList'
 import { FilterPanel } from './components/FilterPanel'
 import { Reader } from './components/Reader'
+import { ResizeHandle } from './components/ResizeHandle'
 import { Ticker } from './components/Ticker'
 import { byDate, matches, NO_FILTERS, ONLY, type Filters } from './filters'
 
@@ -23,6 +24,25 @@ function useHashId(): [string | null, (id: string | null) => void] {
   return [id, select]
 }
 
+type View = 'emails' | 'ask'
+
+// the left panel's width in pixels: answers and their sources need more room than the list
+const DEFAULT_WIDTH: Record<View, number> = { emails: 416, ask: 576 }
+const MIN_WIDTH = 288
+// the reader never gets less than this, however far the line is dragged
+const READER_MIN = 384
+
+/** a width the person chose earlier, remembered by this browser only; storage can be missing or
+ * blocked (a private window), and then the default is used */
+function storedWidth(view: View): number {
+  try {
+    const saved = Number(localStorage.getItem(`panel-width-${view}`))
+    return saved >= MIN_WIDTH ? saved : DEFAULT_WIDTH[view]
+  } catch {
+    return DEFAULT_WIDTH[view]
+  }
+}
+
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))
 
@@ -32,14 +52,25 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState<Filters>(NO_FILTERS)
   const [selectedId, setSelectedId] = useHashId()
-  const [view, setView] = useState<'emails' | 'ask'>('emails')
+  const [view, setView] = useState<View>('emails')
   // the questions panel starts when first opened, from the email filters picked by then
   const [askOpened, setAskOpened] = useState(false)
-  const show = (next: 'emails' | 'ask') => {
+  const show = (next: View) => {
     setView(next)
     if (next === 'ask') setAskOpened(true)
   }
   const searchRef = useRef<HTMLInputElement>(null)
+  const mainRef = useRef<HTMLElement>(null)
+  const [widths, setWidths] = useState(() => ({ emails: storedWidth('emails'), ask: storedWidth('ask') }))
+  const [dragging, setDragging] = useState(false)
+  const resize = (width: number) => {
+    setWidths((w) => ({ ...w, [view]: width }))
+    try {
+      localStorage.setItem(`panel-width-${view}`, String(width))
+    } catch {
+      // not remembered after a reload, which is all storage was for
+    }
+  }
 
   const all = useMemo(() => emails.data ?? [], [emails.data])
   const shown = useMemo(
@@ -126,14 +157,15 @@ export default function App() {
         </div>
       ) : (
         <main
-          className={`flex-1 min-h-0 grid ${
-            // answers and their sources need more width than the list of emails
-            view === 'ask' ? 'lg:grid-cols-[minmax(24rem,36rem)_1fr]' : 'lg:grid-cols-[minmax(20rem,26rem)_1fr]'
+          ref={mainRef}
+          // the left width stays below the room the reader needs, even after the window shrinks;
+          // while dragging, the email's frame must not catch the pointer
+          style={{ '--left': `min(${widths[view]}px, calc(100% - ${READER_MIN}px))` } as CSSProperties}
+          className={`flex-1 min-h-0 grid lg:grid-cols-[var(--left)_auto_minmax(0,1fr)] ${
+            dragging ? 'select-none cursor-col-resize [&_iframe]:pointer-events-none' : ''
           }`}
         >
-          <div
-            className={`min-h-0 overflow-y-auto border-r border-rule ${selected ? 'hidden lg:block' : ''}`}
-          >
+          <div className={`min-h-0 overflow-y-auto ${selected ? 'hidden lg:block' : ''}`}>
             {/* kept mounted while hidden, so switching views keeps the question and its answer */}
             {askOpened && (
               <div hidden={view !== 'ask'}>
@@ -168,6 +200,16 @@ export default function App() {
             )}
             </div>
           </div>
+
+          <ResizeHandle
+            containerRef={mainRef}
+            width={widths[view]}
+            min={MIN_WIDTH}
+            keepRight={READER_MIN}
+            onResize={resize}
+            onReset={() => resize(DEFAULT_WIDTH[view])}
+            onDragging={setDragging}
+          />
 
           <div className={`min-h-0 overflow-y-auto ${selected ? '' : 'hidden lg:block'}`}>
             {selected ? (

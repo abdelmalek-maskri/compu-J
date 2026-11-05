@@ -7,10 +7,18 @@ import pytest
 from pipeline.clean_emails import Attachments
 from pipeline.llm_client import Settings, StopRun
 from rag import chunks as chunks_module
-from rag.answer import Answer, Point, ask_model, check
-from rag.chunks import Chunk, Source, boilerplate, make_chunks, split_text, strip_lines
+from rag.answer import SYSTEM_PROMPT, Answer, Point, ask_model, check
+from rag.chunks import (
+    Chunk,
+    Source,
+    bank_boilerplate,
+    boilerplate,
+    make_chunks,
+    split_text,
+    strip_lines,
+)
 from rag.embed import Embedder, VectorStore
-from rag.evaluate import Question, load_questions, score, summary
+from rag.evaluate import Question, load_questions, ranked, score, summary
 from rag.ingest import build_sources, load_chunks
 from rag.search import Filters, Hit, Keyword, cosine, diverse, fuse, search
 from tests.factories import prepared_email
@@ -63,6 +71,11 @@ def test_lines_in_many_emails_are_boilerplate():
     assert footer.casefold() in remove
     assert "oil is up" not in remove
     assert strip_lines(f"Oil is up\n  {footer}  ", remove) == "Oil is up"
+
+
+def test_short_repeated_lines_are_kept():
+    bodies = [f"Europe\nStock rating Overweight\nNote {i}" for i in range(5)]
+    assert boilerplate(bodies) == set()
 
 
 def test_one_email_repeating_a_line_is_not_boilerplate():
@@ -136,6 +149,18 @@ def test_no_email_fills_every_slot():
     found = [chunk("035432", f"page {i}") for i in range(5)] + [chunk("035300", "other")]
     kept = diverse(list(range(6)), found, k=4)
     assert kept == [0, 1, 2, 5]
+
+
+def test_one_email_left_by_the_filters_fills_every_slot():
+    # a 10 page PDF from one bank on one day: the cap must not leave 5 of 8 slots empty
+    found = [chunk("035350", f"page {i}") for i in range(10)]
+    assert diverse(list(range(10)), found, k=8) == list(range(8))
+
+
+def test_skipped_passages_only_fill_what_other_emails_leave_empty():
+    found = [chunk("035350", f"page {i}") for i in range(5)] + [chunk("035242", "other")]
+    # variety first: the other email's passage comes before the backfilled ones
+    assert diverse(list(range(6)), found, k=5) == [0, 1, 2, 5, 3]
 
 
 @pytest.mark.parametrize(
@@ -282,21 +307,25 @@ def test_a_wrong_key_stops_at_once(tmp_path):
 def test_questions_file(tmp_path):
     path = tmp_path / "q.csv"
     path.write_text(
-        "question,expected,bank,date,wording\n"
-        "Gold?,035337 035435,,,same\n"
-        "UBP on 10 April?,035350,UBP,2026-04-10,hard_negative_filtered\n"
+        "question,expected,bank,date,wording,pages\n"
+        "Gold?,035337 035435,,,same,\n"
+        "UBP on 10 April?,035350,UBP,2026-04-10,hard_negative_filtered,\n"
+        "Cartoons about Iran?,035432,,,picture,035432:3\n"
     )
-    plain, dated = load_questions(path)
+    plain, dated, cartoon = load_questions(path)
     assert plain.expected == {"035337", "035435"} and plain.bank is None
     assert plain.filters == Filters()
     assert dated.filters == Filters(bank="UBP", since="2026-04-10", until="2026-04-10")
+    assert plain.targets == {"035337", "035435"} and cartoon.targets == {"035432:3"}
 
 
 @pytest.mark.parametrize(
     ("content", "problem"),
     [
         ("question,answer\nGold?,035337\n", "columns"),
-        ("question,expected,bank,date,wording\nGold?,035337,,,easy\n", "unknown wording"),
+        ("question,expected,bank,date,wording,pages\nGold?,035337,,,easy,\n", "unknown wording"),
+        ("question,expected,bank,date,wording,pages\nGold?,035337,,,same,035999:3\n", "does not"),
+        ("question,expected,bank,date,wording,pages\nGold?,035337,,,same,035337:p3\n", "written"),
     ],
 )
 def test_a_wrong_questions_file_is_refused(tmp_path, content, problem):
@@ -306,8 +335,8 @@ def test_a_wrong_questions_file_is_refused(tmp_path, content, problem):
         load_questions(path)
 
 
-def question(*expected) -> Question:
-    return Question("?", set(expected), None, None, "same")
+def question(*expected, pages=()) -> Question:
+    return Question("?", set(expected), None, None, "same", set(pages))
 
 
 def test_score():
@@ -315,6 +344,18 @@ def test_score():
     assert (both.found, both.recall, both.reciprocal_rank) == (True, 0.5, 0.5)
     none = score(question("035009"), ["035001"])
     assert (none.found, none.recall, none.reciprocal_rank) == (False, 0.0, 0)
+
+
+def test_a_question_naming_pages_is_scored_by_page():
+    wac = question("035432", pages=["035432:3"])
+    hits = [Hit(chunk("035432", "p26", pdf="wac.pdf", page=26), 1, 1),
+            Hit(chunk("035432", "p3", pdf="wac.pdf", page=3), 2, 2),
+            Hit(chunk("035308", "body"), 3, 3)]  # fmt: skip
+    assert ranked(wac, hits) == ["035432:26", "035432:3", "035308:email"]
+    # the right email came first, but the right page only second
+    assert score(wac, ranked(wac, hits)).reciprocal_rank == 0.5
+    by_email = question("035432")
+    assert score(by_email, ranked(by_email, hits)).reciprocal_rank == 1
 
 
 def test_mrr_shows_a_wrong_day_ranked_first():
@@ -371,3 +412,53 @@ def test_no_limit_means_no_waiting(tmp_path):
                         log=lambda _: None)  # fmt: skip
     store.embed(["a", "b", "c"], "RETRIEVAL_DOCUMENT")
     assert clock.waits == [] and store.minutes_needed(["a"]) == 0
+
+
+def test_a_banks_repeated_legal_text_goes_but_its_repeated_research_stays():
+    legal = "Goldman Sachs does not warrant the accuracy of any interest rates shown."
+    research = "We moderate our year-end gold target to USD 5,800/oz."
+    remove = bank_boilerplate([
+        ("Goldman Sachs", f"Flows on 10 April\n{legal}"),
+        ("Goldman Sachs", f"Flows on 13 April\n{legal}"),
+        ("Deutsche Bank", research),
+        ("Deutsche Bank", f"Daily focus\n{research}"),
+        ("UBS", "Past performance is not a guide to future returns."),
+    ])  # fmt: skip
+    assert remove == {legal.casefold()}
+
+
+@pytest.mark.parametrize(
+    ("quote", "verified"),
+    [
+        ("kept the Fed firmly in wait-and-see mode ... two cuts in September", True),
+        ("kept the Fed firmly in wait-and-see mode \u2026 two cuts in September", True),
+        ("kept the Fed firmly in wait-and-see mode ... three cuts in July", False),
+        ("...", False),
+    ],
+)
+def test_a_quote_shortened_with_an_ellipsis_is_checked_piece_by_piece(quote, verified):
+    text = (
+        "Oil has kept the Fed firmly in wait-and-see mode for now. We expect two cuts in September."
+    )
+    answer = Answer(answered=True, missing="", points=[Point(claim="c", source=1, quote=quote)])
+    assert check(answer, [Hit(chunk(text=text), 1, 1)])[0].verified is verified
+
+
+def test_risk_disclosures_and_professional_only_notices_count_as_legal_text():
+    lines = [
+        "Options Risk Disclosures: Options may trade at a value other than expected.",
+        "This communication is intended for professional or institutional clients only.",
+    ]
+    remove = bank_boilerplate([("Goldman Sachs", "\n".join(lines))] * 2)
+    assert remove == {line.casefold() for line in lines}
+
+
+def test_passages_get_the_characters_the_export_lost(tmp_path):
+    body = "Rates: limited progress on inflation\ufffdXwhere tariff effects drop out."
+    [source], _ = build_sources([prepared_email(body=body)], {}, tmp_path)
+    assert source.text == "Rates: limited progress on inflation\u2014where tariff effects drop out."
+
+
+def test_the_model_is_told_to_mark_words_left_out_of_a_quote():
+    # a quote that skips words without "..." fails the check although its facts are right
+    assert 'mark each gap with "..."' in SYSTEM_PROMPT

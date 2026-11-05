@@ -31,6 +31,22 @@ PRESETS = {
         api_key_env="GEMINI_API_KEY",
         temperature=None,
     ),
+    # OpenAI's cheapest model that reads images and PDFs; the question answering default (see
+    # rag/answer.py). a reasoning model: it takes reasoning_effort and refuses a temperature
+    "gpt-6-luna": Preset(
+        "openai/gpt-6-luna",
+        reasoning_effort="low",
+        api_key_env="OPENAI_API_KEY",
+        temperature=None,
+    ),
+    # Anthropic's cheapest model, priced like gpt-6-luna; reads images and PDFs. it thinks by
+    # default, and LiteLLM turns "low" into Claude's adaptive thinking at low effort
+    "claude-haiku": Preset(
+        "anthropic/claude-haiku-5-5",
+        reasoning_effort="low",
+        api_key_env="ANTHROPIC_API_KEY",
+        temperature=None,
+    ),
     # stronger, but about 5 a minute and only 20 a day: small comparisons only
     "gemini-flash": Preset(
         "gemini/gemini-3.8-flash",

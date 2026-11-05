@@ -5,34 +5,43 @@ uv run python -m rag.evaluate                           keyword, vector and hybr
                                                         questions, once: their vectors are saved)
 
 if the right passage is not retrieved, no answer model can fix it, so retrieval is measured on
-its own, over the emails of the top k passages:
-found@k:  the share of questions with at least one expected email in the top k
-recall@k: the share of all expected emails that appear in the top k
-MRR:      the average of 1 / the rank of the first expected email (1 if first, 1/2 if second,
-          0 if absent): it shows when the right email is found but ranked below a wrong one
+its own, over the top k passages. a question is scored by email, or, when its "pages" column is
+filled, by page: "035432:3" is page 3 of one of that email's PDFs, "035308:email" the email's
+own text or pictures, so a 42 page PDF is not found just because any page of it came back:
+found@k:  the share of questions with at least one expected source in the top k
+recall@k: the share of all expected sources that appear in the top k
+MRR:      the average of 1 / the rank of the first expected source (1 if first, 1/2 if second,
+          0 if absent): it shows when the right source is found but ranked below a wrong one
 
 the "wording" column groups the questions: "same" uses its source's words, "different" other
-words (where keyword search fails), and "hard_negative" asks for one day of a daily series whose
-other days look almost identical; each is asked again as "hard_negative_filtered" with the date
-filter the classification makes possible
+words (where keyword search fails), "hard_negative" asks for one day of a daily series whose
+other days look almost identical, asked again as "hard_negative_filtered" with the date filter
+the classification makes possible, "picture" is answered by a chart, table or cartoon, and
+"comparison" asks what several banks think, so each bank's own notes must be found
+
+the answers themselves are checked by rag/evaluate_answers.py
 """
 
 import argparse
 import csv
+import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
 
 from pipeline.llm_client import StopRun
+from rag.chunks import Chunk
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, VectorStore
 from rag.ingest import DOCUMENT, QUERY, load_chunks, ready
-from rag.search import Filters, Keyword, search
+from rag.question import search_as_read
+from rag.search import Filters, Hit, Keyword, search
 
 QUESTIONS = Path("evaluation/rag_questions.csv")
-COLUMNS = ["question", "expected", "bank", "date", "wording"]
-GROUPS = ["same", "different", "hard_negative", "hard_negative_filtered"]
+COLUMNS = ["question", "expected", "bank", "date", "wording", "pages"]
+GROUPS = ["same", "different", "hard_negative", "hard_negative_filtered", "picture", "comparison"]
+PAGE = re.compile(r"\d{6}:(\d+|email)")
 
 
 @dataclass
@@ -43,10 +52,27 @@ class Question:
     # one day, YYYY-MM-DD: the question is searched among that day's emails only
     date: str | None
     wording: str
+    # when set, the exact pages expected, such as "035432:3"; else any part of the expected emails
+    pages: set[str] = field(default_factory=set)
 
     @property
     def filters(self) -> Filters:
         return Filters(bank=self.bank, since=self.date, until=self.date)
+
+    @property
+    def targets(self) -> set[str]:
+        return self.pages or self.expected
+
+
+def location(chunk: Chunk) -> str:
+    """the email and page a passage comes from, as written in the "pages" column"""
+    return f"{chunk.email_id}:{chunk.page}" if chunk.page else f"{chunk.email_id}:email"
+
+
+def ranked(question: Question, hits: list[Hit]) -> list[str]:
+    """what the hits are scored as: their pages when the question names pages, else emails"""
+    each = location if question.pages else (lambda c: c.email_id)
+    return list(dict.fromkeys(each(h.chunk) for h in hits))
 
 
 def load_questions(path: Path) -> list[Question]:
@@ -57,13 +83,23 @@ def load_questions(path: Path) -> list[Question]:
         rows = list(reader)
     if unknown := {r["wording"] for r in rows} - set(GROUPS):
         raise ValueError(f"{path}: unknown wording {sorted(unknown)}, expected one of {GROUPS}")
-    return [
+    questions = [
         Question(
             r["question"], set(r["expected"].split()), r["bank"] or None, r["date"] or None,
-            r["wording"],
+            r["wording"], set(r["pages"].split()),
         )
         for r in rows
     ]  # fmt: skip
+    for q in questions:
+        if strays := {p for p in q.pages if p.split(":")[0] not in q.expected}:
+            raise ValueError(
+                f"{path}: {q.text!r} names pages of emails it does not expect: {strays}"
+            )
+        if bad := {p for p in q.pages if not PAGE.fullmatch(p)}:
+            raise ValueError(
+                f"{path}: {q.text!r} has pages not written as 035432:3 or 035308:email: {bad}"
+            )
+    return questions
 
 
 @dataclass
@@ -74,13 +110,12 @@ class Result:
     reciprocal_rank: float
 
 
-def score(question: Question, ranked: list[str]) -> Result:
-    """ranked: the emails of the passages found, best first, each once"""
-    hits = question.expected & set(ranked)
-    first = next((n for n, e in enumerate(ranked, 1) if e in question.expected), None)
-    return Result(
-        question, bool(hits), len(hits) / len(question.expected), 1 / first if first else 0
-    )
+def score(question: Question, found: list[str]) -> Result:
+    """found: the sources of the passages found (see ranked), best first, each once"""
+    targets = question.targets
+    hits = targets & set(found)
+    first = next((n for n, e in enumerate(found, 1) if e in targets), None)
+    return Result(question, bool(hits), len(hits) / len(targets), 1 / first if first else 0)
 
 
 def summary(results: list[Result]) -> str:
@@ -135,15 +170,20 @@ def main() -> int:
             return 1
 
     keyword = Keyword(chunks)
+    banks = sorted({c.bank for c in chunks if c.bank})
     for mode in args.modes:
         print(f"\n{mode} search, top {args.k}")
         results = []
         for q in questions:
-            hits = search(
-                q.text, chunks, keyword, q.filters, args.k, mode,
-                query_vectors.get(q.text), vectors,
-            )  # fmt: skip
-            result = score(q, list(dict.fromkeys(h.chunk.email_id for h in hits)))
+            # read as the Ask tab reads it: a kind of picture, or one search per compared bank
+            def run(filters: Filters, n: int, q=q, mode=mode) -> list[Hit]:
+                return search(
+                    q.text, chunks, keyword, filters, n, mode,
+                    query_vectors.get(q.text), vectors,
+                )  # fmt: skip
+
+            hits, _ = search_as_read(q.text, q.filters, args.k, banks, run)
+            result = score(q, ranked(q, hits))
             results.append(result)
             mark = "ok  " if result.found else "MISS"
             first = f"#{round(1 / result.reciprocal_rank)}" if result.reciprocal_rank else "-"

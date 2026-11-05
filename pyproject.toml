@@ -34,6 +34,7 @@ select = ["E", "F", "I", "UP", "B", "SIM"]
 # prompt text is prose sent to the model; one paragraph per line keeps prompt diffs readable
 "pipeline/prompt.py" = ["E501"]
 "rag/answer.py" = ["E501"]
+"rag/images.py" = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

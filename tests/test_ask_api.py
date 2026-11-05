@@ -177,3 +177,36 @@ def test_the_dashboard_may_post_questions(client):
         headers={"Origin": "http://localhost:5173", "Access-Control-Request-Method": "POST"},
     )
     assert "POST" in preflight.headers["access-control-allow-methods"]
+
+
+def test_a_question_can_be_limited_to_pictures(tmp_path):
+    cartoon = chunk("035432", "[cartoon] Two leaders argue over a toll.", picture="cartoon",
+                    pdf="13.04.2026 WAC.pdf", page=26)  # fmt: skip
+    write_index(tmp_path, [*PASSAGES, cartoon])
+    client = make_client(tmp_path)
+    body = {"question": "toll", "mode": "keyword", "sources_only": True}
+    [source] = client.post("/api/ask", json={**body, "picture": "cartoon"}).json()["sources"]
+    assert (source["picture"], source["pdf"], source["page"]) == (
+        "cartoon",
+        "13.04.2026 WAC.pdf",
+        26,
+    )
+    assert client.post("/api/ask", json={**body, "picture": "chart"}).json()["sources"] == []
+    assert client.post("/api/ask", json={**body, "picture": "logo"}).status_code == 422
+
+
+def test_a_point_citing_a_picture_says_so(tmp_path):
+    chart = chunk("035308", "[chart] Italy: 0.26", picture="chart", image="inline/image_1.png")
+    write_index(tmp_path, [chart])
+
+    def cites_the_chart(settings, messages, schema):
+        point = {"claim": "Italy is most exposed", "source": 1, "quote": "Italy: 0.26"}
+        return fake_response(json.dumps({"answered": True, "missing": "", "points": [point]}))
+
+    reply = (
+        make_client(tmp_path, complete=cites_the_chart)
+        .post("/api/ask", json={"question": "Italy", "mode": "keyword"})
+        .json()
+    )
+    assert reply["points"][0]["from_picture"] is True
+    assert reply["sources"][0]["image"] == "inline/image_1.png"

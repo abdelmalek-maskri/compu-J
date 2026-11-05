@@ -11,9 +11,10 @@ from pathlib import Path
 
 from pipeline.llm_client import Settings, complete
 from pipeline.paths import RAG
-from rag.answer import CheckedPoint, ask_model, check
+from rag.answer import CheckedPoint, ask_model, check, rag_settings
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore, call_embedding
 from rag.ingest import CHUNKS, DOCUMENT, QUERY, load_chunks, ready
+from rag.question import Reading, search_as_read
 from rag.search import Filters, Hit, Keyword, search
 
 
@@ -28,11 +29,17 @@ class Reply:
     answered: bool | None = None
     points: list[CheckedPoint] = field(default_factory=list)
     missing: str = ""
+    # what the question changed about the search (rag/question.py): a kind of picture, or one
+    # search per compared bank
+    reading: Reading = field(default_factory=Reading)
 
     def to_json(self) -> dict:
         return {
             "answered": self.answered,
             "missing": self.missing,
+            "picture_from_question": self.reading.picture,
+            "banks_from_question": self.reading.banks,
+            "banks_without_passages": self.reading.banks_without,
             "points": [p.__dict__ for p in self.points],
             "sources": [
                 {
@@ -45,6 +52,9 @@ class Reply:
                     "page": h.chunk.page,
                     "where": h.chunk.where,
                     "text": h.chunk.text,
+                    # the kind of picture the passage describes, and an email image's file
+                    "picture": h.chunk.picture,
+                    "image": h.chunk.image,
                     "keyword_rank": h.keyword_rank,
                     "vector_rank": h.vector_rank,
                 }
@@ -66,6 +76,7 @@ class Index:
         except FileNotFoundError as e:
             raise NotReady(str(e)) from e
         self.keyword = Keyword(self.chunks)
+        self.banks = sorted({c.bank for c in self.chunks if c.bank})
         self.root, self.embedder, self.embed_call = root, embedder, embed_call
         self.store = self._store()
         self._vectors: list[list[float]] | None = None
@@ -109,13 +120,28 @@ def answer(
     settings: Settings | None = None,
     complete_fn: Callable = complete,
     sources_only: bool = False,
+    read: bool = True,
 ) -> Reply:
-    """the passages found, and unless sources_only, the model's answer with each quote checked"""
-    hits = index.search(question, filters, mode, k)
+    """the passages found, and unless sources_only, the model's answer with each quote checked.
+    read: the question may narrow the search to a kind of picture ("cartoons") or split it into
+    one search per bank it compares (see rag/question.py)"""
+
+    def run(f: Filters, n: int) -> list[Hit]:
+        return index.search(question, f, mode, n)
+
+    if read:
+        hits, reading = search_as_read(question, filters, k, index.banks, run)
+    else:
+        hits, reading = run(filters, k), Reading()
     if sources_only or not hits:
-        return Reply(hits)
-    settings = settings or Settings.from_env()
+        return Reply(hits, reading=reading)
+    settings = settings or rag_settings()
     if missing := settings.missing_key():
         raise NotReady(f"{settings.name} needs {missing} in .env")
-    result = ask_model(question, hits, settings, complete_fn)
-    return Reply(hits, result.answered, check(result, hits), result.missing)
+    note = ""
+    if reading.banks:
+        note = f"This compares {', '.join(reading.banks)}; the sources are grouped by bank."
+        if reading.banks_without:
+            note += f" No passage was found for {', '.join(reading.banks_without)}."
+    result = ask_model(question, hits, settings, complete_fn, note=note)
+    return Reply(hits, result.answered, check(result, hits), result.missing, reading)

@@ -9,6 +9,8 @@ DELIVERABLE = Path("classified_emails.json")
 DETAILS = Path("classified_emails_details.json")
 # answers a person corrected after review, applied on every run (see pipeline/reviewed.py)
 REVIEWED = Path("evaluation/reviewed.csv")
+# where each bank's legal footer starts, written by a person; the RAG cuts it (see rag/footers.py)
+FOOTERS = Path("evaluation/footers.csv")
 
 OUTPUT = Path("output")
 CLEANED_EMAILS = OUTPUT / "cleaned_emails"  # what the model reads, one .txt per email
