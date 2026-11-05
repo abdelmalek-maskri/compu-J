@@ -165,3 +165,10 @@ def test_remote_srcset_candidates_count_and_never_replace_a_saved_image():
     assert remote_images(img) == 1
     html = make_safe(img, files_url="/api/emails/035300/files/")
     assert "srcset" not in html and 'src="/api/emails/035300/files/inline/a.png"' in html
+
+
+def test_a_wide_email_is_fitted_to_the_reading_pane():
+    safe = make_safe('<table width="700"><tr><td><img src="a.png" width="700"></td></tr></table>')
+    head = safe.split("</head>")[0]
+    assert "img { max-width: 100% !important" in head
+    assert head.rstrip().endswith("</style>")

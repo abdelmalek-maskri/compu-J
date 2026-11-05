@@ -13,6 +13,13 @@ from pipeline.repair_text import R, repair
 # tags that can run code, load other pages or send data somewhere
 # <noscript> stays: scripts never run in the sandbox, so browsers show its content
 REMOVED_TAGS = ["script", "iframe", "frame", "object", "embed", "form", "base", "link"]
+# bank emails are laid out at a fixed width (often 600 to 700 pixels) that the reading pane can
+# be narrower than; without this their right side is cut off, as macOS hides the scrollbar
+FIT_TO_PANE = (
+    "img { max-width: 100% !important; height: auto !important; } "
+    "table { max-width: 100% !important; } "
+    "body { overflow-wrap: anywhere; }"
+)
 
 
 REMOTE = ("http://", "https://", "//")
@@ -79,6 +86,10 @@ def make_safe(html: str, allow_images: bool = False, files_url: str | None = Non
     if soup.head is None and soup.html:
         soup.html.insert(0, head)
     head.insert(0, soup.new_tag("meta", charset="utf-8"))
+    # last in the head, so it wins over the email's own styles
+    fit = soup.new_tag("style")
+    fit.string = FIT_TO_PANE
+    head.append(fit)
     return str(soup)
 
 
