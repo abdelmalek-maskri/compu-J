@@ -141,8 +141,8 @@ All settings live in `.env`. None is needed to browse the results.
 ## Tests
 
 ```bash
-uv run pytest            # 338 Python tests
-cd web && npm test       # 27 dashboard tests
+uv run pytest            # 358 Python tests
+cd web && npm test       # 31 dashboard tests
 ```
 
 They use made up emails and a fake model, so they need neither a key nor the data, and they run

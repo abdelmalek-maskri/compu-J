@@ -22,6 +22,7 @@ from pypdf.errors import PdfReadError
 from pipeline.clean_emails import PreparedEmail, prepare_all, read_pdf_pages
 from pipeline.llm_client import StopRun
 from pipeline.paths import DELIVERABLE, RAG
+from pipeline.repair_text import repair
 from rag.answer import rag_settings
 from rag.chunks import Chunk, Source, bank_boilerplate, boilerplate, make_chunks, strip_lines
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore
@@ -59,8 +60,10 @@ def _source(email: PreparedEmail, record: dict | None, text: str, **where) -> So
 def build_sources(
     emails: list[PreparedEmail], records: dict[str, dict], data_dir: Path
 ) -> tuple[list[Source], list[str]]:
-    """every email body and every PDF page with text, boilerplate removed; returns the problems
-    met on the way, such as an unreadable PDF"""
+    """every email body and every PDF page with text, boilerplate removed and the characters the
+    export lost put back (pipeline/repair_text.py), so the model quotes and the quote check reads
+    the same words: a lost dash left "passthrough?Xwill" as one word. returns the problems met on
+    the way, such as an unreadable PDF"""
     problems, pdf_pages = [], {}
     emails = [e for e in emails if not e.duplicate_of]
     for email in emails:
@@ -84,12 +87,13 @@ def build_sources(
         record = records.get(email.id)
         if record is None:
             problems.append(f"{email.id}: not in {DELIVERABLE}, so no date, title or tags")
-        body = strip_lines(email.body, remove)
+        # repaired after the boilerplate test, which compares the lines as exported
+        body = repair(strip_lines(email.body, remove))
         if body:
             sources.append(_source(email, record, body))
         for name in email.attachments.pdfs:
             for n, page in enumerate(pdf_pages.get((email.id, name), []), 1):
-                text = strip_lines(page, remove)
+                text = repair(strip_lines(page, remove))
                 if len(text) >= MIN_PAGE_CHARS:
                     sources.append(_source(email, record, text, pdf=name, page=n))
     return sources, problems

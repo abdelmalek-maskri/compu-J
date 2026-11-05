@@ -414,6 +414,19 @@ def test_no_limit_means_no_waiting(tmp_path):
     assert clock.waits == [] and store.minutes_needed(["a"]) == 0
 
 
+def test_a_banks_repeated_legal_text_goes_but_its_repeated_research_stays():
+    legal = "Goldman Sachs does not warrant the accuracy of any interest rates shown."
+    research = "We moderate our year-end gold target to USD 5,800/oz."
+    remove = bank_boilerplate([
+        ("Goldman Sachs", f"Flows on 10 April\n{legal}"),
+        ("Goldman Sachs", f"Flows on 13 April\n{legal}"),
+        ("Deutsche Bank", research),
+        ("Deutsche Bank", f"Daily focus\n{research}"),
+        ("UBS", "Past performance is not a guide to future returns."),
+    ])  # fmt: skip
+    assert remove == {legal.casefold()}
+
+
 @pytest.mark.parametrize(
     ("quote", "verified"),
     [
@@ -431,19 +444,6 @@ def test_a_quote_shortened_with_an_ellipsis_is_checked_piece_by_piece(quote, ver
     assert check(answer, [Hit(chunk(text=text), 1, 1)])[0].verified is verified
 
 
-def test_a_banks_repeated_legal_text_goes_but_its_repeated_research_stays():
-    legal = "Goldman Sachs does not warrant the accuracy of any interest rates shown."
-    research = "We moderate our year-end gold target to USD 5,800/oz."
-    remove = bank_boilerplate([
-        ("Goldman Sachs", f"Flows on 10 April\n{legal}"),
-        ("Goldman Sachs", f"Flows on 13 April\n{legal}"),
-        ("Deutsche Bank", research),
-        ("Deutsche Bank", f"Daily focus\n{research}"),
-        ("UBS", "Past performance is not a guide to future returns."),
-    ])  # fmt: skip
-    assert remove == {legal.casefold()}
-
-
 def test_risk_disclosures_and_professional_only_notices_count_as_legal_text():
     lines = [
         "Options Risk Disclosures: Options may trade at a value other than expected.",
@@ -451,3 +451,9 @@ def test_risk_disclosures_and_professional_only_notices_count_as_legal_text():
     ]
     remove = bank_boilerplate([("Goldman Sachs", "\n".join(lines))] * 2)
     assert remove == {line.casefold() for line in lines}
+
+
+def test_passages_get_the_characters_the_export_lost(tmp_path):
+    body = "Rates: limited progress on inflation\ufffdXwhere tariff effects drop out."
+    [source], _ = build_sources([prepared_email(body=body)], {}, tmp_path)
+    assert source.text == "Rates: limited progress on inflation\u2014where tariff effects drop out."
