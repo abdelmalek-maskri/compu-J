@@ -49,8 +49,17 @@ You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) runni
 
 5. Open <http://localhost:8000>.
 
-`Ctrl+C` stops it, `docker compose down` removes the containers. The Docker setup only serves
-the dashboard and the headlines; to classify again or use the Ask tab, run it without Docker.
+`Ctrl+C` stops it, `docker compose down` removes the containers.
+
+The Ask tab needs `OPENAI_API_KEY` in `.env` and a search index in `output/rag/`. An index
+built without Docker is used as it is; to build one inside Docker instead, while it runs:
+
+```bash
+docker compose run --rm dashboard python -m rag.captions   # optional: describe the pictures
+docker compose run --rm dashboard python -m rag.ingest
+```
+
+To classify the emails again, run it without Docker.
 
 ### Without Docker
 

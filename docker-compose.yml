@@ -8,9 +8,15 @@ services:
     ports:
       # this computer only: the API has no login and serves licensed emails
       - "127.0.0.1:8000:8000"
+    # the Ask tab calls the embedding and answer models
+    env_file:
+      - path: .env
+        required: false
     volumes:
       - ./Data:/app/Data:ro
       - news:/app/output
+      # the Ask tab's index, shared with the host; writable, since each question's vector is saved
+      - ./output/rag:/app/output/rag
     restart: unless-stopped
 
   news:
