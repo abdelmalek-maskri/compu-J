@@ -141,7 +141,7 @@ All settings live in `.env`. None is needed to browse the results.
 ## Tests
 
 ```bash
-uv run pytest            # 358 Python tests
+uv run pytest            # 367 Python tests
 cd web && npm test       # 31 dashboard tests
 ```
 
@@ -191,7 +191,9 @@ that passage. Pictures (charts, tables, cartoons) are described once by a vision
 searched like text; a chart's figures are read twice, and only those both reads agree on, or
 that the text around the picture states, are kept. A question that names a kind of picture ("any funny
 cartoons?") searches those pictures first, and says so; one that compares banks ("Barclays
-and Goldman Sachs", or "all the banks") searches each bank on its own.
+and Goldman Sachs", or "all the banks") searches each bank on its own. Each bank's legal
+footer is cut off before indexing, from the sentence a person listed for it in
+`evaluation/footers.csv`.
 
 ## Limitations
 

@@ -21,11 +21,12 @@ from pypdf.errors import PdfReadError
 
 from pipeline.clean_emails import PreparedEmail, prepare_all, read_pdf_pages
 from pipeline.llm_client import StopRun
-from pipeline.paths import DELIVERABLE, RAG
+from pipeline.paths import DELIVERABLE, FOOTERS, RAG
 from pipeline.repair_text import repair
 from rag.answer import rag_settings
 from rag.chunks import Chunk, Source, bank_boilerplate, boilerplate, make_chunks, strip_lines
 from rag.embed import DEFAULT_EMBEDDER, EMBEDDERS, Embedder, VectorStore
+from rag.footers import cut_footer, load_footers
 from rag.images import (
     NOT_INDEXED,
     CaptionStore,
@@ -58,14 +59,24 @@ def _source(email: PreparedEmail, record: dict | None, text: str, **where) -> So
 
 
 def build_sources(
-    emails: list[PreparedEmail], records: dict[str, dict], data_dir: Path
+    emails: list[PreparedEmail],
+    records: dict[str, dict],
+    data_dir: Path,
+    footers: dict[str, list[str]] | None = None,
 ) -> tuple[list[Source], list[str]]:
     """every email body and every PDF page with text, boilerplate removed and the characters the
     export lost put back (pipeline/repair_text.py), so the model quotes and the quote check reads
     the same words: a lost dash left "passthrough?Xwill" as one word. returns the problems met on
-    the way, such as an unreadable PDF"""
+    the way, such as an unreadable PDF. footers: by bank, where its legal footer starts (see
+    rag/footers.py); each email is cut there first"""
     problems, pdf_pages = [], {}
     emails = [e for e in emails if not e.duplicate_of]
+
+    def bank_of(email: PreparedEmail) -> str | None:
+        return (records.get(email.id) or {}).get("bank") or email.bank
+
+    footers = footers or {}
+    bodies = {e.id: cut_footer(e.body, footers.get(bank_of(e) or "", [])) for e in emails}
     for email in emails:
         for name in email.attachments.pdfs:
             try:
@@ -73,11 +84,8 @@ def build_sources(
             except PdfReadError as e:
                 problems.append(f"{email.id}/{name}: could not read ({e})")
 
-    def bank_of(email: PreparedEmail) -> str | None:
-        return (records.get(email.id) or {}).get("bank") or email.bank
-
     by_id = {e.id: e for e in emails}
-    documents = [(bank_of(e), e.body) for e in emails] + [
+    documents = [(bank_of(e), bodies[e.id]) for e in emails] + [
         (bank_of(by_id[email_id]), "\n".join(pages)) for (email_id, _), pages in pdf_pages.items()
     ]
     remove = boilerplate([text for _, text in documents]) | bank_boilerplate(documents)
@@ -88,7 +96,7 @@ def build_sources(
         if record is None:
             problems.append(f"{email.id}: not in {DELIVERABLE}, so no date, title or tags")
         # repaired after the boilerplate test, which compares the lines as exported
-        body = repair(strip_lines(email.body, remove))
+        body = repair(strip_lines(bodies[email.id], remove))
         if body:
             sources.append(_source(email, record, body))
         for name in email.attachments.pdfs:
@@ -179,7 +187,13 @@ def main() -> int:
     emails, failures = prepare_all(args.data)
     for folder, reason in failures.items():
         print(f"could not prepare {folder}: {reason}")
-    sources, problems = build_sources(emails, records, args.data)
+    try:
+        footers = load_footers(FOOTERS, {r["bank"] for r in records.values() if r.get("bank")})
+    except ValueError as e:
+        print(e)
+        return 1
+    sources, problems = build_sources(emails, records, args.data, footers)
+    print(f"legal footers cut by {FOOTERS}: {len(footers)} banks")
     pictures, picture_problems = find_pictures(args.data)
     for problem in problems + picture_problems:
         print(problem)
